@@ -1,20 +1,21 @@
 #------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
 #-----------------------
+library(here)
 library(dplyr)
 library(tidyverse)
 `%notin%` <- Negate(`%in%`)
 yr_threshold<-20 # we will consider only those routes (i.e., sites) sampled min 20 years
 #---------------------
 # read the data
-xroutes<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv") # route meta data
-xweather<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/weather.csv") # weather data
+xroutes<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv")) # route meta data
+xweather<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/weather.csv")) # weather data
 # BBS provides local weather data, but to keep consistency from different source we are using CHELSA
 # it's a problem to read this text file: not in good format
-xsplist<-read.delim2("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt",
+xsplist<-read.delim2(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt"),
                      header=F,sep=" ",fileEncoding="latin1")
 # read species list files
-x<-read.fwf(file = "../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt",
+x<-read.fwf(file = here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.txt"),
             widths = c(6, 
                        7, 
                        50, 51, 50, 
@@ -27,33 +28,33 @@ colnames(x)<-c("Seq",
                "ORDER","Family","Genus","Species")
 x$ScientificName<-paste(x$Genus,x$Species,sep=" ")
 
-write.csv(x,"../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.csv",row.names = F) 
+write.csv(x,here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.csv"),row.names = F)
 
 #-----------  I am choosing the species level info for each route (1997-2019) from 50-StopData folder --------------
 # for StateNum = 02,Alabama; 03,Alaska; 04,Alberta; 06,Arizona; 07,Arkansas
-f1<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1.csv")
+f1<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1.csv"))
 # for StateNum = 11,BritishColumbia; 14,California; 17,Colorado; 18,Connecticut; 21,Delaware
-f2<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty2.csv")
+f2<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty2.csv"))
 # for StateNum = 25,Florida;27,Georgia; 33,Idaho; 34,Illinois; 35,Indiana; 36,Iowa
-f3<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty3.csv")
+f3<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty3.csv"))
 # for StateNum = 38,Kansas; 39,Kentucky;42,Louisiana; 43,Northwest Territories; 44,Maine; 45,Manitoba; 46,Maryland;47,Massachusetts;
-f4<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty4.csv")
+f4<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty4.csv"))
 # for StateNum = 49,Michigan; 50,Minnesota; 51,Mississippi; 52,Missouri;53,Montana; 54,Nebraska; 55,Nevada; 56,New Brunswick; 57,Newfoundlandand Labrador;
-f5<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty5.csv")
+f5<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty5.csv"))
 # for StateNum = 58,New Hampshire; 59,New Jersey; 60,New Mexico; 61,NewYork; 63,North Carolina;
-f6<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty6.csv")
+f6<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty6.csv"))
 # for StateNum = 62,Nunavut; 64,North Dakota; 65,Nova Scotia;66,Ohio; 67,Oklahoma; 68,Ontario;
-f7<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty7.csv")
+f7<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty7.csv"))
 # for StateNum = 69,Oregon; 72,Pennsylvania; 75,PrinceEdward Island; 76,Quebec; 77,Rhode Island; 79,Saskatchewan; 80,SouthCarolina;
-f8<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty8.csv")
+f8<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty8.csv"))
 # for StateNum = 81,South Dakota; 82,Tennessee; 83,Texas; 85,Utah; 87,Vermont
-f9<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty9.csv")
+f9<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty9.csv"))
 # for StateNum = 88,Virginia; 89,Washington; 90,West Virginia; 91,Wisconsin; 92,Wyoming;93,Yukon
-f10<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty10.csv")
+f10<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty10.csv"))
 
 ffull<-rbind(f1,f2,f3,f4,f5,f6,f7,f8,f9,f10)
-saveRDS(ffull,"../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS")
-#ffull<-readRDS("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS")
+saveRDS(ffull,here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS"))
+#ffull<-readRDS(here(DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS"))
 
 #------------------------ now data cleaning --------------------------------
 #Note that the dataset is complete only for the period from 1997 to present; most earlier data
@@ -70,7 +71,7 @@ xweather_good<-xweather%>%filter(Year%in%c(1997:2019))%>%
   filter(RunType==1)
 fshort<-fshort%>%filter(RouteDataID%in%xweather_good$RouteDataID)
 
-saveRDS(fshort,"../DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS")
+saveRDS(fshort,here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS"))
 zz<-head(fshort,10)
 
 fshort$uRID<-paste(fshort$CountryNum,"_",fshort$StateNum,"_",fshort$Route,sep="")
@@ -86,7 +87,7 @@ xroutes<-xroutes%>%dplyr::select(CountryNum, StateNum, Route, RouteName, Latitud
 xroutes<-xroutes%>%mutate(uRID=paste(CountryNum, StateNum, Route,sep="_"))
 
 route_20yrs_metadata<-left_join(c2,xroutes,by="uRID")
-saveRDS(route_20yrs_metadata,"../DATA/for_BBS/wrangled_data/route_20yrs_metadata.RDS")
+saveRDS(route_20yrs_metadata,here("DATA/for_BBS/wrangled_data/route_20yrs_metadata.RDS"))
 
 # Now we need to compute the pairwise geographic distance of this 1227 sites
 library(geosphere)
@@ -97,7 +98,7 @@ rownames(dist)<-colnames(dist)<-route_20yrs_metadata$uRID
 # dist is a symmetric matrix, with pairwise distance between sites, in Km
 range(dist)
 dist[upper.tri(dist, diag=T)]<-NA
-saveRDS(dist,"../DATA/for_BBS/wrangled_data/pairwise_distance_km.RDS")
+saveRDS(dist,here("DATA/for_BBS/wrangled_data/pairwise_distance_km.RDS"))
 # some visualization
 hist(dist,100)
 range(dist,na.rm=T)
@@ -108,10 +109,10 @@ range(dist,na.rm=T)
 # i.e., for any given species, get a matrix where sites along columns,
 # years across rows
 
-fshort<-readRDS("../DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS")
+fshort<-readRDS(here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS"))
 fshort$uRID<-paste(fshort$CountryNum,"_",fshort$StateNum,"_",fshort$Route,sep="")
 fshort_20yr<-fshort%>%filter(uRID%in%route_20yrs_metadata$uRID)
-saveRDS(fshort_20yr,"../DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol_min20yr.RDS")
+saveRDS(fshort_20yr,here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol_min20yr.RDS"))
 
 nsp<-length(unique(fshort_20yr$AOU))# 652 species recorded
 nyr<-length(unique(fshort_20yr$Year)) # 23 years sampled
@@ -157,17 +158,17 @@ for(i in 1:nsp){
 }
 dim(abund_array)# year by site by species
 
-saveRDS(abund_array,"../DATA/for_BBS/wrangled_data/data1997to2019_abundance_array.RDS")
+saveRDS(abund_array,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_array.RDS"))
 
 
-write.csv(species_absentinfo,"../DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_absentinfo.csv", row.names = F)
+write.csv(species_absentinfo,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_absentinfo.csv"), row.names = F)
 
-xroutes<-read.csv("../DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv") # route meta data
+xroutes<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv")) # route meta data
 xroutes$uRID<-paste(xroutes$CountryNum,"_",xroutes$StateNum,"_",xroutes$Route,sep="")
 xroutes<-xroutes%>%dplyr::select(uRID,Longitude,Latitude,Stratum)
-write.csv(xroutes,"../DATA/for_BBS/wrangled_data/uRID_lonlat_stratum.csv", row.names = F)
+write.csv(xroutes,here("DATA/for_BBS/wrangled_data/uRID_lonlat_stratum.csv"), row.names = F)
 
-
+# so here 652 species are filtered because they were at least sampled once in the study period
 
 
 
