@@ -123,7 +123,12 @@ multcall<-function(d_allsite,resloc,nbin){
     for (j in c(1:lensite)){
       
       #if(i!=j){
-      ms<-vivj_matrix(d_allsite=d_allsite,i=i,j=j,level=0.05,ploton=T)
+      if(lensite<800){
+        ms<-vivj_matrix(d_allsite=d_allsite,i=i,j=j,level=0.05,ploton=T)
+      }else{# too many plots in a single file, not needed
+        ms<-vivj_matrix(d_allsite=d_allsite,i=i,j=j,level=0.05,ploton=F)
+      }
+      
       m<-ms$mat
       
       corval[i,j]<-ms$corval
