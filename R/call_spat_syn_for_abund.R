@@ -17,9 +17,12 @@ for(i in 1:nrow(df)){
     dir.create(outputresloc)
   }
   
-  compute_spat_syn(givenAOU = givenAOU, nbin=2, 
+  distm<-readRDS(here(paste(inputresloc,"/distm_sel.RDS",sep="")))
+  d_allsite_detrend<-readRDS(here(paste(inputresloc,"/detrended_data_selectedsitelist.RDS",sep="")))
+  
+  compute_spat_syn(nbin=2, 
                    inputresloc=inputresloc, 
-                   outputresloc=outputresloc, target="abundance")
+                   outputresloc=outputresloc, distm=distm, d_allsite=d_allsite_detrend)
   print(i)
 }
 

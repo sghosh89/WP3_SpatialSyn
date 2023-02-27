@@ -9,27 +9,26 @@ source(here("R/NonParamStat.R"))
 source(here("R/NonParamStat_matrixplot.R"))
 
 # Input:
-#givenAOU = unique species ID for BBS data
+
 #nbin: 2 (default) to measure tail-dep.
 # inputresloc: path for the location from where 
 #               it should read the input list (e.g.,species abundance list of each site 
 #                 when target=="abundance")
 # outputresloc: path for the location where it should save the result
-# target: either "abundance", or "temperature" 
+# distm: distance matrix for pairwise site 
+# d_allsite: input list (length for the sites you want to include in spatial syn analysis); generally detrended
 
 # Output:
 # save results for spatial syn at either tail
 
-compute_spat_syn<-function(givenAOU, nbin=2, inputresloc, outputresloc, target="abundance"){
+compute_spat_syn<-function(nbin=2, inputresloc, outputresloc, distm, d_allsite){
   
-  if(target=="abundance"){
-    
-    distm<-readRDS(here(paste(inputresloc,"/distm_sel.RDS",sep="")))
-    d_allsite_detrend<-readRDS(here(paste(inputresloc,"/detrended_data_selectedsitelist.RDS",sep="")))
+    #distm<-readRDS(here(paste(inputresloc,"/distm_sel.RDS",sep="")))
+    #d_allsite<-readRDS(here(paste(inputresloc,"/detrended_data_selectedsitelist.RDS",sep="")))
     
     resloc<-paste(outputresloc,"/",sep="")
     
-    z<-multcall(d_allsite = d_allsite_detrend, resloc = resloc, nbin=nbin)
+    z<-multcall(d_allsite = d_allsite, resloc = resloc, nbin=nbin)
     
     saveRDS(z,paste(resloc,"NonParamStat.RDS",sep=""))
     NonParamStat_matrixplot(data=z,
@@ -50,13 +49,6 @@ compute_spat_syn<-function(givenAOU, nbin=2, inputresloc, outputresloc, target="
          ylab="pairwise Spearman correlation", pch=16, col=rgb(0,0,0,0.2)) # this would be a decreasing relationship: spat syn should decrease as distance increase
     dev.off()
     
-  }
-
-  #
-  #if(target=="temperature"){
-    # fill this in to compute spat syn among temperature timeseries
-  #}
-  
 }
 
 
