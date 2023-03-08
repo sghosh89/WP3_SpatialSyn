@@ -85,8 +85,8 @@ chosen_rad<-c(0,400) # within this distance category
 call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
 #==================================================
 # Now visualization
-df<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
-which(df$nneg>df$npos) # 31 species had more competition than spatially synchronous interactions
+#df<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
+#which(df$nneg>df$npos) # 31 species had more competition than spatially synchronous interactions
 
 
 
