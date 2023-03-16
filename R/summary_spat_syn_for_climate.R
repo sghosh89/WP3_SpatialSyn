@@ -3,13 +3,14 @@ library(tidyverse)
 library(here)
 # first make a table
 
-call_summary_spat_syn_for_abund<-function(df, chosen_rad){
-  summary_spat_syn_for_abund<-c()
+call_summary_spat_syn_for_climate<-function(df, chosen_rad, climvar){
+  
+  summary_spat_syn_for_climate<-c()
   for(i in 1:nrow(df)){
     
     givenAOU<-df$AOU[i]
     
-    resloc<-here(paste("RESULTS/AOU_", givenAOU,"/abundance_spatsyn",sep=""))
+    resloc<-here(paste("RESULTS/AOU_", givenAOU,"/",climvar,"_spatsyn",sep=""))
     
     sdf<-readRDS(paste(resloc,"/summary_df.RDS",sep=""))
     
@@ -68,46 +69,24 @@ call_summary_spat_syn_for_abund<-function(df, chosen_rad){
     
     #print(i)
     #print(sdf_selected_range)
-    summary_spat_syn_for_abund<-rbind(summary_spat_syn_for_abund,sdf_selected_range)
+    summary_spat_syn_for_climate<-rbind(summary_spat_syn_for_climate,sdf_selected_range)
   }
   # rearrange
-  summary_spat_syn_for_abund<-summary_spat_syn_for_abund%>%select(AOU, mindist, maxdist,
+  summary_spat_syn_for_climate<-summary_spat_syn_for_climate%>%select(AOU, mindist, maxdist,
                                                                   nint, nind, npos, nneg, 
                                                                   nL, nU, L, U)
   
-  write.csv(summary_spat_syn_for_abund, here(paste("RESULTS/summary_spat_syn_for_abund_",
+  write.csv(summary_spat_syn_for_climate, here(paste("RESULTS/summary_spat_syn_for_",climvar,"_",
                                                    chosen_rad[1],"_",chosen_rad[2],"km.csv",sep="")),row.names = F)
   
 }
 
 df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
 chosen_rad<-c(0,400) # within this distance category
-call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
-
-#chosen_rad<-c(400,1000) # within this distance category
-#call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
-
-#chosen_rad<-c(1000,3000) # within this distance category
-#call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
-
-#==================================================
-# Now visualization
-#df<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
-#which(df$nneg>df$npos) # 31 species had more competition than spatially synchronous interactions
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmin")
 
 
 
