@@ -1,0 +1,54 @@
+---
+title: "Preliminary report for WP3: tail-dependent spatial synchrony among birds"
+author: "Shyamolina"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    code_folding: hide
+---
+
+```{r include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      include = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      cache = FALSE)
+```
+
+```{r echo = FALSE}
+#rm(list = ls())
+library(here)
+library(tidyverse)
+library(gridExtra)
+source(here("R", "mtime.R"))
+
+# the csv files you need for further analysis are:
+
+# spatial synchrony summary results (0-400 Km) for abundance, rainfall, temperature, maxT, minT
+df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
+df_pr<-read.csv(here("RESULTS/summary_spat_syn_for_pr_0_400km.csv"))
+df_tas<-read.csv(here("RESULTS/summary_spat_syn_for_tas_0_400km.csv"))
+df_tasmax<-read.csv(here("RESULTS/summary_spat_syn_for_tasmax_0_400km.csv"))
+df_tasmin<-read.csv(here("RESULTS/summary_spat_syn_for_tasmin_0_400km.csv"))
+
+# metadata: AOU code for given species, diet category and IUCN status
+df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+```
+
+# Intro
+
+```{r insert-pdf-conceptual-fig, fig.cap="Conceptual figure (will update later)", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/res_Prelim_report/routes_on_map_selectedsites_conceptual.pdf"),rel_path = F)
+```
+
+# Results
+
+```{r insert-pdf-synabund, fig.cap="Spatial synchrony among metapopulation abundance (1997-2019; r=400 Km) (A) for species those are synchronously rare, (B) for species those are synchronously abundant. Numeric codes in gray color are unique code for each species (see given csv file for details).", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/res_Prelim_report/visualize_spat_syn_for_abund_0_400km_inkscape.pdf"),rel_path = F)
+```
+
+

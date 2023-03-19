@@ -14,6 +14,7 @@ source(here("R/diet_cat.R")) # get diet and foraging info for each bird species
 
 source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group
 
+# conceptual figure: AOU_5110
 #------------ climate data extraction ------
 source(here("R/download_rawdata_CHELSA.R")) # need a lot of space in your desktop
 source(here("DATA/CHELSA_v2/monthly/pr/extract_data_for_uRID_WP3.R"))
