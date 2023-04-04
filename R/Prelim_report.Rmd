@@ -22,21 +22,12 @@ knitr::opts_chunk$set(echo = FALSE,
 ```{r echo = FALSE}
 #rm(list = ls())
 library(here)
+#library(ggpmisc)
 library(tidyverse)
 library(gridExtra)
+library(ggpubr)
 source(here("R", "mtime.R"))
-
-# the csv files you need for further analysis are:
-
-# spatial synchrony summary results (0-400 Km) for abundance, rainfall, temperature, maxT, minT
-df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
-df_pr<-read.csv(here("RESULTS/summary_spat_syn_for_pr_0_400km.csv"))
-df_tas<-read.csv(here("RESULTS/summary_spat_syn_for_tas_0_400km.csv"))
-df_tasmax<-read.csv(here("RESULTS/summary_spat_syn_for_tasmax_0_400km.csv"))
-df_tasmin<-read.csv(here("RESULTS/summary_spat_syn_for_tasmin_0_400km.csv"))
-
-# metadata: AOU code for given species, diet category and IUCN status
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+source(here("R","summarize_res.R"))
 ```
 
 # Intro
@@ -47,8 +38,248 @@ knitr::include_graphics(here("Results/res_Prelim_report/routes_on_map_selectedsi
 
 # Results
 
-```{r insert-pdf-synabund, fig.cap="Spatial synchrony among metapopulation abundance (1997-2019; r=400 Km) (A) for species those are synchronously rare, (B) for species those are synchronously abundant. Numeric codes in gray color are unique code for each species (see given csv file for details).", out.height = "460px", out.width='800px'}
-knitr::include_graphics(here("Results/res_Prelim_report/visualize_spat_syn_for_abund_0_400km_inkscape.pdf"),rel_path = F)
+## r=0-250km
+
+```{r insert-pdf-synabund-r0-250km, fig.cap="Spatial synchrony among metapopulation abundance (1997-2019; r=0-250 Km) (A) for species those are synchronously rare, (B) for species those are synchronously abundant. Numeric codes in gray color are unique code for each species (see given csv file for details).", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_0_250km_inkscape.pdf"),rel_path = F)
 ```
+
+```{r summarize-plot-res-for-r0-250km, echo=F}
+summarize_res(chosen_rad = c(0,250))
+```
+
+### Observations from the above plots (r=0-250km)
+
+
+
+## r=250-500km
+
+```{r insert-pdf-synabund-r250-500km, fig.cap="Spatial synchrony among metapopulation abundance (1997-2019; r=250-500 Km) (A) for species those are synchronously rare, (B) for species those are synchronously abundant. Numeric codes in gray color are unique code for each species (see given csv file for details).", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_250_500km_inkscape.pdf"),rel_path = F)
+```
+
+```{r summarize-plot-res-for-r250-500km, echo=F}
+summarize_res(chosen_rad = c(250,500))
+```
+
+
+<!--
+```{r read-data, echo=F}
+
+# the csv files you need for further analysis are:
+chosen_rad<-c(0,250)
+
+# spatial synchrony summary results for abundance, rainfall, temperature, maxT, minT
+
+df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df_pr<-read.csv(here("RESULTS/summary_spat_syn_for_pr_0_250km.csv"))
+df_tas<-read.csv(here("RESULTS/summary_spat_syn_for_tas_0_250km.csv"))
+df_tasmax<-read.csv(here("RESULTS/summary_spat_syn_for_tasmax_0_250km.csv"))
+df_tasmin<-read.csv(here("RESULTS/summary_spat_syn_for_tasmin_0_250km.csv"))
+
+# metadata: AOU code for given species, diet category and IUCN status
+df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+```
+
+```{r combo-data, echo=F}
+library(tidyverse)
+library(dplyr)
+library(here)
+
+# read abundance summary
+df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df_ab<-df_ab%>%dplyr::select(AOU,ab_L=L,ab_U=U)%>%mutate(fLU_ab=(ab_L+ab_U)/(abs(ab_U)+ab_L))
+
+# read pr summary
+df_pr<-df_pr%>%dplyr::select(AOU,pr_L=L,pr_U=U)%>%mutate(fLU_pr=(pr_L+pr_U)/(abs(pr_U)+pr_L))
+
+# read tas summary
+df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
+
+# read tasmax summary
+df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
+
+# read tasmin summary
+df_tasmin<-df_tasmin%>%dplyr::select(AOU,tasmin_L=L,tasmin_U=U)%>%mutate(fLU_tasmin=(tasmin_L+tasmin_U)/(abs(tasmin_U)+tasmin_L))
+
+df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,df_tasmax$fLU_tasmax,df_tasmin$fLU_tasmin)
+colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmin")
+df<-as.data.frame(df)
+
+df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+df_spmeta<-df_spmeta%>%dplyr::select(AOU,Diet.5Cat,IUCN_status)
+
+df<-left_join(df,df_spmeta,by="AOU")# This is the dataframe we need to visualize
+
+
+id<-which(is.na(df$fLU_ab))
+df<-df[-id,]
+
+df<-na.omit(df) 
+
+df$tail<-ifelse(df$fLU_ab>0,"LT","UT")
+df$tail<-as.factor(df$tail)
+df$Diet.5Cat<-as.factor(df$Diet.5Cat)
+write.csv(df,here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"),row.names = F)
+# you need this df dataframe file to plot abund_syn vs climate_syn
+```
+
+```{r plot-across-species, echo=F, fig.cap="Spatial synchrony among metapopulation abundance is driven by similar spatial synchrony in climate? (considering all 274 species)."}
+
+ftmethod<-"lm"
+
+g1<-ggplot(data=df,aes(x=fLU_pr,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, rainfall")+ylab("Spatial synchrony, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  geom_smooth(method=ftmethod, col="black")+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
+
+g2<-ggplot(data=df,aes(x=fLU_tas,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  geom_smooth(method=ftmethod, col="black")+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
+
+g3<-ggplot(data=df,aes(x=fLU_tasmax,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, maximum T")+ylab("Spatial synchrony, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  geom_smooth(method=ftmethod, col="black")+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
+
+g4<-ggplot(data=df,aes(x=fLU_tasmin,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, minimum T")+ylab("Spatial synchrony, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  geom_smooth(method=ftmethod, col="black")+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
+
+grid.arrange(g1, g2, g3, g4, ncol=2)
+```
+--->
+
+**But** to me the species appeared differently in two groups: some species were synchronously rare across metapopulation sites, and some were synchronously common. I think the first group of species were limited by some climatic stressors whereas the second group got the benefit. So, why not consider the dataset separately for each group?
+
+<!--
+```{r plot-groupwise, echo=F, fig.cap="Spatial synchrony among metapopulation abundance is driven by similar spatial synchrony in climate? (row1 = rare group, row2 = common group).", out.height = "300px", out.width='600px'}
+
+ftmethod<-"lm"
+
+# ======== NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY RARE (n=138) ===================
+# LT synchrony for abundance caused by high pr (+ve cor) and high temp across sites (-ve cor)
+
+df1<-df%>%filter(tail=="LT")
+g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod, aes(col="red"))+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
+
+g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
+
+g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
+
+g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
+
+# === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
+# UT synchrony for abundance caused by high temp across sites (+ve cor)
+df2<-df%>%filter(tail=="UT")
+g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
+
+g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
+
+g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
+
+g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.1)+
+  geom_smooth(method=ftmethod)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
+  #stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~")), color = "steelblue1", geom = "label")
+
+grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, nrow=2)
+```
+--->
+
+**So**, from the above groupwise plots, I can see that rainfall and maxT were important for rare group - and maxT only was important for common group (considering each variable separately - don't know how it would be in a multiple variable model). I can see opposite pattern between two groups, though, for all climate variable.
+
+<!--
+```{r plot-groupwise-lm-by-diet, echo=F, fig.cap="Previous plot by diet category", out.height = "300px", out.width='600px'}
+
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
+
+ftmethod<-"lm"
+
+# ======== NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY RARE (n=138) ===================
+# LT synchrony for abundance caused by high pr (+ve cor) and high temp across sites (-ve cor)
+
+df1<-df%>%filter(tail=="LT")
+g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
+  #facet_grid(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+# === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
+# UT synchrony for abundance caused by high temp across sites (+ve cor)
+df2<-df%>%filter(tail=="UT")
+g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
+  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_bw()+ theme(legend.position="none")
+
+g9<-ggplot(data=df2,aes(x=NA,y=NA,col=Diet.5Cat))+geom_point(alpha=0)+
+  geom_smooth(method=ftmethod,se=F)+xlab("")+ylab("")+
+  #facet_wrap(~Diet.5Cat)+
+  theme_void()+ theme(legend.title=element_blank(),legend.position="top")
+
+grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, g9, 
+  layout_matrix = rbind(c(1, 2, 3, 4),
+                        c(5, 6, 7, 8),c(9, 9, 9)), nrow=3)
+```
+--->
 
 

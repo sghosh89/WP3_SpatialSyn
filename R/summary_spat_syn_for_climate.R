@@ -81,15 +81,29 @@ call_summary_spat_syn_for_climate<-function(df, chosen_rad, climvar){
   
 }
 
+# range: 0-250km
+df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
+chosen_rad<-c(0,250) # within this distance category
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmin")
+
+# range: 250-500km
+df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
+chosen_rad<-c(250,500) # within this distance category
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax")
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmin")
+
+# range: 0-400km
 df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
 chosen_rad<-c(0,400) # within this distance category
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr")
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas")
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax")
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmin")
-
-
-
 
 
 

@@ -12,7 +12,7 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
   
   df<-left_join(df2,df1,by="AOU")# This is the dataframe we need to visualize
   
-  df<-df%>%filter(nint!=nind)# 291 sp. we will consider, exluding sp. where all interactions are indep.
+  df<-df%>%filter(nint!=nind)# exluding sp. where all interactions are indep.
   
   df$fL<-(df$nL/(df$nint))*100
   df$fU<-(df$nU/(df$nint))*100
@@ -37,7 +37,7 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
   if(plotonly=="UT"){
     df<-df%>%filter(LandU<0)# only for positive tail dep. (lower tail) synchrony
   }
-  
+  print(nrow(df))
   # arrange data in required format for stacked circular barplot
   dfsmall<-df%>%select(individual=AOU, group=Diet.5Cat, fLval, fUval)#%>%
   #              mutate(individual=paste(AOU,IUCN_status,sep=","))%>%select(-AOU,-IUCN_status)
@@ -135,6 +135,42 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
 }
 
 # Now visualization
+
+# ============ 0-250km ===========
+plotonly<-"LT"
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+
+plotonly<-"UT"
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+
+# later in your plot you could add info about IUCN status in inkscape
+
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km.pdf"), width = 14, height = 7) # Open a new pdf file
+grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
+dev.off() 
+
+# ============ 250-500km ===========
+plotonly<-"LT"
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_250_500km.csv"))
+df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+
+plotonly<-"UT"
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_250_500km.csv"))
+df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+
+# later in your plot you could add info about IUCN status in inkscape
+
+pdf(here("RESULTS/visualize_spat_syn_for_abund_250_500km.pdf"), width = 14, height = 7) # Open a new pdf file
+grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
+dev.off()
+
+# ============ 0-400km ===========
 plotonly<-"LT"
 df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
 df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
@@ -149,5 +185,4 @@ gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_400km.pdf"), width = 14, height = 7) # Open a new pdf file
 grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
-dev.off() 
-
+dev.off()
