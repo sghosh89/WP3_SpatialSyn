@@ -27,6 +27,12 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas, tasmax
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data (pr, tas, tasmax, tasmin) 
 source(here("R/summary_spat_syn_for_climate.R"))# summarize spat_syn for climate data
 
+#--------- AVONET: traits and bodymass data for bird species ----------
+# below lines are also included in Prelim_report.Rmd
+source(here("R/get_birdtraits_from_AVONET.R"))
+source(here("R/get_bodymass_from_AVONET.R"))
+source(here("R/get_birdspecies_phylotree.R"))
+source(here("R/test_tree.R"))
 
 
 

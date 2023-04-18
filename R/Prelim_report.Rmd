@@ -48,9 +48,204 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_0_250km_inksc
 summarize_res(chosen_rad = c(0,250))
 ```
 
-### Observations from the above plots (r=0-250km)
+### Testing body-traits for both red and blue group of birds
 
+```{r test_hypo, echo=F}
 
+source(here("R/get_birdtraits_from_AVONET.R"))
+source(here("R/get_bodymass_from_AVONET.R"))
+source(here("R/get_birdspecies_phylotree.R"))
+
+#===================================================================
+# We will test some hypotheses related to trait-difference 
+# among two groups showing LT and UT spatial synchrony
+#===================================================================
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggpubr)
+library(gridExtra)
+library(PupillometryR)
+
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
+df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName,PassNonPass)
+
+df<-left_join(df,df_spmeta, by="AOU") # don't rename this dataframe
+
+#======================================================================
+#=========================  BODY SIZE RELATED TRAITS  ==========================
+#=======================================================================
+
+# first with Bird AvoNet database
+dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
+dftrait<-dftrait%>%dplyr::select(spname, possible_sp, 
+                                 Beak.Length_Culmen, Beak.Width, Beak.Depth,
+                                 Tarsus.Length, 
+                                 Wing.Length, Kipps.Distance, Hand.wing.Index,
+                                 Tail.Length)
+dftrait<-dftrait%>%group_by(spname,possible_sp)%>%
+  summarize(meanBeak.LengthCulmen=mean(Beak.Length_Culmen,na.rm=T),
+            meanBeak.Width=mean(Beak.Width,na.rm=T),
+            meanBeak.Depth=mean(Beak.Depth,na.rm=T),
+            meanTarsus.Length=mean(Tarsus.Length,na.rm=T),
+            meanWing.Length=mean(Wing.Length,na.rm=T),
+            meanKipps.Distance=mean(Kipps.Distance,na.rm=T),
+            meanHWI=mean(Hand.wing.Index,na.rm=T),
+            meanTail.Length=mean(Tail.Length,na.rm=T),)%>%ungroup()
+
+dft1<-dftrait%>%filter(spname==possible_sp)%>%dplyr::select(-spname)
+dft2<-dftrait%>%filter(spname!=possible_sp)%>%dplyr::select(-possible_sp)
+
+df2<-left_join(df,dft1,by=c("ScientificName"="possible_sp"))
+df2<-left_join(df2,dft2,by=c("ScientificName"="spname"))
+
+df2$meanBeak.LengthCulmen<-coalesce(df2$meanBeak.LengthCulmen.x,df2$meanBeak.LengthCulmen.y)
+df2$meanBeak.Width<-coalesce(df2$meanBeak.Width.x,df2$meanBeak.Width.y)
+df2$meanBeak.Depth<-coalesce(df2$meanBeak.Depth.x,df2$meanBeak.Depth.y)
+df2$meanTarsus.Length<-coalesce(df2$meanTarsus.Length.x,df2$meanTarsus.Length.y)
+df2$meanWing.Length<-coalesce(df2$meanWing.Length.x,df2$meanWing.Length.y)
+df2$meanKipps.Distance<-coalesce(df2$meanKipps.Distance.x,df2$meanKipps.Distance.y)
+df2$meanHWI<-coalesce(df2$meanHWI.x,df2$meanHWI.y)
+df2$meanTail.Length<-coalesce(df2$meanTail.Length.x,df2$meanTail.Length.y)
+
+# data with 8 traits from AvoNet
+mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName, 
+                               fLU_ab,fLU_pr, fLU_tas, fLU_tasmax, fLU_tasmin,Diet.5Cat, 
+                               IUCN_status, tail, PassNonPass,
+                               meanBeak.LengthCulmen,meanBeak.Width,meanBeak.Depth,
+                               meanTarsus.Length,meanWing.Length,
+                               meanKipps.Distance,meanHWI,
+                               meanTail.Length)
+
+plot_type_bodytrait<-function(mydftrait,traits, type){
+  
+  gplist<-vector(mode = "list", length = length(traits))
+  
+  for(i in 1:length(traits)){
+    
+    if(type==1){
+      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
+      tempo<-mydftrait[id]
+      tempo<-rename(tempo,y=traits[i])
+      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
+        #geom_point()+
+        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
+        theme_bw()+theme(legend.position = "none")
+    }
+    
+    if(type==2){
+      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
+      tempo<-mydftrait[id]
+      tempo<-rename(tempo,y=traits[i])
+      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
+        geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .5) + 
+        geom_point(aes(y = y, color = tail), position = position_jitter(width = .1), size = 0.9, alpha = 0.5) +
+        geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.5)+
+        theme_bw()+theme(legend.position = "none")
+    }
+    
+    if(type==3){
+      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",traits[i]))
+      tempo<-mydftrait[id]
+      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i])
+      gp<-ggplot(tempo, aes(x=DT, y=y, fill=tail)) +
+        #geom_point()+
+        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
+        theme_bw()+theme(legend.position = "none")
+    }
+    
+    if(type==4){
+      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
+                                         "fLU_ab","fLU_pr",
+                                         "fLU_tas","fLU_tasmax","fLU_tasmin",
+                                         traits[i]))
+      tempo<-mydftrait[id]
+      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
+      gp<-ggplot(tempo, aes(x=x, y=y, col=DT, shape=tail)) + 
+        geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+        labs(title="",x="spat syn (abund)",y=traits[i])+
+        theme_bw()+theme(legend.position = c(0.5,0.8), legend.box = "horizontal")
+    }
+    
+    if(type==5){
+      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
+                                         "fLU_ab","fLU_pr",
+                                         "fLU_tas","fLU_tasmax","fLU_tasmin",
+                                         traits[i]))
+      tempo<-mydftrait[id]
+      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
+      gp<-ggplot(tempo, aes(x=x, y=y, col=tail, shape=tail)) + 
+        geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+        labs(title="",x="spat syn (abund)",y=traits[i])+
+        theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+    }
+    
+    gplist[[i]]<-gp
+    
+  }
+  
+  return(gplist)
+}
+
+traits<-c("meanBeak.LengthCulmen","meanBeak.Width","meanBeak.Depth",
+          "meanTarsus.Length","meanWing.Length","meanKipps.Distance",
+          "meanHWI","meanTail.Length")
+
+# no difference in mean of both groups
+res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=1)
+grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
+             layout_matrix = rbind(c(1, 2, 3, 4),
+                                   c(5, 6, 7, 8)), nrow=2)
+
+# but here we can see in extreme conditions because of some environmental filtering species with better traits exist
+res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=5)
+grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
+             layout_matrix = rbind(c(1, 2, 3, 4),
+                                   c(5, 6, 7, 8)), nrow=2)
+
+#======================================================================
+#=========================  BODY MASS   ==========================
+#=======================================================================
+dfmass<-read.csv(here("DATA/AVONET/bird_bodymass_from_AVONET.csv"))# 13614 species
+dfm<-left_join(df,dfmass,by=c("ScientificName"="Species"))
+dfm1<-dfm%>%filter(!is.na(mass_gm)) # 251 sp.
+dfm2<-dfm%>%filter(is.na(mass_gm)) # 11 sp. - need to know synonym
+
+dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
+dftrait<-dftrait%>%filter(spname!=possible_sp)%>%distinct(spname,.keep_all = T)
+dftrait<-dftrait%>%dplyr::select(spname,possible_sp)
+dfm2<-left_join(dfm2,dftrait,by=c("ScientificName"="spname"))
+id<-which(dfm2$ScientificName%in%c("Setophaga coronata coronata","Setophaga coronata audoboni"))
+dfm2$possible_sp[id]<-"Setophaga coronata" # for these subspecies mass info not available, so putting species level info
+dfm2<-left_join(dfm2,dfmass,by=c("possible_sp"="Species"))
+dfm2$mass_gm<-coalesce(dfm2$mass_gm.x,dfm2$mass_gm.y)
+dfm2$source<-coalesce(dfm2$source.x,dfm2$source.y)
+dfm2<-dfm2%>%dplyr::select(-source.x,-source.y,-mass_gm.x,-mass_gm.y)
+
+dfm1$possible_sp<-dfm1$ScientificName
+dfm2<-dfm2%>%dplyr::select(colnames(dfm1))
+
+# combine
+dfm_birds<-rbind(dfm1,dfm2)%>%arrange(AOU)
+dfm_birds2<-dfm_birds%>%dplyr::select(ScientificName, possible_sp, mass_gm, source)
+mydftrait_w_mass<-left_join(mydftrait,dfm_birds2,by=c("ScientificName"="ScientificName"))
+
+# save file
+write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"),row.names=F)
+
+# same trend for bodymass
+res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=1)
+res
+res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=5)
+res
+
+source(here("R/test_tree.R"))
+```
+
+```{r insert-pdf-phylo-r0-250km, fig.cap="Spatial synchrony and phylogeny for bird species (within 0-250 km).", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/species_phylogeny_0_250km.pdf"),rel_path = F)
+```
 
 ## r=250-500km
 
@@ -62,224 +257,11 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_250_500km_ink
 summarize_res(chosen_rad = c(250,500))
 ```
 
-
-<!--
-```{r read-data, echo=F}
-
-# the csv files you need for further analysis are:
-chosen_rad<-c(0,250)
-
-# spatial synchrony summary results for abundance, rainfall, temperature, maxT, minT
-
-df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
-df_pr<-read.csv(here("RESULTS/summary_spat_syn_for_pr_0_250km.csv"))
-df_tas<-read.csv(here("RESULTS/summary_spat_syn_for_tas_0_250km.csv"))
-df_tasmax<-read.csv(here("RESULTS/summary_spat_syn_for_tasmax_0_250km.csv"))
-df_tasmin<-read.csv(here("RESULTS/summary_spat_syn_for_tasmin_0_250km.csv"))
-
-# metadata: AOU code for given species, diet category and IUCN status
-df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-```
-
-```{r combo-data, echo=F}
-library(tidyverse)
-library(dplyr)
-library(here)
-
-# read abundance summary
-df_ab<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
-df_ab<-df_ab%>%dplyr::select(AOU,ab_L=L,ab_U=U)%>%mutate(fLU_ab=(ab_L+ab_U)/(abs(ab_U)+ab_L))
-
-# read pr summary
-df_pr<-df_pr%>%dplyr::select(AOU,pr_L=L,pr_U=U)%>%mutate(fLU_pr=(pr_L+pr_U)/(abs(pr_U)+pr_L))
-
-# read tas summary
-df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
-
-# read tasmax summary
-df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
-
-# read tasmin summary
-df_tasmin<-df_tasmin%>%dplyr::select(AOU,tasmin_L=L,tasmin_U=U)%>%mutate(fLU_tasmin=(tasmin_L+tasmin_U)/(abs(tasmin_U)+tasmin_L))
-
-df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,df_tasmax$fLU_tasmax,df_tasmin$fLU_tasmin)
-colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmin")
-df<-as.data.frame(df)
-
-df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-df_spmeta<-df_spmeta%>%dplyr::select(AOU,Diet.5Cat,IUCN_status)
-
-df<-left_join(df,df_spmeta,by="AOU")# This is the dataframe we need to visualize
-
-
-id<-which(is.na(df$fLU_ab))
-df<-df[-id,]
-
-df<-na.omit(df) 
-
-df$tail<-ifelse(df$fLU_ab>0,"LT","UT")
-df$tail<-as.factor(df$tail)
-df$Diet.5Cat<-as.factor(df$Diet.5Cat)
-write.csv(df,here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"),row.names = F)
-# you need this df dataframe file to plot abund_syn vs climate_syn
-```
-
-```{r plot-across-species, echo=F, fig.cap="Spatial synchrony among metapopulation abundance is driven by similar spatial synchrony in climate? (considering all 274 species)."}
-
-ftmethod<-"lm"
-
-g1<-ggplot(data=df,aes(x=fLU_pr,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, rainfall")+ylab("Spatial synchrony, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  geom_smooth(method=ftmethod, col="black")+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
-
-g2<-ggplot(data=df,aes(x=fLU_tas,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  geom_smooth(method=ftmethod, col="black")+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
-
-g3<-ggplot(data=df,aes(x=fLU_tasmax,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, maximum T")+ylab("Spatial synchrony, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  geom_smooth(method=ftmethod, col="black")+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
-
-g4<-ggplot(data=df,aes(x=fLU_tasmin,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("Spatial synchrony, minimum T")+ylab("Spatial synchrony, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  geom_smooth(method=ftmethod, col="black")+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
-
-grid.arrange(g1, g2, g3, g4, ncol=2)
-```
---->
-
 **But** to me the species appeared differently in two groups: some species were synchronously rare across metapopulation sites, and some were synchronously common. I think the first group of species were limited by some climatic stressors whereas the second group got the benefit. So, why not consider the dataset separately for each group?
 
-<!--
-```{r plot-groupwise, echo=F, fig.cap="Spatial synchrony among metapopulation abundance is driven by similar spatial synchrony in climate? (row1 = rare group, row2 = common group).", out.height = "300px", out.width='600px'}
-
-ftmethod<-"lm"
-
-# ======== NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY RARE (n=138) ===================
-# LT synchrony for abundance caused by high pr (+ve cor) and high temp across sites (-ve cor)
-
-df1<-df%>%filter(tail=="LT")
-g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod, aes(col="red"))+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
-
-g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
-
-g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
-
-g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red", geom = "label")
-
-# === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
-# UT synchrony for abundance caused by high temp across sites (+ve cor)
-df2<-df%>%filter(tail=="UT")
-g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
-
-g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
-
-g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
-
-g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.1)+
-  geom_smooth(method=ftmethod)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "steelblue3", geom = "label")
-  #stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~")), color = "steelblue1", geom = "label")
-
-grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, nrow=2)
-```
---->
 
 **So**, from the above groupwise plots, I can see that rainfall and maxT were important for rare group - and maxT only was important for common group (considering each variable separately - don't know how it would be in a multiple variable model). I can see opposite pattern between two groups, though, for all climate variable.
 
-<!--
-```{r plot-groupwise-lm-by-diet, echo=F, fig.cap="Previous plot by diet category", out.height = "300px", out.width='600px'}
 
-df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
-
-ftmethod<-"lm"
-
-# ======== NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY RARE (n=138) ===================
-# LT synchrony for abundance caused by high pr (+ve cor) and high temp across sites (-ve cor)
-
-df1<-df%>%filter(tail=="LT")
-g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
-  #facet_grid(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-# === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
-# UT synchrony for abundance caused by high temp across sites (+ve cor)
-df2<-df%>%filter(tail=="UT")
-g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, rainfall")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
-  geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("SpatSyn, abundance")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_bw()+ theme(legend.position="none")
-
-g9<-ggplot(data=df2,aes(x=NA,y=NA,col=Diet.5Cat))+geom_point(alpha=0)+
-  geom_smooth(method=ftmethod,se=F)+xlab("")+ylab("")+
-  #facet_wrap(~Diet.5Cat)+
-  theme_void()+ theme(legend.title=element_blank(),legend.position="top")
-
-grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, g9, 
-  layout_matrix = rbind(c(1, 2, 3, 4),
-                        c(5, 6, 7, 8),c(9, 9, 9)), nrow=3)
-```
---->
 
 
