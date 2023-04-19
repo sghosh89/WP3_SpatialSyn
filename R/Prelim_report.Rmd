@@ -33,7 +33,7 @@ source(here("R","summarize_res.R"))
 # Intro
 
 ```{r insert-pdf-conceptual-fig, fig.cap="Conceptual figure (will update later)", out.height = "460px", out.width='800px'}
-knitr::include_graphics(here("Results/res_Prelim_report/routes_on_map_selectedsites_conceptual.pdf"),rel_path = F)
+knitr::include_graphics(here("Results/conceptual_fig/routes_on_map_selectedsites_conceptual.pdf"),rel_path = F)
 ```
 
 # Results
@@ -45,21 +45,17 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_0_250km_inksc
 ```
 
 ```{r summarize-plot-res-for-r0-250km, echo=F}
-summarize_res(chosen_rad = c(0,250))
+summarize_res(chosen_rad = c(0,250)) # for visually testing Q2
 ```
 
 ### Testing body-traits for both red and blue group of birds
 
 ```{r test_hypo, echo=F}
 
-source(here("R/get_birdtraits_from_AVONET.R"))
-source(here("R/get_bodymass_from_AVONET.R"))
-source(here("R/get_birdspecies_phylotree.R"))
 
-#===================================================================
 # We will test some hypotheses related to trait-difference 
 # among two groups showing LT and UT spatial synchrony
-#===================================================================
+
 library(tidyverse)
 library(dplyr)
 library(here)
@@ -73,9 +69,8 @@ df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName,Pa
 
 df<-left_join(df,df_spmeta, by="AOU") # don't rename this dataframe
 
-#======================================================================
+
 #=========================  BODY SIZE RELATED TRAITS  ==========================
-#=======================================================================
 
 # first with Bird AvoNet database
 dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
@@ -204,9 +199,8 @@ grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]
              layout_matrix = rbind(c(1, 2, 3, 4),
                                    c(5, 6, 7, 8)), nrow=2)
 
-#======================================================================
 #=========================  BODY MASS   ==========================
-#=======================================================================
+
 dfmass<-read.csv(here("DATA/AVONET/bird_bodymass_from_AVONET.csv"))# 13614 species
 dfm<-left_join(df,dfmass,by=c("ScientificName"="Species"))
 dfm1<-dfm%>%filter(!is.na(mass_gm)) # 251 sp.
@@ -239,11 +233,10 @@ res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=1)
 res
 res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=5)
 res
-
-source(here("R/test_tree.R"))
 ```
 
 ```{r insert-pdf-phylo-r0-250km, fig.cap="Spatial synchrony and phylogeny for bird species (within 0-250 km).", out.height = "460px", out.width='800px'}
+# source(here("R/test_tree.R")) this code generated the below pdf
 knitr::include_graphics(here("Results/species_phylogeny_0_250km.pdf"),rel_path = F)
 ```
 
@@ -254,7 +247,7 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_250_500km_ink
 ```
 
 ```{r summarize-plot-res-for-r250-500km, echo=F}
-summarize_res(chosen_rad = c(250,500))
+summarize_res(chosen_rad = c(250,500)) # for visually testing Q2
 ```
 
 **But** to me the species appeared differently in two groups: some species were synchronously rare across metapopulation sites, and some were synchronously common. I think the first group of species were limited by some climatic stressors whereas the second group got the benefit. So, why not consider the dataset separately for each group?
