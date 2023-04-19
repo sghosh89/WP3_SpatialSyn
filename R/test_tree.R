@@ -19,7 +19,7 @@ df$BirdTreeName<-NA
 
 #write.csv(df,here("DATA/BirdTree/species_0_250km.csv"),row.names = F)
 
-BT<-read.csv(here("DATA/BirdTree/BLIOCPhyloMasterTax (1).csv"))
+BT<-read.csv(here("DATA/BirdTree/BLIOCPhyloMasterTax.csv"))
 idmatch<-which(df$ScientificName%in%BT$Scientific)
 df$BirdTreeName[idmatch]<-df$ScientificName[idmatch]
 
