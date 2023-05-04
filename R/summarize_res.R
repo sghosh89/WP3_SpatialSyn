@@ -3,6 +3,9 @@ library(dplyr)
 library(ggpubr)
 library(here)
 
+# this function keeps species set which have all finite non-zero value for flu_ab
+# and finite value for spatial synchrony in climvar (e.g. pr, tas, tasmax, tasmin)
+
 summarize_res<-function(chosen_rad){
   #============== read data ========================
   # the csv files you need for further analysis are:
@@ -54,7 +57,8 @@ summarize_res<-function(chosen_rad){
   id<-which(is.na(df$fLU_ab))
   df<-df[-id,]
   
-  df<-na.omit(df) 
+  df<-na.omit(df) # still Na happens when no tail dep in any of the climate variables
+  # e.g., 0-250km, fLU_pr shows NaN for AOU=7470
   
   df$tail<-ifelse(df$fLU_ab>0,"LT","UT")
   df$tail<-as.factor(df$tail)

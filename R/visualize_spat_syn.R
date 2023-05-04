@@ -20,7 +20,7 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
   df$fUval<-(abs(df$U)/(df$L + abs(df$U)))*100
   
   id<-which(is.na(df$fLval))
-  df$fLval[id]<-0 # replacing NaN
+  df$fLval[id]<-0 # replacing NaN # NaN happens when all are either indep, or neg corr.
   df$fUval[id]<-0 # replacing NaN
   
   class(df$fLval)
