@@ -32,9 +32,9 @@ source(here("R/get_birdtraits_from_AVONET.R"))
 source(here("R/get_bodymass_from_AVONET.R"))
 # test_hypo code chunk in Rmd file tested hypo related to body traits
 source(here("R/get_birdspecies_phylotree.R"))
-source(here("R/test_tree.R"))
+source(here("R/test_tree.R"))# maybe abundon this later: all random pattern
 
+source(here("R/get_bio_opt_for_species.R")) # optimal P, T
 
-
-
+source(here("R/spat_syn_vs_distance_plot.R")) # maybe put as suppmat, also in Rmd
 

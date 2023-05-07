@@ -240,6 +240,61 @@ res
 knitr::include_graphics(here("Results/species_phylogeny_0_250km.pdf"),rel_path = F)
 ```
 
+```{r plot_opt_bio, echo=F}
+
+# source(here("R/get_bio_opt_for_species.R"))
+# see CHELSA description file to understand variables
+df_opt<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
+
+g1<-ggplot(df_opt, aes(x=fLU_ab, y=bio1, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio1")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+
+g12<-ggplot(df_opt, aes(x=fLU_ab, y=bio12, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio12")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+
+g9<-ggplot(df_opt, aes(x=fLU_ab, y=bio9, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio9")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+g10<-ggplot(df_opt, aes(x=fLU_ab, y=bio10, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio10")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+
+g17<-ggplot(df_opt, aes(x=fLU_ab, y=bio17, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio17")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+g18<-ggplot(df_opt, aes(x=fLU_ab, y=bio18, col=tail, shape=tail)) + 
+  geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
+  labs(title="",x="spat syn (abund)",y="bio18")+
+  theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
+
+grid.arrange(g1,g12,g9,g10,g17,g18, nrow=3)
+# see, first, third row
+```
+
+**bio1=** mean annual air temperature (degree C), mean annual daily mean air temperatures averaged over 1 year.
+
+**bio12=** annual precipitation amount (Kg m$^{-2}$ per year), Accumulated precipitation amount over 1 year.
+
+**bio9=** mean daily mean air temperatures of the driest quarter (degree C), The driest quarter of the year is determined (to the nearest month).
+
+**bio10=** mean daily mean air temperatures of the warmest quarter (degree C), The warmest quarter of the year is determined (to the nearest month).
+
+**bio17=** mean monthly precipitation amount of the driest quarter (Kg m$^{-2}$ per month), The driest quarter of the year is determined (to the nearest month).
+
+**bio18=** mean monthly precipitation amount of the warmest quarter (Kg m$^{-2}$ per month), The warmest quarter of the year is determined (to the nearest month).
+
+```{r spat-syn-vs-distance-plot, echo=F, cache=T, cache.extra=list(mtime(here("R/spat_syn_vs_distance_plot.R")))}
+source(here("R/spat_syn_vs_distance_plot.R")) # maybe put as suppmat
+```
+
+<!--
 ## r=250-500km
 
 ```{r insert-pdf-synabund-r250-500km, fig.cap="Spatial synchrony among metapopulation abundance (1997-2019; r=250-500 Km) (A) for species those are synchronously rare, (B) for species those are synchronously abundant. Numeric codes in gray color are unique code for each species (see given csv file for details).", out.height = "460px", out.width='800px'}
@@ -249,7 +304,7 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_250_500km_ink
 ```{r summarize-plot-res-for-r250-500km, echo=F}
 summarize_res(chosen_rad = c(250,500)) # for visually testing Q2
 ```
-
+-->
 **But** to me the species appeared differently in two groups: some species were synchronously rare across metapopulation sites, and some were synchronously common. I think the first group of species were limited by some climatic stressors whereas the second group got the benefit. So, why not consider the dataset separately for each group?
 
 

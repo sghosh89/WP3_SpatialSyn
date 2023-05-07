@@ -87,6 +87,12 @@ call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
 chosen_rad<-c(250,500) # within this distance category
 call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
 
+chosen_rad<-c(500,750) # within this distance category
+call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
+
+chosen_rad<-c(750,1000) # within this distance category
+call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
+
 chosen_rad<-c(0,400) # within this distance category
 call_summary_spat_syn_for_abund(df=df, chosen_rad=chosen_rad)
 
