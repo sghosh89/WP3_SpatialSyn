@@ -24,17 +24,17 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas, tasmax
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data (pr, tas, tasmax, tasmin) 
 source(here("R/summary_spat_syn_for_climate.R"))# summarize spat_syn for climate data
 
-# source(here("R/summarize_res.R")) # called in Rmd fifle
+source(here("R/summarize_res.R")) # called in Rmd fifle
 # summarizes spatial syn in abund, climate (see source file for details)
 
 #--------- AVONET: traits, bodymass, and phylogeny data for bird species ----------
 source(here("R/get_birdtraits_from_AVONET.R"))
 source(here("R/get_bodymass_from_AVONET.R"))
-# test_hypo code chunk in Rmd file tested hypo related to body traits
-source(here("R/get_birdspecies_phylotree.R"))
-source(here("R/test_tree.R"))# maybe abundon this later: all random pattern
+source(here("R/test_hypo.R"))
+
+#source(here("R/get_birdspecies_phylotree.R"))
+#source(here("R/test_tree.R"))# maybe abundon this later: all random pattern
 
 source(here("R/get_bio_opt_for_species.R")) # optimal P, T
-
-source(here("R/spat_syn_vs_distance_plot.R")) # maybe put as suppmat, also in Rmd
+source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat
 

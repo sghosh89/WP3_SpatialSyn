@@ -27,7 +27,6 @@ library(tidyverse)
 library(gridExtra)
 library(ggpubr)
 source(here("R", "mtime.R"))
-source(here("R","summarize_res.R"))
 ```
 
 # Intro
@@ -45,200 +44,23 @@ knitr::include_graphics(here("Results/visualize_spat_syn_for_abund_0_250km_inksc
 ```
 
 ```{r summarize-plot-res-for-r0-250km, echo=F}
-summarize_res(chosen_rad = c(0,250)) # for visually testing Q2
+source(here("R","summarize_res.R"))
 ```
 
 ### Testing body-traits for both red and blue group of birds
 
 ```{r test_hypo, echo=F}
-
-
 # We will test some hypotheses related to trait-difference 
 # among two groups showing LT and UT spatial synchrony
-
-library(tidyverse)
-library(dplyr)
-library(here)
-library(ggpubr)
-library(gridExtra)
-library(PupillometryR)
-
-df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
-df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName,PassNonPass)
-
-df<-left_join(df,df_spmeta, by="AOU") # don't rename this dataframe
-
-
-#=========================  BODY SIZE RELATED TRAITS  ==========================
-
-# first with Bird AvoNet database
-dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
-dftrait<-dftrait%>%dplyr::select(spname, possible_sp, 
-                                 Beak.Length_Culmen, Beak.Width, Beak.Depth,
-                                 Tarsus.Length, 
-                                 Wing.Length, Kipps.Distance, Hand.wing.Index,
-                                 Tail.Length)
-dftrait<-dftrait%>%group_by(spname,possible_sp)%>%
-  summarize(meanBeak.LengthCulmen=mean(Beak.Length_Culmen,na.rm=T),
-            meanBeak.Width=mean(Beak.Width,na.rm=T),
-            meanBeak.Depth=mean(Beak.Depth,na.rm=T),
-            meanTarsus.Length=mean(Tarsus.Length,na.rm=T),
-            meanWing.Length=mean(Wing.Length,na.rm=T),
-            meanKipps.Distance=mean(Kipps.Distance,na.rm=T),
-            meanHWI=mean(Hand.wing.Index,na.rm=T),
-            meanTail.Length=mean(Tail.Length,na.rm=T),)%>%ungroup()
-
-dft1<-dftrait%>%filter(spname==possible_sp)%>%dplyr::select(-spname)
-dft2<-dftrait%>%filter(spname!=possible_sp)%>%dplyr::select(-possible_sp)
-
-df2<-left_join(df,dft1,by=c("ScientificName"="possible_sp"))
-df2<-left_join(df2,dft2,by=c("ScientificName"="spname"))
-
-df2$meanBeak.LengthCulmen<-coalesce(df2$meanBeak.LengthCulmen.x,df2$meanBeak.LengthCulmen.y)
-df2$meanBeak.Width<-coalesce(df2$meanBeak.Width.x,df2$meanBeak.Width.y)
-df2$meanBeak.Depth<-coalesce(df2$meanBeak.Depth.x,df2$meanBeak.Depth.y)
-df2$meanTarsus.Length<-coalesce(df2$meanTarsus.Length.x,df2$meanTarsus.Length.y)
-df2$meanWing.Length<-coalesce(df2$meanWing.Length.x,df2$meanWing.Length.y)
-df2$meanKipps.Distance<-coalesce(df2$meanKipps.Distance.x,df2$meanKipps.Distance.y)
-df2$meanHWI<-coalesce(df2$meanHWI.x,df2$meanHWI.y)
-df2$meanTail.Length<-coalesce(df2$meanTail.Length.x,df2$meanTail.Length.y)
-
-# data with 8 traits from AvoNet
-mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName, 
-                               fLU_ab,fLU_pr, fLU_tas, fLU_tasmax, fLU_tasmin,Diet.5Cat, 
-                               IUCN_status, tail, PassNonPass,
-                               meanBeak.LengthCulmen,meanBeak.Width,meanBeak.Depth,
-                               meanTarsus.Length,meanWing.Length,
-                               meanKipps.Distance,meanHWI,
-                               meanTail.Length)
-
-plot_type_bodytrait<-function(mydftrait,traits, type){
-  
-  gplist<-vector(mode = "list", length = length(traits))
-  
-  for(i in 1:length(traits)){
-    
-    if(type==1){
-      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,y=traits[i])
-      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
-        #geom_point()+
-        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
-        theme_bw()+theme(legend.position = "none")
-    }
-    
-    if(type==2){
-      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,y=traits[i])
-      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
-        geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .5) + 
-        geom_point(aes(y = y, color = tail), position = position_jitter(width = .1), size = 0.9, alpha = 0.5) +
-        geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.5)+
-        theme_bw()+theme(legend.position = "none")
-    }
-    
-    if(type==3){
-      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i])
-      gp<-ggplot(tempo, aes(x=DT, y=y, fill=tail)) +
-        #geom_point()+
-        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
-        theme_bw()+theme(legend.position = "none")
-    }
-    
-    if(type==4){
-      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
-                                         "fLU_ab","fLU_pr",
-                                         "fLU_tas","fLU_tasmax","fLU_tasmin",
-                                         traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
-      gp<-ggplot(tempo, aes(x=x, y=y, col=DT, shape=tail)) + 
-        geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
-        labs(title="",x="spat syn (abund)",y=traits[i])+
-        theme_bw()+theme(legend.position = c(0.5,0.8), legend.box = "horizontal")
-    }
-    
-    if(type==5){
-      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
-                                         "fLU_ab","fLU_pr",
-                                         "fLU_tas","fLU_tasmax","fLU_tasmin",
-                                         traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
-      gp<-ggplot(tempo, aes(x=x, y=y, col=tail, shape=tail)) + 
-        geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
-        labs(title="",x="spat syn (abund)",y=traits[i])+
-        theme_bw()+theme(legend.position = "none", legend.box = "horizontal")
-    }
-    
-    gplist[[i]]<-gp
-    
-  }
-  
-  return(gplist)
-}
-
-traits<-c("meanBeak.LengthCulmen","meanBeak.Width","meanBeak.Depth",
-          "meanTarsus.Length","meanWing.Length","meanKipps.Distance",
-          "meanHWI","meanTail.Length")
-
-# no difference in mean of both groups
-res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=1)
-grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
-             layout_matrix = rbind(c(1, 2, 3, 4),
-                                   c(5, 6, 7, 8)), nrow=2)
-
-# but here we can see in extreme conditions because of some environmental filtering species with better traits exist
-res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=5)
-grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
-             layout_matrix = rbind(c(1, 2, 3, 4),
-                                   c(5, 6, 7, 8)), nrow=2)
-
-#=========================  BODY MASS   ==========================
-
-dfmass<-read.csv(here("DATA/AVONET/bird_bodymass_from_AVONET.csv"))# 13614 species
-dfm<-left_join(df,dfmass,by=c("ScientificName"="Species"))
-dfm1<-dfm%>%filter(!is.na(mass_gm)) # 251 sp.
-dfm2<-dfm%>%filter(is.na(mass_gm)) # 11 sp. - need to know synonym
-
-dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
-dftrait<-dftrait%>%filter(spname!=possible_sp)%>%distinct(spname,.keep_all = T)
-dftrait<-dftrait%>%dplyr::select(spname,possible_sp)
-dfm2<-left_join(dfm2,dftrait,by=c("ScientificName"="spname"))
-id<-which(dfm2$ScientificName%in%c("Setophaga coronata coronata","Setophaga coronata audoboni"))
-dfm2$possible_sp[id]<-"Setophaga coronata" # for these subspecies mass info not available, so putting species level info
-dfm2<-left_join(dfm2,dfmass,by=c("possible_sp"="Species"))
-dfm2$mass_gm<-coalesce(dfm2$mass_gm.x,dfm2$mass_gm.y)
-dfm2$source<-coalesce(dfm2$source.x,dfm2$source.y)
-dfm2<-dfm2%>%dplyr::select(-source.x,-source.y,-mass_gm.x,-mass_gm.y)
-
-dfm1$possible_sp<-dfm1$ScientificName
-dfm2<-dfm2%>%dplyr::select(colnames(dfm1))
-
-# combine
-dfm_birds<-rbind(dfm1,dfm2)%>%arrange(AOU)
-dfm_birds2<-dfm_birds%>%dplyr::select(ScientificName, possible_sp, mass_gm, source)
-mydftrait_w_mass<-left_join(mydftrait,dfm_birds2,by=c("ScientificName"="ScientificName"))
-
-# save file
-write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"),row.names=F)
-
-# same trend for bodymass
-res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=1)
-res
-res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=5)
-res
+source(here("R/test_hypo.R")) 
 ```
 
+<!--
 ```{r insert-pdf-phylo-r0-250km, fig.cap="Spatial synchrony and phylogeny for bird species (within 0-250 km).", out.height = "460px", out.width='800px'}
 # source(here("R/test_tree.R")) this code generated the below pdf
 knitr::include_graphics(here("Results/species_phylogeny_0_250km.pdf"),rel_path = F)
 ```
+-->
 
 ```{r plot_opt_bio, echo=F}
 
@@ -290,8 +112,8 @@ grid.arrange(g1,g12,g9,g10,g17,g18, nrow=3)
 
 **bio18=** mean monthly precipitation amount of the warmest quarter (Kg m$^{-2}$ per month), The warmest quarter of the year is determined (to the nearest month).
 
-```{r spat-syn-vs-distance-plot, echo=F, cache=T, cache.extra=list(mtime(here("R/spat_syn_vs_distance_plot.R")))}
-source(here("R/spat_syn_vs_distance_plot.R")) # maybe put as suppmat
+```{r spat-syn-vs-distance-plot, fig.cap="Spatial synchrony vs. distance category plot.", out.height = "460px", out.width='800px'}
+knitr::include_graphics(here("Results/spat_syn_vs_distance_plot.pdf"),rel_path = F)
 ```
 
 <!--

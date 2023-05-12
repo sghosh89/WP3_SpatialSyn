@@ -57,7 +57,9 @@ g1<-ggplot(dg, aes(x=dc, y=value, col=type)) +
   xlab("Pairwise-distance category, Km")+ylab("Spatial synchrony")+
   theme_bw()+theme(legend.position = c(0.7,0.8))
 
-print(g1)
+pdf(here("RESULTS/spat_syn_vs_distance_plot.pdf"),height=3.5,width = 7)
+g1
+dev.off()
 
 
 

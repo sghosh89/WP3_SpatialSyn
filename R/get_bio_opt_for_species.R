@@ -124,7 +124,7 @@ for(i in 1:nrow(df)){
   xxbio18<-xx%>%dplyr::select(species,year,bio18)%>%distinct(bio18,.keep_all = T)
   df$bio18[i]<-mean(xxbio18$bio18,na.rm=T)
   
-  print(i)
+  #print(i)
 }
 
 # scale them
