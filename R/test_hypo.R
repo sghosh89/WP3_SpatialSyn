@@ -126,7 +126,8 @@ plot_type_bodytrait<-function(mydftrait,traits, type){
         geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
         labs(title="",x="spat syn (abund)",y=traits[i])+
         theme_bw()+theme(legend.position = "none", legend.box = "horizontal", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))
+                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))+ 
+        stat_cor(aes(label = paste(after_stat(p.label), sep = "~")))
     }
     
     gplist[[i]]<-gp
