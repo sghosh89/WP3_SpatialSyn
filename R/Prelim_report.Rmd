@@ -132,6 +132,8 @@ summarize_res(chosen_rad = c(250,500)) # for visually testing Q2
 
 **So**, from the above groupwise plots, I can see that rainfall and maxT were important for rare group - and maxT only was important for common group (considering each variable separately - don't know how it would be in a multiple variable model). I can see opposite pattern between two groups, though, for all climate variable.
 
-
+```{r method-fig, echo=F, results="hide"}
+source(here("R/method_fig.R"))
+```
 
 
