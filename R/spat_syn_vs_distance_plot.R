@@ -43,7 +43,7 @@ for(i in 1:nrow(df)){
 # now plot
 range(dflong$d)
 
-dflong$dc<-cut(dflong$d, breaks=c(0,250,500,750,1000,1500,3000,4000,8000))
+dflong$dc<-cut(dflong$d, breaks=c(0,25,75,150,250,400,700,1000,1500,2500,5000,8000))
 
 dfs<-dflong%>%group_by(dc)%>%summarise(cl=mean(cl),cu=mean(cu))%>%ungroup()
 
