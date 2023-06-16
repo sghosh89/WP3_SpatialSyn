@@ -38,3 +38,5 @@ source(here("R/test_hypo.R"))
 source(here("R/get_bio_opt_for_species.R")) # optimal P, T
 source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat
 
+source(here("R/geography_of_LT_UT.R")) # maybe put in suppmat
+
