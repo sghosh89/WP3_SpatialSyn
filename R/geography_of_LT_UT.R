@@ -10,7 +10,7 @@ df_spmeta<-df_spmeta%>%dplyr::select(AOU,ngoodsites,"ScientificName")
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
 df<-left_join(df,df_spmeta,by="AOU")
 # select LT in abundance, and atleast >80% for species
-dfLT<-df%>%filter(tail=="UT")%>% filter(abs(fLU_ab)>0.9)
+dfLT<-df%>%filter(tail=="LT")%>% filter(abs(fLU_ab)>0.9)
 
 gp_list_LT <- vector(mode='list', length=nrow(dfLT))
 # now plot on map for those 27 species the sites they are sampled
