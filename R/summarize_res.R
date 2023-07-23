@@ -79,25 +79,29 @@ summarize_res<-function(chosen_rad){
     geom_smooth(method=ftmethod,linetype="dashed")+xlab("Spatial synchrony, Precipitation")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
     geom_smooth(method=ftmethod, col="black")+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black")+ theme(legend.position="none")
+    theme_bw()+stat_cor( method = "spearman",aes(label =paste(after_stat(r),after_stat(p.label),sep = "~")), color = "black")+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), panel.grid.minor = element_blank())
   
   g2<-ggplot(data=df,aes(x=fLU_tas,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.3)+
     geom_smooth(method=ftmethod,linetype="dashed")+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
     geom_smooth(method=ftmethod, col="black")+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black")+ theme(legend.position="none")
+    theme_bw()+stat_cor( method = "spearman",aes(label =paste(after_stat(r),after_stat(p.label),sep = "~")), color = "black")+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), panel.grid.minor = element_blank())
   
   g3<-ggplot(data=df,aes(x=fLU_tasmax,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.3)+
     geom_smooth(method=ftmethod,linetype="dashed")+xlab("Spatial synchrony, maximum T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
     geom_smooth(method=ftmethod, col="black")+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black")+ theme(legend.position="none")
+    theme_bw()+stat_cor( method = "spearman",aes(label =paste(after_stat(r),after_stat(p.label),sep = "~")), color = "black")+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), panel.grid.minor = element_blank())
   
   g4<-ggplot(data=df,aes(x=fLU_tasmin,y=fLU_ab,col=as.factor(tail)))+geom_point(alpha=0.3)+
     geom_smooth(method=ftmethod,linetype="dashed")+xlab("Spatial synchrony, minimum T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
     geom_smooth(method=ftmethod, col="black")+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "black", geom = "label")+ theme(legend.position="none")
+    theme_bw()+stat_cor( method = "spearman",aes(label =paste(after_stat(r),after_stat(p.label),sep = "~")), color = "black")+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), panel.grid.minor = element_blank())
   
   grid.arrange(g1, g2, ncol=2)
   # saving the plot as pdf
@@ -115,22 +119,34 @@ summarize_res<-function(chosen_rad){
   g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.3, col = "red")+
     geom_smooth(method=ftmethod, aes(col="red"))+xlab("Spatial synchrony, Precipitation")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")),color = "red")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = 0.9, color="red")
   
   g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.3, col = "red")+
     geom_smooth(method=ftmethod,aes(col="red"))+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = 0.9, color="red")
   
   g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.3, col = "red")+
     geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, max T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = 0.9, color="red")
   
   g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.3, col = "red")+
     geom_smooth(method=ftmethod,aes(col="red"))+xlab("SpatSyn, min T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+theme(legend.position = "none")+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "red")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = 0.9, color="red")
   
   # === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
   # UT synchrony for abundance caused by high temp across sites (+ve cor)
@@ -138,22 +154,34 @@ summarize_res<-function(chosen_rad){
   g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab))+geom_point(alpha=0.3, col = "darkturquoise")+
     geom_smooth(method=ftmethod, col = "darkturquoise")+xlab("Spatial synchrony, Precipitation")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), label.y.npc="bottom", label.x.npc = "left",color = "darkturquoise")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = -0.9, col = "darkturquoise")
   
   g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab))+geom_point(alpha=0.3, col = "darkturquoise")+
     geom_smooth(method=ftmethod, col = "darkturquoise")+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), label.y.npc="bottom", label.x.npc = "left", color = "darkturquoise")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+        stat_cor(method = "spearman", label.x = -0.5, label.y = -0.9, col = "darkturquoise")
   
   g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab))+geom_point(alpha=0.3, col = "darkturquoise")+
     geom_smooth(method=ftmethod, col = "darkturquoise")+xlab("SpatSyn, max T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "darkturquoise")
+    theme_bw()+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+      stat_cor(method = "spearman", label.x = -0.5, label.y = -0.9, col = "darkturquoise")
   
   g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab))+geom_point(alpha=0.3, col = "darkturquoise")+
     geom_smooth(method=ftmethod, col = "darkturquoise")+xlab("SpatSyn, min T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+stat_cor(aes(label = paste(after_stat(p.label), sep = "~")), color = "darkturquoise")
+    theme_bw()+ 
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())+
+    stat_cor(method = "spearman", label.x = -0.5, label.y = -0.9, col = "darkturquoise")
   
   grid.arrange(g1, g2, g5, g6, nrow=2)
   
@@ -174,22 +202,30 @@ summarize_res<-function(chosen_rad){
   g1<-ggplot(data=df1,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("Spatial synchrony, Precipitation")+ylab("Spatial synchrony, Abundance")+
     #facet_grid(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(0,1)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g2<-ggplot(data=df1,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(0,1)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g3<-ggplot(data=df1,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(0,1)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g4<-ggplot(data=df1,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(0,1)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   # === NOW WITH SPECIES WHICH ARE SYNCHRONOUSLY COMMON (n=136, excluded AOU=7470; indep pr spatsyn for 2 sites) ===================
   # UT synchrony for abundance caused by high temp across sites (+ve cor)
@@ -197,22 +233,30 @@ summarize_res<-function(chosen_rad){
   g5<-ggplot(data=df2,aes(x=fLU_pr,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("Spatial synchrony, Precipitation")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(-1,0)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g6<-ggplot(data=df2,aes(x=fLU_tas,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("Spatial synchrony, Temperature")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(-1,0)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g7<-ggplot(data=df2,aes(x=fLU_tasmax,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, max T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(-1,0)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g8<-ggplot(data=df2,aes(x=fLU_tasmin,y=fLU_ab,col=Diet.5Cat))+geom_point(alpha=0.5)+
     geom_smooth(method=ftmethod,se=F)+xlab("SpatSyn, min T")+ylab("Spatial synchrony, Abundance")+
     #facet_wrap(~Diet.5Cat)+
-    theme_bw()+ theme(legend.position="none")
+    theme_bw()+ ylim(-1,0)+
+    theme(legend.position="none",panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank())
   
   g9<-ggplot(data=df2,aes(x=NA,y=NA,col=Diet.5Cat))+geom_point(alpha=0)+
     geom_smooth(method=ftmethod,se=F)+xlab("")+ylab("")+
@@ -224,7 +268,7 @@ summarize_res<-function(chosen_rad){
                                      c(3,4),c(9, 9)), nrow=3)
   # saving the plot as pdf
   pdf(here(paste("RESULTS/df_abund_climate_spatsyn_dietwise_",
-                 chosen_rad[1],"_",chosen_rad[2],"km.pdf",sep="")), width = 8, height = 10)
+                 chosen_rad[1],"_",chosen_rad[2],"km.pdf",sep="")), width = 6, height = 8)
   grid.arrange(g1, g2, g5, g6, g9, 
                layout_matrix = rbind(c(1, 2),
                                      c(3,4),c(9, 9)), nrow=3)

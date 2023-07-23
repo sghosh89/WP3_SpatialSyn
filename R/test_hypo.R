@@ -75,47 +75,13 @@ plot_type_bodytrait<-function(mydftrait,traits, type){
         #geom_point()+
         geom_boxplot(alpha = 0.5)+ylab(traits[i])+
         theme_bw()+theme(legend.position = "none", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))
+                         axis.text.x = element_text(size = 15),
+                         axis.text.y = element_text(size = 15),
+                         panel.grid.major = element_blank(), 
+                         panel.grid.minor = element_blank())
     }
     
     if(type==2){
-      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,y=traits[i])
-      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
-        geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .5) + 
-        geom_point(aes(y = y, color = tail), position = position_jitter(width = .1), size = 0.9, alpha = 0.5) +
-        geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.5)+
-        theme_bw()+theme(legend.position = "none", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))
-    }
-    
-    if(type==3){
-      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i])
-      gp<-ggplot(tempo, aes(x=DT, y=y, fill=tail)) +
-        #geom_point()+
-        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
-        theme_bw()+theme(legend.position = "none", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))
-    }
-    
-    if(type==4){
-      id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
-                                         "fLU_ab","fLU_pr",
-                                         "fLU_tas","fLU_tasmax","fLU_tasmin",
-                                         traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
-      gp<-ggplot(tempo, aes(x=x, y=y, col=DT, shape=tail)) + 
-        geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
-        labs(title="",x="spat syn (abund)",y=traits[i])+
-        theme_bw()+theme(legend.position = c(0.5,0.8), legend.box = "horizontal", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))
-    }
-    
-    if(type==5){
       id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
                                          "fLU_ab","fLU_pr",
                                          "fLU_tas","fLU_tasmax","fLU_tasmin",
@@ -126,8 +92,12 @@ plot_type_bodytrait<-function(mydftrait,traits, type){
         geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
         labs(title="",x="spat syn (abund)",y=traits[i])+
         theme_bw()+theme(legend.position = "none", legend.box = "horizontal", 
-                         axis.text.x = element_text(size = 15),axis.text.y = element_text(size = 15))+ 
-        stat_cor(aes(label = paste(after_stat(p.label), sep = "~")))
+                         axis.text.x = element_text(size = 15),
+                         axis.text.y = element_text(size = 15),
+                         panel.grid.major = element_blank(), 
+                         panel.grid.minor = element_blank())+
+        stat_cor(method = "spearman") 
+        #stat_cor(aes(label = paste(after_stat(p.label), sep = "~")))
     }
     
     gplist[[i]]<-gp
@@ -157,7 +127,7 @@ grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]
 dev.off()
 
 # but here we can see in extreme conditions because of some environmental filtering species with better traits exist
-res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=5)
+res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=2)
 grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
              layout_matrix = rbind(c(1, 2, 3, 4),
                                    c(5, 6, 7, 8)), nrow=2)
@@ -206,7 +176,7 @@ pdf(here(paste("RESULTS/species_bodymass_boxplot_",
 print(res[[1]])
 dev.off()
 
-res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=5)
+res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=2)
 print(res[[1]])
 
 pdf(here(paste("RESULTS/species_bodymass_vs_spatsynabundvalue_",
