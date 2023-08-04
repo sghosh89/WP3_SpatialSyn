@@ -61,27 +61,12 @@ mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName,
                                meanKipps.Distance,meanHWI,
                                meanTail.Length)
 
-plot_type_bodytrait<-function(mydftrait,traits, type){
+plot_type_bodytrait<-function(mydftrait,traits){
   
   gplist<-vector(mode = "list", length = length(traits))
   
   for(i in 1:length(traits)){
     
-    if(type==1){
-      id<-which(colnames(mydftrait)%in%c("tail",traits[i]))
-      tempo<-mydftrait[id]
-      tempo<-rename(tempo,y=traits[i])
-      gp<-ggplot(tempo, aes(x=tail, y=y, fill=tail)) +
-        #geom_point()+
-        geom_boxplot(alpha = 0.5)+ylab(traits[i])+
-        theme_bw()+theme(legend.position = "none", 
-                         axis.text.x = element_text(size = 15),
-                         axis.text.y = element_text(size = 15),
-                         panel.grid.major = element_blank(), 
-                         panel.grid.minor = element_blank())
-    }
-    
-    if(type==2){
       id<-which(colnames(mydftrait)%in%c("tail","Diet.5Cat",
                                          "fLU_ab","fLU_pr",
                                          "fLU_tas","fLU_tasmax","fLU_tasmin",
@@ -98,7 +83,7 @@ plot_type_bodytrait<-function(mydftrait,traits, type){
                          panel.grid.minor = element_blank())+
         stat_cor(method = "spearman") 
         #stat_cor(aes(label = paste(after_stat(p.label), sep = "~")))
-    }
+   
     
     gplist[[i]]<-gp
     
@@ -111,23 +96,8 @@ traits<-c("meanBeak.LengthCulmen","meanBeak.Width","meanBeak.Depth",
           "meanTarsus.Length","meanWing.Length","meanKipps.Distance",
           "meanHWI","meanTail.Length")
 
-# no difference in mean of both groups
-res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=1)
-
-
-grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
-             layout_matrix = rbind(c(1, 2, 3, 4),
-                                   c(5, 6, 7, 8)), nrow=2)
-
-pdf(here(paste("RESULTS/species_bodytraits_boxplot_",
-               chosen_rad[1],"_",chosen_rad[2],"km.pdf",sep="")), width = 12, height = 6)
-grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
-             layout_matrix = rbind(c(1, 2, 3, 4),
-                                   c(5, 6, 7, 8)), nrow=2)
-dev.off()
-
 # but here we can see in extreme conditions because of some environmental filtering species with better traits exist
-res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits,type=2)
+res<-plot_type_bodytrait(mydftrait=mydftrait,traits=traits)
 grid.arrange(res[[1]], res[[2]], res[[3]], res[[4]], res[[5]], res[[6]], res[[7]], res[[8]],  
              layout_matrix = rbind(c(1, 2, 3, 4),
                                    c(5, 6, 7, 8)), nrow=2)
@@ -167,19 +137,22 @@ mydftrait_w_mass<-left_join(mydftrait,dfm_birds2,by=c("ScientificName"="Scientif
 # save file
 write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"),row.names=F)
 
-# same trend for bodymass
-res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=1)
-print(res[[1]])
-
-pdf(here(paste("RESULTS/species_bodymass_boxplot_",
-               chosen_rad[1],"_",chosen_rad[2],"km.pdf",sep="")), width = 3, height = 3)
-print(res[[1]])
-dev.off()
-
-res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm",type=2)
+res<-plot_type_bodytrait(mydftrait=dfm_birds,traits="mass_gm")
 print(res[[1]])
 
 pdf(here(paste("RESULTS/species_bodymass_vs_spatsynabundvalue_",
                chosen_rad[1],"_",chosen_rad[2],"km.pdf",sep="")), width = 3, height = 3)
 print(res[[1]])
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
