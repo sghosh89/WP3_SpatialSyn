@@ -49,5 +49,22 @@ nm<-nm%>%distinct(BirdTreeName)
 write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km.txt"),quote=F,col.names =F,row.names=F)
 # 254 unique sp name in BirdTree
 
+################ get species phylogeny for LT and UT separate group ###########
+df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
+df$newBT<-gsub(" ", "_", df$BirdTreeName)
 
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"))
+dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
+df<-left_join(df,dft,by="ScientificName")
+
+# remove the duplicated entries from df$new_BT column
+df<-df%>%distinct(newBT,.keep_all = T)
+
+dfl<-df%>%filter(tail=="LT")# 124 unique sp.
+btl<-dfl%>%dplyr::select(BirdTreeName)
+write.table(btl,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_LTabund.txt"),quote=F,col.names =F,row.names=F)
+
+dfu<-df%>%filter(tail=="UT") #130 unique species
+btu<-dfu%>%dplyr::select(BirdTreeName)
+write.table(btu,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_UTabund.txt"),quote=F,col.names =F,row.names=F)
 

@@ -61,6 +61,7 @@ mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName,
                                meanKipps.Distance,meanHWI,
                                meanTail.Length)
 
+
 plot_type_bodytrait<-function(mydftrait,traits){
   
   gplist<-vector(mode = "list", length = length(traits))
@@ -72,16 +73,16 @@ plot_type_bodytrait<-function(mydftrait,traits){
                                          "fLU_tas","fLU_tasmax","fLU_tasmin",
                                          traits[i]))
       tempo<-mydftrait[id]
-      tempo<-rename(tempo,DT=Diet.5Cat,y=traits[i],x=fLU_ab)
+      tempo<-rename(tempo,DT=Diet.5Cat,x=traits[i],y=fLU_ab)
       gp<-ggplot(tempo, aes(x=x, y=y, col=tail, shape=tail)) + 
         geom_point(alpha=0.5)+geom_smooth(se=F,method="lm")+
-        labs(title="",x="spat syn (abund)",y=traits[i])+
+        labs(title="",y="spat syn (abund)",x=traits[i])+
         theme_bw()+theme(legend.position = "none", legend.box = "horizontal", 
                          axis.text.x = element_text(size = 15),
                          axis.text.y = element_text(size = 15),
                          panel.grid.major = element_blank(), 
                          panel.grid.minor = element_blank())+
-        stat_cor(method = "spearman") 
+        stat_cor(method = "spearman", cor.coef.name=c("rho")) 
         #stat_cor(aes(label = paste(after_stat(p.label), sep = "~")))
    
     

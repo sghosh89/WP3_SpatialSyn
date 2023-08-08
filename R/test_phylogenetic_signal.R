@@ -59,8 +59,10 @@ hist(res$fLU_ab.signal$pval)
 
 saveRDS(res,here("RESULTS/phylogenetic_signal.RDS"))
 
-
-
+#res<-readRDS(here("RESULTS/phylogenetic_signal.RDS"))
+#hist(res$kipps.signal$lambda)
+#hist(res$kipps.signal$pval)
+#mean(res$kipps.signal$lambda)
 
 
 

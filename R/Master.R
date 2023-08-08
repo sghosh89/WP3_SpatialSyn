@@ -25,21 +25,17 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas, tasmax
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data (pr, tas, tasmax, tasmin) 
 source(here("R/summary_spat_syn_for_climate.R"))# summarize spat_syn for climate data
 
-source(here("R/summarize_res.R")) # called in Rmd fifle, ftd_abund vs ftd_climate plot for both group
+source(here("R/summarize_res.R")) # ftd_abund vs ftd_climate plot for both group (not considering phylogeny)
 
 #--------- AVONET: traits, bodymass, and phylogeny data for bird species ----------
 source(here("R/get_birdtraits_from_AVONET.R"))
 source(here("R/get_bodymass_from_AVONET.R"))
-source(here("R/test_hypo.R")) # ftd_abund vs. trait pattern
 
-#source(here("R/get_birdspecies_phylotree.R"))
-#source(here("R/test_tree.R"))# maybe abundon this later: all random pattern
-#source(here("R/test_phylogenetic_signal.R"))# testing for Pagel's lambda
-
-
+source(here("R/get_birdspecies_phylotree.R"))
 
 source(here("R/get_bio_opt_for_species.R")) # optimal P, T
 source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat
 
 source(here("R/geography_of_LT_UT.R")) # maybe put in suppmat
+source("R/model_phylopath.R")
 

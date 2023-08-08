@@ -10,6 +10,7 @@ library(here)
 library(ggpubr)
 library(gridExtra)
 library(RColorBrewer)
+library(phytools)
 
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
 df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
@@ -47,14 +48,12 @@ write.csv(df,here("DATA/BirdTree/species_0_250km_tobefilled.csv"),row.names = F)
 
 
 # play with sample data
-
 library(ape)
 library(ggtree)
 library(tidytree)
 
-stree <- read.nexus(here("DATA/BirdTree/tree-pruner-f1d9b817-3739-4e7d-bbaf-1227c85c4a2c/output.nex"))
-
-ctree<-consensus(stree, p = 1, check.labels = TRUE, rooted = TRUE)
+wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-f1d9b817-3739-4e7d-bbaf-1227c85c4a2c/output.nex"))
+ct3<-consensus.edges(wholeT,method="least.squares")# with edge length
 
 df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
@@ -68,15 +67,15 @@ df<-df%>%distinct(newBT,.keep_all = T)
 
 df<-df%>%dplyr::select(AOU,fLU_ab,kipps, HWI,tail,newBT)
 
-dd<-as_tibble(ctree)
+dd<-as_tibble(ct3)
 dd<-left_join(dd,df,by=c("label"="newBT"))
 
 #tree2<-as.treedata(dd)
 #ggtree(ctree, layout="circular")+geom_tiplab()
-g1<-ggtree(ctree,layout="circular") %<+% dd +
+g1<-ggtree(ct3,layout="circular") %<+% dd +
   geom_tippoint(pch=19, aes(col=tail))+theme(legend.position="bottom")
 
-g2<-ggtree(ctree,layout="circular") %<+% dd +
+g2<-ggtree(ct3,layout="circular") %<+% dd +
   geom_tippoint(pch=19, cex=3,aes(col=fLU_ab))+
   scale_color_gradientn(colours=rev(brewer.pal(n=7,"RdBu")))+
   #scale_color_gradient2(low = "blue",
@@ -85,35 +84,41 @@ g2<-ggtree(ctree,layout="circular") %<+% dd +
   #                    high = "red",
   #                    space="Lab", name="Spatial \nsynchrony in \nabundance")+
   #geom_text(aes(label=AOU), hjust=1, vjust=-0.4, size=3)+ 
-  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
                                                hjust=-0.2)
 #g2
 
-g3<-ggtree(ctree,layout="circular") %<+% dd +
+g3<-ggtree(ct3,layout="circular") %<+% dd +
   geom_tippoint(pch=19, cex=3,aes(col=HWI))+
   scale_color_gradientn(colours=brewer.pal(n=7,"GnBu"))+
-  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
                                                hjust=-0.2)
 #g3
 #dh <- data.frame(node=c(1, 37), type=c("A"))
 
-g4<-ggtree(ctree,layout="circular") %<+% dd +
+g4<-ggtree(ct3,layout="circular") %<+% dd +
   geom_tippoint(pch=19, cex=2,aes(col=kipps))+
    scale_color_gradientn(colours=brewer.pal(n=7,"GnBu"))+
-  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
                                                hjust=-0.2)
 
-pdf(here("RESULTS/species_phylogeny_0_250km_a.pdf"), width = 9, height = 13) # Open a new pdf file
+pdf(here("RESULTS/species_phylogeny_0_250km_fLU_ab.pdf"), width = 9, height = 13) # Open a new pdf file
 g2 # Write the grid.arrange in the file
 dev.off()
 
-pdf(here("RESULTS/species_phylogeny_0_250km_b.pdf"), width = 9, height = 13) # Open a new pdf file
+pdf(here("RESULTS/species_phylogeny_0_250km_HWI.pdf"), width = 9, height = 13) # Open a new pdf file
 g3 # Write the grid.arrange in the file
 dev.off()
 
-pdf(here("RESULTS/species_phylogeny_0_250km_c.pdf"), width = 9, height = 13) # Open a new pdf file
+pdf(here("RESULTS/species_phylogeny_0_250km_kipps.pdf"), width = 9, height = 13) # Open a new pdf file
 g4 # Write the grid.arrange in the file
 dev.off()
+
+
+# note: ct3 has 254 sp. unique from birdtree in total
+
+
+
 
 AOU_highlights<-c(4200,4160,3420,3370,3390,3310,3250,3260,4280,4320,4230,3850,
                   3870,2240,2580,2300,2490,2640,2610,770,540,2730,2210,2140,2060,
