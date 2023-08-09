@@ -1,3 +1,4 @@
+#rm(list=ls())
 library(tidyverse)
 library(gridExtra)
 library(here)
@@ -153,36 +154,3 @@ pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km.pdf"), width = 14, height
 grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
 dev.off() 
 
-# ============ 250-500km ===========
-plotonly<-"LT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_250_500km.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
-
-plotonly<-"UT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_250_500km.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
-
-# later in your plot you could add info about IUCN status in inkscape
-
-pdf(here("RESULTS/visualize_spat_syn_for_abund_250_500km.pdf"), width = 14, height = 7) # Open a new pdf file
-grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
-dev.off()
-
-# ============ 0-400km ===========
-plotonly<-"LT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
-
-plotonly<-"UT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_400km.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
-
-# later in your plot you could add info about IUCN status in inkscape
-
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_400km.pdf"), width = 14, height = 7) # Open a new pdf file
-grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
-dev.off()
