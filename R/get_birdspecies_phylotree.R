@@ -43,7 +43,7 @@ write.csv(df,here("DATA/BirdTree/species_0_250km_tobefilled.csv"),row.names = F)
 # Now we fill manually the above file column BirdTreeName and saved as
 # "DATA/BirdTree/species_0_250km_filledin.csv"
 
-df<-read.csv(here("DATA/BirdTree/species_0_250km_tobefilled.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
 nm<-df
 nm<-nm%>%distinct(BirdTreeName)
 write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km.txt"),quote=F,col.names =F,row.names=F)

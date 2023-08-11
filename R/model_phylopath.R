@@ -2,9 +2,14 @@ rm(list=ls())
 library(phylopath);library(RColorBrewer);library(ggtree);library(tidytree)
 library(here); library(ape); library(castor); library(phytools)
 library(tidyverse); library(gridExtra)
+set.seed(seed=123)
+
+if(!dir.exists(here("RESULTS/model_phylopath"))){
+  mkdir(here("RESULTS/model_phylopath"))
+}
 
 # help: http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
-wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-f1d9b817-3739-4e7d-bbaf-1227c85c4a2c/output.nex"))
+wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-65cf333a-348c-45ec-a857-8a84854ef486/output.nex"))
 
 #=================== first check about your tree description ==========
 tree_property<-data.frame(i=1:1000,
@@ -36,38 +41,28 @@ saveRDS(ct3,here("RESULTS/model_phylopath/consensus_tree_with_edgelength.RDS"))
 # ============= read data ==============
 # my data table with traits
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
-df$newBT<-gsub(" ", "_", df$BirdTreeName)
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"))
-dft<-dft%>%dplyr::select(ScientificName,wing=meanWing.Length,
-                         kipps=meanKipps.Distance,HWI=meanHWI,
-                         beaklen=meanBeak.LengthCulmen,
-                         beakwid=meanBeak.Width,
-                         beakdep=meanBeak.Depth,
-                         tarsus=meanTarsus.Length,
-                         taillen=meanTail.Length)
-df<-left_join(df,dft,by="ScientificName")
+# it already had the trait kipps and HWI
+
 # remove the duplicated entries from df$new_BT column
-df<-df%>%distinct(newBT,.keep_all = T)
-df<-df%>%dplyr::select(AOU,fLU_ab,fLU_pr,fLU_tas,wing,kipps, HWI,
-                       beaklen,beakwid, beakdep,
-                       tarsus,taillen,
-                       tail,bio1,bio12,bio9,bio18,newBT)
+df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
+df<-df%>%dplyr::select(AOU,fLU_ab,fLU_pr,fLU_tas,kipps, HWI,
+                       tail,bio1,bio12,newBT)
 df$Species<-df$newBT
 df$tail<-as.factor(df$tail)
 
 #Imputing data for Carduelis_flammea
 
-Carduelis_gr<-which(df$Species%in%c("Carduelis_hornemanni",
-                                    "Carduelis_tristis",
-                                    "Carduelis_psaltria",
-                                    "Carduelis_pinus"))
-meanbeaklen<-mean(df$beaklen[Carduelis_gr])
-id<-which(df$Species=="Carduelis_flammea")
-df$beaklen[id]<-meanbeaklen
-df$beakwid[id]<-mean(df$beakwid[Carduelis_gr])
-df$beakdep[id]<-mean(df$beakdep[Carduelis_gr])
-df$tarsus[id]<-mean(df$tarsus[Carduelis_gr])
-df$taillen[id]<-mean(df$taillen[Carduelis_gr])
+#Carduelis_gr<-which(df$Species%in%c("Carduelis_hornemanni",
+#                                    "Carduelis_tristis",
+#                                    "Carduelis_psaltria",
+#                                    "Carduelis_pinus"))
+#meanbeaklen<-mean(df$beaklen[Carduelis_gr])
+#id<-which(df$Species=="Carduelis_flammea")
+#df$beaklen[id]<-meanbeaklen
+#df$beakwid[id]<-mean(df$beakwid[Carduelis_gr])
+#df$beakdep[id]<-mean(df$beakdep[Carduelis_gr])
+#df$tarsus[id]<-mean(df$tarsus[Carduelis_gr])
+#df$taillen[id]<-mean(df$taillen[Carduelis_gr])
 
 #==================== genarate some plots: phylogeny tree =========================
 dd<-as_tibble(ct3)
@@ -167,7 +162,7 @@ modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfUT,
                                model = 'lambda')
 
 (modsum<-summary(modres_HWI_T_only))
- plot(modsum)
+ gp3<-plot(modsum)+theme_minimal()
 (best_model_T_UT <- best(modres_HWI_T_only))
 plot(best_model_T_UT, curvature=0.1, edge_width = 3)
 coef_plot(best_model_T_UT)+ggplot2::theme_bw()
@@ -177,29 +172,8 @@ coef_plot(best_model_T_UT)+ggplot2::theme_bw()
 gp1<-plot(average_model_T_UT, algorithm = 'mds', curvature = 0.1)
 gp2<-coef_plot(average_model_T_UT)+ggplot2::theme_bw()
 
-pdf(here("RESULTS/model_phylopath/phylopath_UT/avg_model_res_HWI.pdf"), height=4, width=10)
-grid.arrange(gp1, gp2, ncol=2)
-dev.off()
-sink()
-
-sink(here("RESULTS/model_phylopath/phylopath_UT/modres_Kipp_T_only_summary.txt"),
-     append=TRUE, split=TRUE)
-modres_Kipp_T_only<- phylo_path(modelsKipp_Tonly, data = dfUT, 
-                               tree = ct3, 
-                               model = 'lambda')
-
-(modsum<-summary(modres_Kipp_T_only))
-(best_model_T_UT <- best(modres_Kipp_T_only))
-plot(best_model_T_UT, curvature=0.1, edge_width = 3)
-coef_plot(best_model_T_UT)+ggplot2::theme_bw()
-
-(average_model_T_UT <- average(modres_Kipp_T_only))
-
-gp1<-plot(average_model_T_UT, algorithm = 'mds', curvature = 0.1)
-gp2<-coef_plot(average_model_T_UT)+ggplot2::theme_bw()
-
-pdf(here("RESULTS/model_phylopath/phylopath_UT/avg_model_res_Kipp.pdf"), height=4, width=10)
-grid.arrange(gp1, gp2, ncol=2)
+pdf(here("RESULTS/model_phylopath/phylopath_UT/avg_model_res_HWI.pdf"), height=4, width=15)
+grid.arrange(gp1, gp2, gp3, ncol=3)
 dev.off()
 sink()
 
@@ -211,7 +185,8 @@ modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfLT,
                                model = 'lambda')
 
 (modsum<-summary(modres_HWI_T_only))
-plot(modsum)
+gp3<-plot(modsum)
+gp3<-gp3+theme_minimal()
 (best_model_T_UT <- best(modres_HWI_T_only))
 
 gp1b<-plot(best_model_T_UT, curvature=0.1, edge_width = 3)
@@ -223,33 +198,11 @@ gp1<-plot(average_model_T_UT, algorithm = 'mds', curvature = 0.1)
 gp2<-coef_plot(average_model_T_UT)+ggplot2::theme_bw()
 # there is no need for average model, so plotting the best model
 
-pdf(here("RESULTS/model_phylopath/phylopath_LT/best_model_res_HWI.pdf"), height=4, width=10)
-grid.arrange(gp1b, gp2b, ncol=2)
+pdf(here("RESULTS/model_phylopath/phylopath_LT/best_model_res_HWI.pdf"), height=4, width=15)
+grid.arrange(gp1b, gp2b, gp3, ncol=3)
 dev.off()
 sink()
 
-
-sink(here("RESULTS/model_phylopath/phylopath_LT/modres_Kipp_T_only_summary.txt"),
-     append=TRUE, split=TRUE)
-modres_Kipp_T_only<- phylo_path(modelsKipp_Tonly, data = dfLT, 
-                                tree = ct3, 
-                                model = 'lambda')
-
-(modsum<-summary(modres_Kipp_T_only))
-(best_model_T_UT <- best(modres_Kipp_T_only))
-plot(best_model_T_UT, curvature=0.1, edge_width = 3)
-coef_plot(best_model_T_UT)+ggplot2::theme_bw()
-
-(average_model_T_UT <- average(modres_Kipp_T_only))
-
-gp1<-plot(average_model_T_UT, algorithm = 'mds', curvature = 0.1)
-gp2<-coef_plot(average_model_T_UT)+ggplot2::theme_bw()
-
-pdf(here("RESULTS/model_phylopath/phylopath_LT/avg_model_res_Kipp.pdf"), height=4, width=10)
-grid.arrange(gp1, gp2, ncol=2)
-dev.off()
-sink()
-
-##########################################
+#########################################
 
 
