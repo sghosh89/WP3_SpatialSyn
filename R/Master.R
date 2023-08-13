@@ -28,6 +28,7 @@ source(here("R/summarize_res.R")) # ftd_abund vs ftd_climate plot for both group
 #--------- AVONET: traits, bodymass, and phylogeny data for bird species ----------
 source(here("R/get_birdtraits_from_AVONET.R"))
 source(here("R/get_bodymass_from_AVONET.R"))
+source(here("R/summarize_traits_mass.R"))
 
 source(here("R/get_birdspecies_phylotree.R"))
 
