@@ -5,13 +5,13 @@ library(here)
 library(gridExtra)
 
 # this function keeps species set which have all finite non-zero value for flu_ab
-# and finite value for spatial synchrony in climvar (e.g. pr, tas, tasmax, tasmin)
+# and finite value for spatial synchrony in climvar (e.g. pr, tas)
 
 summarize_res<-function(chosen_rad){
   #============== read data ========================
   # the csv files you need for further analysis are:
   
-  # spatial synchrony summary results (0-250 Km) for abundance, Precipitation, temperature, maxT, minT
+  # spatial synchrony summary results (0-250 Km) for abundance, Precipitation, temperature
   
   
   df_ab<-read.csv(here(paste("RESULTS/summary_spat_syn_for_abund_",chosen_rad[1],
@@ -20,11 +20,7 @@ summarize_res<-function(chosen_rad){
                              "_",chosen_rad[2],"km.csv",sep="")))
   df_tas<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_",chosen_rad[1],
                               "_",chosen_rad[2],"km.csv",sep="")))
-  df_tasmax<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_",chosen_rad[1],
-                                 "_",chosen_rad[2],"km.csv",sep="")))
-  df_tasmin<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmin_",chosen_rad[1],
-                                 "_",chosen_rad[2],"km.csv",sep="")))
-  
+   
   #======================== make combo data ===========================
   # read abundance summary
   #df_ab<-read.csv(here(paste("RESULTS/summary_spat_syn_for_abund_",chosen_rad[1],
@@ -37,14 +33,8 @@ summarize_res<-function(chosen_rad){
   # read tas summary
   df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
   
-  # read tasmax summary
-  df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
-  
-  # read tasmin summary
-  df_tasmin<-df_tasmin%>%dplyr::select(AOU,tasmin_L=L,tasmin_U=U)%>%mutate(fLU_tasmin=(tasmin_L+tasmin_U)/(abs(tasmin_U)+tasmin_L))
-  
-  df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,df_tasmax$fLU_tasmax,df_tasmin$fLU_tasmin)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmin")
+  df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas)
+  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas")
   df<-as.data.frame(df)
   
   

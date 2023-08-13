@@ -80,10 +80,10 @@ prepare_climate_data(climvar=climvar)
 climvar<-"tas"
 prepare_climate_data(climvar=climvar)
 
-climvar<-"tasmax"
-prepare_climate_data(climvar=climvar)
+#climvar<-"tasmax"
+#prepare_climate_data(climvar=climvar)
 
-climvar<-"tasmin"
-prepare_climate_data(climvar=climvar)
+#climvar<-"tasmin"
+#prepare_climate_data(climvar=climvar)
 
 

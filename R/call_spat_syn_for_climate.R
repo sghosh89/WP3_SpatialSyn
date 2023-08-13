@@ -37,9 +37,4 @@ call_spat_syn_for_climate(climvar=climvar)
 climvar<-"tas"
 call_spat_syn_for_climate(climvar=climvar)
 
-climvar<-"tasmax"
-call_spat_syn_for_climate(climvar=climvar)
-
-climvar<-"tasmin"
-call_spat_syn_for_climate(climvar=climvar)
 

@@ -16,12 +16,10 @@ source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both 
 #------------ climate data extraction ------
 source(here("R/download_rawdata_CHELSA.R")) # need a lot of space in your desktop
 source(here("DATA/CHELSA_v2/monthly/pr/extract_data_for_uRID_WP3.R"))
-source(here("DATA/CHELSA_v2/monthly/tas/extract_data_for_uRID_WP3.R"))# fix this
-source(here("DATA/CHELSA_v2/monthly/tasmax/extract_data_for_uRID_WP3.R"))
-source(here("DATA/CHELSA_v2/monthly/tasmin/extract_data_for_uRID_WP3.R"))
+source(here("DATA/CHELSA_v2/monthly/tas/extract_data_for_uRID_WP3.R"))
 
 #--------------- spat syn for climate data --------
-source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas, tasmax, tasmin) in required format
+source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas) in required format
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data (pr, tas, tasmax, tasmin) 
 source(here("R/summary_spat_syn_for_climate.R"))# summarize spat_syn for climate data
 
