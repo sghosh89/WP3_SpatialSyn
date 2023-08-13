@@ -50,6 +50,7 @@ for(i in 1:nrow(df)){
   }
 }
 # ok, so we have all species files there: 4 sp to be read from BirdTreeName
+# they are: AOU = 4120, 4881, 5275, 5660
 
 #============get bio (1-12, 9-10, 17-18) variables for those species=====================================
 bio1_path<- here("DATA/CHELSA_v2/climatologies/1981-2010/bio/CHELSA_bio1_1981-2010_V.2.1.tif")
