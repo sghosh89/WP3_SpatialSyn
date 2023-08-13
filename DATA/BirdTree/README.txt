@@ -5,4 +5,4 @@ https://birdtree.org/subsets/
 Species name might differ in their BirdTree database with my given species, I resolved those differing names in 
 "species_0_250km_filledin.csv file" (see last three columns). Related code is given here: "R/get_birdspecies_phylotree.R".
 "unique_speciesnameBirdTree_0_250km.txt" is the text file containing the species name compatible with BirdTree database, I used these species names 
-to download 1000 trees from https://birdtree.org/subsets/, these trees are given in "whole_tree-pruner-f1d9b817-3739-4e7d-bbaf-1227c85c4a2c" folder.
+to download 1000 trees from https://birdtree.org/subsets/, these trees are given in the folder "whole_..." as output.nex file.
