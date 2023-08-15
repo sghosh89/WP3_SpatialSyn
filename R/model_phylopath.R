@@ -169,14 +169,23 @@ coef_plot(best_model_T_UT)+ggplot2::theme_bw()
 
 (average_model_T_UT <- average(modres_HWI_T_only))
 
+cat("========== now using avg_method=full ========== \n")
+(average_model_T_UT_full <- average(modres_HWI_T_only,avg_method = "full"))
+
 gp1<-plot(average_model_T_UT, algorithm = 'mds', curvature = 0.1)
 gp2<-coef_plot(average_model_T_UT)+ggplot2::theme_bw()
+
+gp1f<-plot(average_model_T_UT_full, algorithm = 'mds', curvature = 0.1)
+gp2f<-coef_plot(average_model_T_UT_full)+ggplot2::theme_bw()
 
 pdf(here("RESULTS/model_phylopath/phylopath_UT/avg_model_res_HWI.pdf"), height=4, width=15)
 grid.arrange(gp1, gp2, gp3, ncol=3)
 dev.off()
-sink()
 
+pdf(here("RESULTS/model_phylopath/phylopath_UT/avg_full_model_res_HWI.pdf"), height=4, width=15)
+grid.arrange(gp1f, gp2f, gp3, ncol=3)
+dev.off()
+sink()
 #============= test with LT group ================
 sink(here("RESULTS/model_phylopath/phylopath_LT/modres_HWI_T_only_summary.txt"),
      append=TRUE, split=TRUE)
