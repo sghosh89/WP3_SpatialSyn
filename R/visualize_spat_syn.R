@@ -6,7 +6,7 @@ library(here)
 visualize_spat_syn<-function(plotonly="LT",df1,df2){
   
   # select few variables
-  df2<-df2%>%select(AOU, ScientificName, totsites, ngoodsites,
+  df2<-df2%>%dplyr::select(AOU, ScientificName, totsites, ngoodsites,
                     SpecID, ORDER, Family, Genus, Species, 
                     PassNonPass, Diet.5Cat, Diet.Certainty, Strat.7Cat, ForStrat.SpecLevel,
                     nAbsentSitesAllyr, Nocturnal, IUCN_status)

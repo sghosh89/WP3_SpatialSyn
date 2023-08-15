@@ -48,7 +48,7 @@ summarize_res<-function(chosen_rad){
   id<-which(is.na(df$fLU_ab))
   df<-df[-id,]
   
-  df<-na.omit(df) # still Na happens when no tail dep in any of the climate variables
+  df<-na.omit(df) # still NA happens when no tail dep in any of the climate variables
   # e.g., 0-250km, fLU_pr shows NaN for AOU=7470
   
   df$tail<-ifelse(df$fLU_ab>0,"LT","UT")
