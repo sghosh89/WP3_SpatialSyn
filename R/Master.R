@@ -32,6 +32,7 @@ source(here("R/summarize_traits_mass.R"))
 
 source(here("R/get_birdspecies_phylotree.R"))
 
+#source(here("R/clean_gbif_data_example.R"))# do not run it, just an example to show
 source(here("R/get_bio_opt_for_species.R")) # optimal P, T
 source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat
 
