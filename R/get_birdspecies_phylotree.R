@@ -38,6 +38,12 @@ df<-left_join(df,dfnonmatched,by="ScientificName")
 df$BirdTreeName<-coalesce(df$BirdTreeName.x,df$BirdTreeName.y)
 df<-df%>%dplyr::select(-BirdTreeName.x, -BirdTreeName.y)
 
+# ok, see here AOU=6520 occurred twice with two different BirdTree names (Dendroica aestiva and Dendroica petechia) for a given 
+# Scientific species (Setophaga petechia). I think we should exclude the Dendroica aestiva.
+
+id<-which(df$BirdTreeName=="Dendroica aestiva")
+df<-df[-id,]
+# now it is 263 species!
 write.csv(df,here("DATA/BirdTree/species_0_250km_tobefilled.csv"),row.names = F)
 
 # Now we fill manually the above file column BirdTreeName and saved as
@@ -47,24 +53,5 @@ df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
 nm<-df
 nm<-nm%>%distinct(BirdTreeName)
 write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km.txt"),quote=F,col.names =F,row.names=F)
-# 254 unique sp name in BirdTree
-
-################ get species phylogeny for LT and UT separate group ###########
-#df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
-#df$newBT<-gsub(" ", "_", df$BirdTreeName)
-
-#dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"))
-#dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
-#df<-left_join(df,dft,by="ScientificName")
-
-# remove the duplicated entries from df$new_BT column
-#df<-df%>%distinct(newBT,.keep_all = T)
-
-#dfl<-df%>%filter(tail=="LT")# 124 unique sp.
-#btl<-dfl%>%dplyr::select(BirdTreeName)
-#write.table(btl,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_LTabund.txt"),quote=F,col.names =F,row.names=F)
-
-#dfu<-df%>%filter(tail=="UT") #130 unique species
-#btu<-dfu%>%dplyr::select(BirdTreeName)
-#write.table(btu,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_UTabund.txt"),quote=F,col.names =F,row.names=F)
+# 253 unique sp name in BirdTree
 

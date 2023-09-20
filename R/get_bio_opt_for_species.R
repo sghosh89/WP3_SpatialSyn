@@ -14,7 +14,7 @@ dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 df<-left_join(df,dft,by="ScientificName")
 
 # remove the duplicated entries from df$new_BT column
-df<-df%>%distinct(newBT,.keep_all = T)#254 sp.
+df<-df%>%distinct(newBT,.keep_all = T)#253 sp.
 
 dfm<-read.csv(here("DATA/birds_gbif_data/cleaned/birds_occurrence_metadata_added_manual.csv"))
 dfm<-dfm%>%distinct(ScientificName,.keep_all = T)
@@ -23,7 +23,7 @@ df<-left_join(df,dfm,by=c("ScientificName"))
 
 
 length(unique(df$ScientificName))# 253 unique species
-length(unique(df$BirdTreeName))# 254 unique species
+length(unique(df$BirdTreeName))# 253 unique species
 
 st<-unique(df$ScientificName)
 bt<-unique(df$BirdTreeName)

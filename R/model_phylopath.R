@@ -9,7 +9,7 @@ if(!dir.exists(here("RESULTS/model_phylopath"))){
 }
 
 # help: http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
-wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-65cf333a-348c-45ec-a857-8a84854ef486/output.nex"))
+wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-bfb47e7d-3253-4f9e-a5a7-ec93ff54c372/output.nex"))
 
 #=================== first check about your tree description ==========
 tree_property<-data.frame(i=1:1000,
@@ -141,7 +141,7 @@ modelsKipp_Tonly<-define_model_set(
 gmodels<-plot_model_set(modelsKipp_Tonly, edge_width = 0.5)
 ggsave(here("RESULTS/model_phylopath/modelsKipp_Tonly.pdf"), width=6,height=6)
 
-# We are choosing migration ability trait: HWI
+# We are choosing dispersal ability trait: HWI
 modelsHWI_Ponly<-define_model_set(
   mod1 = c(fLU_ab~ fLU_pr+HWI),
   mod2 = c(fLU_ab~ fLU_pr+HWI, 
@@ -162,7 +162,7 @@ modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfUT,
                                model = 'lambda')
 
 (modsum<-summary(modres_HWI_T_only))
- gp3<-plot(modsum)+theme_minimal()
+ gp3<-plot(modsum)+theme_classic()
 (best_model_T_UT <- best(modres_HWI_T_only))
 plot(best_model_T_UT, curvature=0.1, edge_width = 3)
 coef_plot(best_model_T_UT)+ggplot2::theme_bw()
@@ -195,7 +195,7 @@ modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfLT,
 
 (modsum<-summary(modres_HWI_T_only))
 gp3<-plot(modsum)
-gp3<-gp3+theme_minimal()
+gp3<-gp3+theme_classic()
 (best_model_T_UT <- best(modres_HWI_T_only))
 
 gp1b<-plot(best_model_T_UT, curvature=0.1, edge_width = 3)

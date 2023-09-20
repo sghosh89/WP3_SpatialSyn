@@ -2,7 +2,7 @@ library(here)
 library(ape)
 library(phytools)
 library(ggplot2)
-stree <- read.nexus(here("DATA/BirdTree/whole_tree-pruner-65cf333a-348c-45ec-a857-8a84854ef486/output.nex"))
+stree <- read.nexus(here("DATA/BirdTree/whole_tree-pruner-bfb47e7d-3253-4f9e-a5a7-ec93ff54c372/output.nex"))
 # 1000 tree downloaded
 
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))

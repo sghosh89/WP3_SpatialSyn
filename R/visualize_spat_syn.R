@@ -154,3 +154,11 @@ pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km.pdf"), width = 14, height
 grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
 dev.off() 
 
+
+#df263<-rbind(dfl,dfu)
+#df263<-df263[,c(1,2)]
+#write.csv(df263,here("RESULTS/species263_127LT_136UT.csv"),row.names = F)
+#df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
+#id254<-which(df263$AOU%in%df$AOU)
+#df263$AOU[setdiff(1:263,id254)] # not included in phylotree
+
