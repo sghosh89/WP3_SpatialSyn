@@ -5,7 +5,14 @@ library(ggplot2)
 stree <- read.nexus(here("DATA/BirdTree/whole_tree-pruner-bfb47e7d-3253-4f9e-a5a7-ec93ff54c372/output.nex"))
 # 1000 tree downloaded
 
-df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
+#df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
+df$newBT<-gsub(" ", "_", df$BirdTreeName)
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"))
+dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
+df<-left_join(df,dft,by="ScientificName")
+
+df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
 
 # ok, I want to test if any sig phylogenetic signal is there using Pagel's lambda
 
