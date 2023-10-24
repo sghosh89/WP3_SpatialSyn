@@ -15,7 +15,7 @@ About:
 	This repository records the complete workflow that produced the analysis from the data. 
 	Each folder contains a "README.txt" to guide through the repository. We used the data extracted from 
 	several publicly available databases (e.g., Breeding Bird Survey: https://doi.org/10.5066/P9J6QUF6; 
-	GBIF: https://www.gbif.org/; CHELSA: https://chelsa-climate.org/, AVONET: Tobias et al. 2022; 
+	CHELSA: https://chelsa-climate.org/, AVONET: Tobias et al. 2022; 
 	EltonTraits: Wilman et al. 2014; BirdTree: https://birdtree.org/).
 	The core software dependency is R (R Core Team, 2022. R: A language and environment for statistical computing. 
 	R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.). 

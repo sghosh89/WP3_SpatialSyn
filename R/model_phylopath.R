@@ -5,7 +5,7 @@ library(tidyverse); library(gridExtra)
 set.seed(seed=123)
 
 if(!dir.exists(here("RESULTS/model_phylopath"))){
-  mkdir(here("RESULTS/model_phylopath"))
+  dir.create(here("RESULTS/model_phylopath"))
 }
 
 # help: http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
