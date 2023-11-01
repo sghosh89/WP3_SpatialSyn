@@ -127,7 +127,7 @@ dev.off()
 
 sink()
 
-#============= test with UT group ================
+#============= test with LT group ================
 sink(here("RESULTS/model_phylopath_simple/phylopath_LT/modres_HWI_T_only_summary.txt"),
      append=TRUE, split=TRUE)
 modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfLT, 
