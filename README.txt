@@ -2,7 +2,7 @@ Repository for analysis:
 	Spatial synchrony at the extremes: Tail-dependence in temperature drives tail-dependence in birds' spatial synchrony across North America
 
 
-Authors: Shyamolina Ghosh (1*), Owen Petchey (1)  
+Authors: Shyamolina Ghosh (1*), Owen L. Petchey (1)  
  
 
 Affiliations:

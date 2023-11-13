@@ -7,10 +7,10 @@ source(here("R/method_fig.R")) # conceptual figure introducing tail-dependence
 source(here("R/get_birds_data.R")) # wrangle raw data
 source(here("R/prepare_abund_data.R")) # for a given species, get abundance data in required format
 source(here("R/call_spat_syn_for_abund.R"))# call for all species' abundance data to compute spat syn
-source(here("R/summary_spat_syn_for_abund.R")) # summarize birds' abundance spat syn result
+source(here("R/summary_spat_syn_for_abund.R")) # summarize birds' abundance spat syn result (373 sp within 0-250 km distance with more than 2 sites)
 source(here("R/diet_cat.R")) # get diet and foraging info for each bird species
 
-source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group
+source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group between 0-250 Km between sites distance, total 263 sp. there 
 
 # conceptual figure: AOU_5110
 #------------ climate data extraction ------
@@ -39,4 +39,4 @@ source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat
 #source(here("R/geography_of_LT_UT.R")) # don't need anymore
 source(here("R/test_phylogenetic_signal.R")) # maybe put in suppmat
 source("R/model_phylopath_simple.R")
-#source("R/model_phylopath.R") # maybe put in suppmat
+#source("R/model_phylopath.R") # don't need anymore, complex version
