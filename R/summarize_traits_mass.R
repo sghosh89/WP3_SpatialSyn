@@ -5,7 +5,7 @@ library(here)
 chosen_rad<-c(0,250)
 
 df<-read.csv(here(paste("RESULTS/df_abund_climate_spatsyn_",chosen_rad[1],"_",
-                        chosen_rad[2],"km.csv", sep="")))
+                        chosen_rad[2],"km_nbin_4.csv", sep="")))
 df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
 df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName,PassNonPass)
 
@@ -57,15 +57,15 @@ mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName,
 
 dfmass<-read.csv(here("DATA/AVONET/bird_bodymass_from_AVONET.csv"))# 13614 species
 dfm<-left_join(df,dfmass,by=c("ScientificName"="Species"))
-dfm1<-dfm%>%filter(!is.na(mass_gm)) # 251 sp.
-dfm2<-dfm%>%filter(is.na(mass_gm)) # 11 sp. - need to know synonym
+dfm1<-dfm%>%filter(!is.na(mass_gm)) # 77 sp.
+dfm2<-dfm%>%filter(is.na(mass_gm)) # 1 sp. - need to know synonym
 
 dftrait<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
 dftrait<-dftrait%>%filter(spname!=possible_sp)%>%distinct(spname,.keep_all = T)
 dftrait<-dftrait%>%dplyr::select(spname,possible_sp)
 dfm2<-left_join(dfm2,dftrait,by=c("ScientificName"="spname"))
-id<-which(dfm2$ScientificName%in%c("Setophaga coronata coronata","Setophaga coronata audoboni"))
-dfm2$possible_sp[id]<-"Setophaga coronata" # for these subspecies mass info not available, so putting species level info
+#id<-which(dfm2$ScientificName%in%c("Setophaga coronata coronata","Setophaga coronata audoboni"))
+#dfm2$possible_sp[id]<-"Setophaga coronata" # for these subspecies mass info not available, so putting species level info
 dfm2<-left_join(dfm2,dfmass,by=c("possible_sp"="Species"))
 dfm2$mass_gm<-coalesce(dfm2$mass_gm.x,dfm2$mass_gm.y)
 dfm2$source<-coalesce(dfm2$source.x,dfm2$source.y)
@@ -80,4 +80,4 @@ dfm_birds2<-dfm_birds%>%dplyr::select(ScientificName, possible_sp, mass_gm, sour
 mydftrait_w_mass<-left_join(mydftrait,dfm_birds2,by=c("ScientificName"="ScientificName"))
 
 # save file
-write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"),row.names=F)
+write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"),row.names=F)

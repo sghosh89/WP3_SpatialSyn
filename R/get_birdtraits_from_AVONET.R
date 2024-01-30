@@ -15,7 +15,7 @@ avodat_meta<-read_excel(here("DATA/AVONET/AVONET Supplementary dataset 1.xlsx"),
 avodat_raw<-read_excel(here("DATA/AVONET/AVONET Supplementary dataset 1.xlsx"),sheet=6)
 #avodat_mass =? separate data sheets - needed to be combined
 
-df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
 df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
 df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName)
 df<-left_join(df,df_spmeta, by="AOU")
@@ -34,7 +34,7 @@ avina<-get_dat_ebird[id,]# unknown 12 sp
 avina<-data.frame(spname=avina$spname)
 
 get_dat_ebird_good<-get_dat_ebird%>%filter(!is.na(get_dat_ebird$Avibase.ID))
-length(unique(get_dat_ebird_good$spname)) #250 sp found
+length(unique(get_dat_ebird_good$spname)) #77 sp found
 
 # now match with ebird,group (if any)
 get_dat_ebird_gr<-left_join(avina,avodat_raw,by=c("spname"="eBird.species.group"))
@@ -88,4 +88,5 @@ df_manual_2<-df_manual_2%>%dplyr::select(colnames(birdstraits))
 birdstraits<-rbind(birdstraits,df_manual_2)
 birdstraits<-birdstraits[order(birdstraits$spname),]
 write.csv(birdstraits,here("DATA/AVONET/bird_traits_from_AVONET.csv"),row.names=F)
+#birdstraits<-read.csv(here("DATA/AVONET/bird_traits_from_AVONET.csv"))
 

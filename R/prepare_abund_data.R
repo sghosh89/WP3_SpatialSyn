@@ -3,7 +3,7 @@
 # for a given species ID (i.e. AOU), it will prepare the abundance data in a 
 # year by site dataframe format (raw data and detrended data)
 # filter applied:
-#   - choose only those sites where the species is recorded for atleast 20 out of 23 years
+#   - choose only those sites where the species is recorded for atleast 40 out of 41 years
 #===============================================================================
 #rm(list=ls())
 library(here)
@@ -21,10 +21,12 @@ prepare_abund_data<-function(givenAOU){
   }
   
   xroutes<-read.csv(here("DATA/for_BBS/wrangled_data/uRID_lonlat_stratum.csv"))
-  abund_array<-readRDS(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_array.RDS"))
+  #abund_array<-readRDS(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_array.RDS"))
+  abund_array<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_array.RDS"))
   #dim(abund_array) # year by site by species
   
-  distm<-readRDS(here("DATA/for_BBS/wrangled_data/pairwise_distance_km.RDS"))
+  #distm<-readRDS(here("DATA/for_BBS/wrangled_data/pairwise_distance_km.RDS"))
+  distm<-readRDS(here("DATA/for_BBS/wrangled_data/pairwise_distance_km_min40yrs.RDS"))
   #dim(distm)# site by site
   sitename<-rownames(distm)
   
@@ -44,18 +46,20 @@ prepare_abund_data<-function(givenAOU){
   # now save abundance matrix in your desired format for the input in tail-analysis
   mat<-(abund_mat) # we will compute tail analysis between sites, i.e., between two columns
   
-  # but exclude the sites where the bird species were observed atleast for 20 years
+  # but exclude the sites where the bird species were not observed atleast for 40 years
   id<-apply(X=mat, MARGIN=2, FUN = function(x){sum(x==0)})
-  badid<-which(id>3)# out of 23 years I only allow 3 absent years
+  badid<-which(id>1)# out of 41 years I only allow 1 absent years
   
   mat_good<-mat[,-badid]
   
   goodsite<-ncol(mat_good)
   
-  if(length(badid)>1225){# (=1227-2) means at least 2 sites needed for spatial syn.
+  restsites<-dim(abund_array)[2] - 2
+  
+  if(length(badid)>restsites){# means at least 2 sites needed for spatial syn.
     nsites<-NA # no good sites found
   }else{
-    #----------- plot a map of birds' present sites (present 20 years at least) --------------
+    #----------- plot a map of birds' present sites (present 40 years at least) --------------
     df_lonlat<-xroutes%>%filter(uRID%in%colnames(mat_good))
     
     wd<-map_data("world")
@@ -106,9 +110,9 @@ prepare_abund_data<-function(givenAOU){
 
 
 #=============================================================
-# for all the 652 species filtered, get the abundance data
-species_absentinfo<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_absentinfo.csv"))
-species_absentinfo$totsites<-1227
+# for all the 498 species filtered, get the abundance data
+species_absentinfo<-read.csv(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_absentinfo.csv"))
+species_absentinfo$totsites<-161#1227
 #givenAOU<-"5460"
 species_absentinfo$ngoodsites<-NA
 
@@ -120,15 +124,16 @@ for(i in 1:nrow(species_absentinfo)){
   print(i)
 }
 
-write.csv(species_absentinfo,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_nsites_info.csv"), row.names = F)
+write.csv(species_absentinfo,here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_nsites_info.csv"), row.names = F)
 
 # ok, so how many sp are there with good sites?
 df<-na.omit(species_absentinfo)
 hist(df$ngoodsites,50)
+as.data.frame(table(df$ngoodsites))# total 173 sp with good sites, out of them 35sp have only 2 good sites
 
-write.csv(df,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"), row.names = F)
-# so 373 species were filtered here based on condition that 
-# they were sampled at least at two sites and at min. of 20 years
+write.csv(df,here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_w_minimum2sites.csv"), row.names = F)
+# so 173 species were filtered here based on condition that 
+# they were sampled at least at two sites and at min. of 40 years
 
 #df2<-df%>%filter(ngoodsites>250)
 

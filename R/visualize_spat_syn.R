@@ -128,8 +128,12 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
               angle = label_data$angle, inherit.aes = FALSE) +
     
     # Add base line information
-    geom_segment(data = base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha = 0.8, size = 1, inherit.aes = FALSE) +
-    geom_text(data = base_data, aes(x = title, y = -10, label = group), hjust = c(1, 1.0, 0, 0,0.8), colour = "black", alpha = 0.8, size = 3, fontface = "bold", angle=30,inherit.aes = FALSE)
+    geom_segment(data = base_data, aes(x = start, y = -5, xend = end, yend = -5), 
+                 colour = "black", alpha = 0.8, size = 1, inherit.aes = FALSE) +
+    geom_text(data = base_data, aes(x = title, y = -10, label = group), 
+              #hjust = c(1, 1.0, 0, 0), 
+              colour = "black", alpha = 0.8, 
+              size = 3, fontface = "bold", angle=30,inherit.aes = FALSE)
   #> Warning: Removed 24 rows containing missing values (position_stack).
   #> Warning: Removed 9 rows containing missing values (geom_text).
   return(g1)
@@ -139,18 +143,18 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
 
 # ============ 0-250km ===========
 plotonly<-"LT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km_nbin_4.csv"))
 df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
 gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
 
 plotonly<-"UT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km.csv"))
+df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km_nbin_4.csv"))
 df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
 gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
 
 # later in your plot you could add info about IUCN status in inkscape
 
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km.pdf"), width = 14, height = 7) # Open a new pdf file
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4.pdf"), width = 14, height = 7) # Open a new pdf file
 grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
 dev.off() 
 

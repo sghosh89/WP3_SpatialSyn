@@ -15,7 +15,7 @@ prepare_climate_data<-function(climvar){
   longcdat<- gather(cdat,key="key",value="value", -uRID)
   longcdat<-longcdat%>%separate(key,c("var","month","year"))
   longcdat$year<-as.integer(longcdat$year)
-  longcdat<-longcdat%>%filter(year%in%c(1997:2019))# remove year=1996 
+  #longcdat<-longcdat%>%filter(year%in%c(1997:2019))# remove year=1996 
   
   longcdat<-longcdat%>%group_by(uRID,year)%>%summarise(meanval=mean(value,na.rm=T))%>%ungroup()
   zz<-longcdat%>%spread(year, meanval)
@@ -38,7 +38,7 @@ prepare_climate_data<-function(climvar){
   
   
   # These species are chosen
-  df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
+  df<-read.csv(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_w_minimum2sites.csv"))
   
   for(j in 1:nrow(df)){
     #j<-1
@@ -80,8 +80,8 @@ prepare_climate_data(climvar=climvar)
 climvar<-"tas"
 prepare_climate_data(climvar=climvar)
 
-#climvar<-"tasmax"
-#prepare_climate_data(climvar=climvar)
+climvar<-"tasmax"
+prepare_climate_data(climvar=climvar)
 
 #climvar<-"tasmin"
 #prepare_climate_data(climvar=climvar)

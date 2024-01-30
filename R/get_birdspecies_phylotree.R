@@ -9,7 +9,7 @@ library(gridExtra)
 #library(ape)
 #library(ggtree)
 
-df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km.csv"))
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
 df_spmeta<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
 df_spmeta<-df_spmeta%>%dplyr::select(AOU, ORDER, Family, Genus, Species, English_Common_Name, ScientificName)
 
@@ -38,20 +38,21 @@ df<-left_join(df,dfnonmatched,by="ScientificName")
 df$BirdTreeName<-coalesce(df$BirdTreeName.x,df$BirdTreeName.y)
 df<-df%>%dplyr::select(-BirdTreeName.x, -BirdTreeName.y)
 
+df$BirdTreeName[which(df$ScientificName=="Colaptes auratus auratus")]<-"Colaptes auratus"
+
+
+
 # ok, see here AOU=6520 occurred twice with two different BirdTree names (Dendroica aestiva and Dendroica petechia) for a given 
 # Scientific species (Setophaga petechia). I think we should exclude the Dendroica aestiva.
 
 id<-which(df$BirdTreeName=="Dendroica aestiva")
 df<-df[-id,]
-# now it is 263 species!
-write.csv(df,here("DATA/BirdTree/species_0_250km_tobefilled.csv"),row.names = F)
+# now it is 78 species!
+write.csv(df,here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"),row.names = F)
 
-# Now we fill manually the above file column BirdTreeName and saved as
-# "DATA/BirdTree/species_0_250km_filledin.csv"
-
-df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
+#df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
 nm<-df
 nm<-nm%>%distinct(BirdTreeName)
-write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km.txt"),quote=F,col.names =F,row.names=F)
-# 253 unique sp name in BirdTree
+write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_nbin_4.txt"),quote=F,col.names =F,row.names=F)
+# 78 unique sp name in BirdTree
 

@@ -66,19 +66,21 @@ zEngName<-rename(zEngName, mixed_name= Scientific)
 dftemp<-rbind(z,zEngName)
 
 # check if the 373 species AOU you choose here for spat syn calculation are within the z dataframe or not?
-df<-read.csv(here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_w_morethan2sites.csv"))
+df<-read.csv(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_w_minimum2sites.csv"))
 
-dfall<-left_join(df,dftemp, by="AOU") # 20 species data not found, we will fill in manually
+dfall<-left_join(df,dftemp, by="AOU") # 9 species data not found, we will fill in manually
+df0<-dfall[which(is.na(dfall$Seq)),]
 write.csv(dfall, here("RESULTS/species_dietcat.csv"),row.names = F)
 
 #df0<-dfall[which(is.na(dfall$Seq)),]
 
-# I filled in the edited csv mainly for diet category and for those 20 species 
+# I filled in the edited csv mainly for diet category and for those 9 species 
 # from df0 dataframe, x
 
-
-
-
-
-
+#x<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+#old<-read.csv(here("RESULTS/old.csv"))
+#old<-old%>%dplyr::select(AOU, IUCN_status)
+#y<-left_join(x,old,by="AOU")
+#y<-y%>%dplyr::select(-IUCN.status)
+#write.csv(y, here("RESULTS/species_dietcat_edited.csv"),row.names = F)
 

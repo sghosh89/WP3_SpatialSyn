@@ -16,7 +16,7 @@ if(!dir.exists(here("RESULTS/model_phylopath_simple/phylopath_UT"))){
   dir.create(here("RESULTS/model_phylopath_simple/phylopath_UT"))
 }
 # help: http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
-wholeT<-read.nexus(here("DATA/BirdTree/whole_tree-pruner-bfb47e7d-3253-4f9e-a5a7-ec93ff54c372/output.nex"))
+wholeT<-read.nexus(here("DATA/BirdTree/tree-pruner-a1bf37e0-0290-4a07-a041-77d2744a7b5c/output.nex"))
 
 #=================== first check about your tree description ==========
 tree_property<-data.frame(i=1:1000,
@@ -44,10 +44,10 @@ ct3<-consensus.edges(wholeT,method="least.squares")# with edge length
 saveRDS(ct3,here("RESULTS/model_phylopath_simple/consensus_tree_with_edgelength.RDS"))
 
 # ============= read data ==============
-df<-read.csv(here("DATA/BirdTree/species_0_250km_filledin.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_speciestraits_mass.csv"))
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"))
 dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 df<-left_join(df,dft,by="ScientificName")
 
@@ -56,7 +56,7 @@ df<-left_join(df,dft,by="ScientificName")
 
 # remove the duplicated entries from df$new_BT column
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
-df<-df%>%dplyr::select(AOU,fLU_ab,fLU_pr,fLU_tas,kipps, HWI,
+df<-df%>%dplyr::select(AOU,fLU_ab,fLU_pr,fLU_tas,fLU_tasmax,HWI,
                        tail,newBT)
 df$Species<-df$newBT
 df$tail<-as.factor(df$tail)
@@ -94,19 +94,38 @@ pdf(here("RESULTS/model_phylopath_simple/species_phylogeny_0_250km_HWI.pdf"), wi
 g3 # Write the grid.arrange in the file
 dev.off()
 #=============
+rownames(df)<-df$Species
+
 dfUT<-df%>%filter(tail=="UT")
 dfLT<-df%>%filter(tail=="LT")
 
-rownames(dfUT)<-dfUT$Species
-rownames(dfLT)<-dfLT$Species
+#rownames(dfUT)<-dfUT$Species
+#rownames(dfLT)<-dfLT$Species
 
 #=================== Now specify model hypo ===============================
 # We are choosing migration ability trait: HWI
 modelsHWI_Tonly<-define_model_set(
-  model = c(fLU_ab~ fLU_tas+HWI)
+  model = c(fLU_ab~ fLU_tasmax+HWI)
 )
 gmodels<-plot_model_set(modelsHWI_Tonly, edge_width = 0.5)
 ggsave(here("RESULTS/model_phylopath_simple/modelsHWI_Tonly.pdf"), width=6,height=3)
+
+
+
+# considering no group
+modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = df, 
+                               tree = ct3, 
+                               model = 'lambda')
+
+(modsum<-summary(modres_HWI_T_only))
+gp3<-plot(modsum)+theme_classic()
+(best_model_T <- best(modres_HWI_T_only, boot=1000))
+gp1<-plot(best_model_T, curvature=0.1, edge_width = 3)
+gp2<-coef_plot(best_model_T)+ggplot2::theme_bw()
+
+pdf(here("RESULTS/model_phylopath_simple/nogroup_model_est.pdf"), height=4, width=10)
+grid.arrange(gp1, gp2, ncol=2)
+dev.off()
 
 #============= test with UT group ================
 sink(here("RESULTS/model_phylopath_simple/phylopath_UT/modres_HWI_T_only_summary.txt"),

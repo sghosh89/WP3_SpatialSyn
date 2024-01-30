@@ -5,7 +5,7 @@ library(here)
 library(dplyr)
 library(tidyverse)
 `%notin%` <- Negate(`%in%`)
-yr_threshold<-20 # we will consider only those routes (i.e., sites) sampled min 20 years
+yr_threshold<-40 # we will consider only those routes (i.e., sites) sampled min 40 years
 #---------------------
 # read the data
 xroutes<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv")) # route meta data
@@ -54,11 +54,14 @@ f10<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData
 
 ffull<-rbind(f1,f2,f3,f4,f5,f6,f7,f8,f9,f10)
 saveRDS(ffull,here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS"))
-#ffull<-readRDS(here(DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS"))
+#ffull<-readRDS(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/50-StopData/1997ToPresent_SurveyWide/fifty1to10.RDS"))
+
 
 #------------------------ now data cleaning --------------------------------
 #Note that the dataset is complete only for the period from 1997 to present; most earlier data
 #(1966-1996) are only available in the 10-stop summary files (in the "States" folder, online data).
+
+
 fshort<-ffull%>%filter(Year%in%c(1997:2019)) # filter for 1997-2019
 colnames(fshort)
 sum1to50<-apply(fshort[,8:57],MARGIN=1,FUN=sum)
@@ -74,31 +77,43 @@ fshort<-fshort%>%filter(RouteDataID%in%xweather_good$RouteDataID)
 saveRDS(fshort,here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS"))
 zz<-head(fshort,10)
 
+#=======================================
+source(here("R/get_birds_data_1979_1996.R"))
+# the above r script saves below line in same format as fshort for year 1979-1996
+#saveRDS(files,here("DATA/for_BBS/wrangled_data/data1979to1996_consistentprotocol.RDS"))
+#----------------------------------------------
+fshortupto1996<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to1996_consistentprotocol.RDS"))
+
+# merge to get data from 1979-2019
+fshort<-rbind(fshortupto1996,fshort)
+#============================================
+
 fshort$uRID<-paste(fshort$CountryNum,"_",fshort$StateNum,"_",fshort$Route,sep="")
+saveRDS(fshort,here("DATA/for_BBS/wrangled_data/data1979to2019_consistentprotocol.RDS"))
 
 #How many routes are there?
-length(unique(fshort$uRID))#4687
+length(unique(fshort$uRID))#5089
 
 # one given route can be among many states
-# 1227 routes are sampled atleast for 20 years, we will consider only those
+# 161 routes are sampled atleast for 40 years, we will consider only those
 c2<-fshort%>%group_by(uRID)%>%summarise(nyr=n_distinct(Year))%>%ungroup()%>%filter(nyr>=yr_threshold)
 
 xroutes<-xroutes%>%dplyr::select(CountryNum, StateNum, Route, RouteName, Latitude, Longitude, Stratum)
 xroutes<-xroutes%>%mutate(uRID=paste(CountryNum, StateNum, Route,sep="_"))
 
-route_20yrs_metadata<-left_join(c2,xroutes,by="uRID")
-saveRDS(route_20yrs_metadata,here("DATA/for_BBS/wrangled_data/route_20yrs_metadata.RDS"))
+route_40yrs_metadata<-left_join(c2,xroutes,by="uRID")
+saveRDS(route_40yrs_metadata,here("DATA/for_BBS/wrangled_data/route_40yrs_metadata.RDS"))
 
-# Now we need to compute the pairwise geographic distance of this 1227 sites
+# Now we need to compute the pairwise geographic distance of this 161 sites
 library(geosphere)
-dist<-distm(x=route_20yrs_metadata[,c("Longitude","Latitude")], fun=distGeo)
+dist<-distm(x=route_40yrs_metadata[,c("Longitude","Latitude")], fun=distGeo)
 dist<-dist/1000 # distance in Km
 dim(dist)
-rownames(dist)<-colnames(dist)<-route_20yrs_metadata$uRID
+rownames(dist)<-colnames(dist)<-route_40yrs_metadata$uRID
 # dist is a symmetric matrix, with pairwise distance between sites, in Km
 range(dist)
 dist[upper.tri(dist, diag=T)]<-NA
-saveRDS(dist,here("DATA/for_BBS/wrangled_data/pairwise_distance_km.RDS"))
+saveRDS(dist,here("DATA/for_BBS/wrangled_data/pairwise_distance_km_min40yrs.RDS"))
 # some visualization
 hist(dist,100)
 range(dist,na.rm=T)
@@ -109,21 +124,21 @@ range(dist,na.rm=T)
 # i.e., for any given species, get a matrix where sites along columns,
 # years across rows
 
-fshort<-readRDS(here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol.RDS"))
+fshort<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to2019_consistentprotocol.RDS"))
 fshort$uRID<-paste(fshort$CountryNum,"_",fshort$StateNum,"_",fshort$Route,sep="")
-fshort_20yr<-fshort%>%filter(uRID%in%route_20yrs_metadata$uRID)
-saveRDS(fshort_20yr,here("DATA/for_BBS/wrangled_data/data1997to2019_consistentprotocol_min20yr.RDS"))
+fshort_40yr<-fshort%>%filter(uRID%in%route_40yrs_metadata$uRID)
+saveRDS(fshort_40yr,here("DATA/for_BBS/wrangled_data/data1979to2019_consistentprotocol_min40yr.RDS"))
 
-nsp<-length(unique(fshort_20yr$AOU))# 652 species recorded
-nyr<-length(unique(fshort_20yr$Year)) # 23 years sampled
-range(fshort_20yr$Year)# 1997-2019
-length(unique(fshort$uRID))
-nsite<-length(unique(fshort_20yr$uRID)) #1227 sites
-usp<-sort(unique(fshort_20yr$AOU)) # 652 unique species
+nsp<-length(unique(fshort_40yr$AOU))# 498 species recorded
+nyr<-length(unique(fshort_40yr$Year)) # 41 years sampled
+range(fshort_40yr$Year)# 1979-2019
+length(unique(fshort$uRID))#5089
+nsite<-length(unique(fshort_40yr$uRID)) #161 sites
+usp<-sort(unique(fshort_40yr$AOU)) # 498 unique species
   
 abund_array<-array(data=0, dim=c(nyr,nsite,nsp))
-dimnames(abund_array)[[1]]<- as.character(sort(unique(fshort_20yr$Year)))
-dimnames(abund_array)[[2]]<- route_20yrs_metadata$uRID
+dimnames(abund_array)[[1]]<- as.character(sort(unique(fshort_40yr$Year)))
+dimnames(abund_array)[[2]]<- route_40yrs_metadata$uRID
 dimnames(abund_array)[[3]]<- as.character(usp)
 
 species_absentinfo<-data.frame(AOU=NA*numeric(nsp),nAbsentSitesAllyr=NA*numeric(nsp))
@@ -133,8 +148,8 @@ species_absentinfo<-data.frame(AOU=NA*numeric(nsp),nAbsentSitesAllyr=NA*numeric(
 for(i in 1:nsp){
   
   sp<-usp[i]
-  zz<-fshort_20yr%>%filter(AOU==sp)%>%dplyr::select(uRID,Year,Stop1to50)
-  notobsyr<-setdiff(c(1997:2019),zz$Year)
+  zz<-fshort_40yr%>%filter(AOU==sp)%>%dplyr::select(uRID,Year,Stop1to50)
+  notobsyr<-setdiff(c(1979:2019),zz$Year)
   zz_ref<-data.frame(Year=notobsyr)
   newtab<-full_join(zz,zz_ref,by="Year")
   zz0<-newtab %>% complete(uRID, Year, fill= list(Stop1to50=0))
@@ -158,17 +173,17 @@ for(i in 1:nsp){
 }
 dim(abund_array)# year by site by species
 
-saveRDS(abund_array,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_array.RDS"))
+saveRDS(abund_array,here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_array.RDS"))
 
 
-write.csv(species_absentinfo,here("DATA/for_BBS/wrangled_data/data1997to2019_abundance_species_absentinfo.csv"), row.names = F)
+write.csv(species_absentinfo,here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_absentinfo.csv"), row.names = F)
 
 xroutes<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/routes.csv")) # route meta data
 xroutes$uRID<-paste(xroutes$CountryNum,"_",xroutes$StateNum,"_",xroutes$Route,sep="")
 xroutes<-xroutes%>%dplyr::select(uRID,Longitude,Latitude,Stratum)
 write.csv(xroutes,here("DATA/for_BBS/wrangled_data/uRID_lonlat_stratum.csv"), row.names = F)
 
-# so here 652 species are filtered because they were at least sampled once in the study period
+# so here 498 species are filtered because they were at least sampled once in the study period of min 40 yrs
 
 
 
