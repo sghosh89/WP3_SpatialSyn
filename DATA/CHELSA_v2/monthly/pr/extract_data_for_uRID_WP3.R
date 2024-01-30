@@ -9,7 +9,7 @@ library(raster)
 library(sp)
 rastlist <- list.files(path = "./", pattern='.tif$', all.files=TRUE, full.names=FALSE)
 id<-as.integer(substr(rastlist,14,17))
-idsel<-which(id%in%c(1996:2019))
+idsel<-which(id%in%c(1979:2019))
 rastlist<-rastlist[idsel]
 
 allrasters <- raster::stack(rastlist)
