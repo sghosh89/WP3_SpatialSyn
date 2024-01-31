@@ -121,5 +121,6 @@ call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax"
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr",nbin=4)
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas",nbin=4)
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax",nbin=4)
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax_avgMaytoJuly",nbin=4)
 
 

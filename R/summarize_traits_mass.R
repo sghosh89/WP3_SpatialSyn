@@ -48,7 +48,8 @@ df2$meanTail.Length<-coalesce(df2$meanTail.Length.x,df2$meanTail.Length.y)
 
 # data with 8 traits from AvoNet
 mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName, 
-                               fLU_ab,fLU_pr, fLU_tas, Diet.5Cat, 
+                               fLU_ab,fLU_pr, fLU_tas, fLU_tasmax,fLU_tasmax_avgMaytoJuly,
+                               Diet.5Cat, 
                                IUCN_status, tail, PassNonPass,
                                meanBeak.LengthCulmen,meanBeak.Width,meanBeak.Depth,
                                meanTarsus.Length,meanWing.Length,

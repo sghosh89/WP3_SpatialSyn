@@ -22,7 +22,9 @@ summarize_res<-function(chosen_rad,nbin){
                               "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   df_tasmax<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_",chosen_rad[1],
                                  "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
-   
+  df_tasmaxMaytoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgMaytoJuly_",chosen_rad[1],
+                                 "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  
   #======================== make combo data ===========================
   # read abundance summary
   #df_ab<-read.csv(here(paste("RESULTS/summary_spat_syn_for_abund_",chosen_rad[1],
@@ -35,11 +37,16 @@ summarize_res<-function(chosen_rad,nbin){
   # read tas summary
   df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
   
-  # read tas summary
+  # read tasmax summary
   df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
   
-  df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,df_tasmax$fLU_tasmax)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax")
+  # read tasmax 3 months avg MaytoJuly summary
+  df_tasmaxMaytoJulyavg<-df_tasmaxMaytoJulyavg%>%dplyr::select(AOU,tasmax3_L=L,tasmax3_U=U)%>%mutate(fLU_tasmax3=(tasmax3_L+tasmax3_U)/(abs(tasmax3_U)+tasmax3_L))
+  
+  
+  df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,
+            df_tasmax$fLU_tasmax, df_tasmaxMaytoJulyavg$fLU_tasmax3)
+  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmax_avgMaytoJuly")
   df<-as.data.frame(df)
   
   
@@ -68,7 +75,7 @@ summarize_res<-function(chosen_rad,nbin){
 
 # input chosen radius 
 chosen_rad<-c(0,250)
-df2<-summarize_res(chosen_rad=chosen_rad,nbin=2)
+#df2<-summarize_res(chosen_rad=chosen_rad,nbin=2)
 df4<-summarize_res(chosen_rad=chosen_rad,nbin=4)
 
 #==================== plot across species ==============

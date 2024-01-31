@@ -43,6 +43,8 @@ source(here("R/get_birdspecies_phylotree.R")) # file to get matched names for al
 
 source(here("R/function_to_testing_abund.R"))
 source(here("R/function_to_testing_tasmax.R"))
+source(here("R/function_to_testing_tasmax_avgMaytoJuly.R"))
+
 
 source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
 source(here("R/phylopath_sig75.R"))# summarised: 0-250 km.
@@ -56,7 +58,8 @@ source(here("R/phylopath_sig75_100-250km.R"))
 source(here("R/get_migratory_status.R"))
 #=======================
 
-
+# run analysis with May-July avg results
+source(here("R/prepare_tasmax_with_MaytoJuly.R"))
 
 
 

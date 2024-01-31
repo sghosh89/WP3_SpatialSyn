@@ -40,7 +40,8 @@ write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_nbin4_tail
 # remove the duplicated entries from df$new_BT column
 df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
-df<-df%>%dplyr::select(AOU,fab.sig,ftasmax.sig,HWI,
+df<-df%>%dplyr::select(AOU,fab.sig,ftasmax.sig,ftasmax3.sig,
+                       HWI,
                        tail,tail75,newBT)
 df$Species<-df$newBT
 df$tail<-as.factor(df$tail)
@@ -85,7 +86,7 @@ dev.off()
 
 #============== model ===========
 modelsHWI_Tonly<-define_model_set(
-  model = c(fab.sig~ ftasmax.sig+HWI)
+  model = c(fab.sig~ ftasmax3.sig+HWI)
 )
 gmodels<-plot_model_set(modelsHWI_Tonly, edge_width = 0.5)
 ggsave(here("RESULTS/model_phylopath_sig75/modelsHWI_Tonly.pdf"), width=6,height=3)

@@ -8,7 +8,7 @@ nbin<-4
 chosen_rad<-c(0,250) # within this distance category
 
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
-df<-df%>%dplyr::select(AOU,fLU_ab,fLU_tasmax) # before considering significance
+df<-df%>%dplyr::select(AOU,fLU_ab,fLU_tasmax,fLU_tasmax_avgMaytoJuly) # before considering significance
 
 # Now consider tail-dep significant result
 
@@ -26,11 +26,19 @@ for(i in 1:nrow(df)){
   idgs<-idgs%>%dplyr::select(row_col,dist.KM)
   sigabund<-left_join(sigabund,idgs,by="row_col")
   
+  #------ for climate: tasmax avg across all 12 months --------
   sigclim<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
   sigclim<-sigclim%>%dplyr::select(row_col,corlmcoru_tasmax=corlmcoru_actual,
                                      sig75tasmax=sig75,sig95tasmax=sig95)
   
   sigabund<-left_join(sigabund,sigclim,by="row_col")
+  
+  #------ for climate: tasmax avg across 3 months: May to July --------
+  sigclim3<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_avgMaytoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+  sigclim3<-sigclim3%>%dplyr::select(row_col,corlmcoru_tasmax3=corlmcoru_actual,
+                                   sig75tasmax3=sig75,sig95tasmax3=sig95)
+  sigabund<-left_join(sigabund,sigclim3,by="row_col")
+  
   sigabund$AOU<-givenAOU
   
   sigabund<-sigabund%>%filter(sig75ab==1)
@@ -38,8 +46,12 @@ for(i in 1:nrow(df)){
 }
 distance_sigtaildep_abund_tasmax<-distance_sigtaildep_abund_tasmax%>%
                                   dplyr::select(AOU,row_col,dist.KM,
-                                                corlmcoru_ab,corlmcoru_tasmax,
-                                                sig75ab,sig75tasmax)
+                                                corlmcoru_ab,
+                                                corlmcoru_tasmax,
+                                                corlmcoru_tasmax3,
+                                                sig75ab,
+                                                sig75tasmax,
+                                                sig75tasmax3)
 
 write.csv(distance_sigtaildep_abund_tasmax,here("RESULTS/distance_sigtaildep_abund_tasmax.csv"), row.names = F)
 #==================================================

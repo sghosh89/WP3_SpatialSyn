@@ -1,6 +1,5 @@
 ###############################################################################################################
-# This file has to be in the same folder where you save the environmental data 
-# that you will extract
+#  which months to choose froma given year?
 ###############################################################################################################
 rm(list=ls())
 path<-dirname(rstudioapi::getSourceEditorContext()$path)

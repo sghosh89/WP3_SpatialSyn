@@ -39,7 +39,8 @@ for(i in 1:nrow(df)){
   df$fab.sig[i]<-sum(tempo$corlmcoru_ab)/sum(abs(tempo$corlmcoru_ab))
   
   tempoclim<-tempo%>%filter(sig75tasmax==1)
-  df$ftasmax.sig[i]<-sum(tempoclim$corlmcoru_ab)/sum(abs(tempoclim$corlmcoru_ab))
+  df$ftasmax.sig[i]<-sum(tempoclim$corlmcoru_tasmax)/sum(abs(tempoclim$corlmcoru_tasmax))
+
 }
 
 df$tail<-ifelse(df$fab.sig>0,"LT","UT")
