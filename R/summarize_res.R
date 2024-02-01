@@ -22,9 +22,11 @@ summarize_res<-function(chosen_rad,nbin){
                               "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   df_tasmax<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_",chosen_rad[1],
                                  "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
-  df_tasmaxMaytoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgMaytoJuly_",chosen_rad[1],
-                                 "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
-  
+  #df_tasmaxMaytoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgMaytoJuly_",chosen_rad[1],
+  #                              "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  df_tasmaxAprtoAugavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgAprtoAug_",chosen_rad[1],
+                                             "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+                                             
   #======================== make combo data ===========================
   # read abundance summary
   #df_ab<-read.csv(here(paste("RESULTS/summary_spat_syn_for_abund_",chosen_rad[1],
@@ -40,13 +42,13 @@ summarize_res<-function(chosen_rad,nbin){
   # read tasmax summary
   df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
   
-  # read tasmax 3 months avg MaytoJuly summary
-  df_tasmaxMaytoJulyavg<-df_tasmaxMaytoJulyavg%>%dplyr::select(AOU,tasmax3_L=L,tasmax3_U=U)%>%mutate(fLU_tasmax3=(tasmax3_L+tasmax3_U)/(abs(tasmax3_U)+tasmax3_L))
+  # read tasmax 5 months avg summary
+  df_tasmaxAprtoAugavg<-df_tasmaxAprtoAugavg%>%dplyr::select(AOU,tasmax5_L=L,tasmax5_U=U)%>%mutate(fLU_tasmax5=(tasmax5_L+tasmax5_U)/(abs(tasmax5_U)+tasmax5_L))
   
   
   df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,
-            df_tasmax$fLU_tasmax, df_tasmaxMaytoJulyavg$fLU_tasmax3)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmax_avgMaytoJuly")
+            df_tasmax$fLU_tasmax, df_tasmaxAprtoAugavg$fLU_tasmax5)
+  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmax_avgAprtoAug")
   df<-as.data.frame(df)
   
   

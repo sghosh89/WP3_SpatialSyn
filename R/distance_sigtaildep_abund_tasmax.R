@@ -1,103 +1,215 @@
-# Make a summary table for each species 
-# with sig (75%CI) taildep in abundance and climate (tasmax) for each site pair distance
+# write a function to get summarized value of sig tail dep (75%CI) within a given distance boundary
 
-rm(list=ls())
-library(here)
-library(tidyverse)
+
+distance_sigtaildep_abund_clim<-function(df,nbin=4,target_dist_cat){
+  
+  #nbin<-4
+  #df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
+  df<-df%>%dplyr::select(AOU)
+  
+  df$Lsig75ab<-NA
+  df$Usig75ab<-NA
+  df$Lsig95ab<-NA
+  df$Usig95ab<-NA
+  
+  df$Lsig75tasmax<-NA
+  df$Usig75tasmax<-NA
+  df$Lsig95tasmax<-NA
+  df$Usig95tasmax<-NA
+  
+  df$Lsig75tasmax5<-NA
+  df$Usig75tasmax5<-NA
+  df$Lsig95tasmax5<-NA
+  df$Usig95tasmax5<-NA
+  
+  #target_dist_cat<-c(0,100)
+  
+  for(i in 1:nrow(df)){
+    
+    givenAOU<-df$AOU[i]
+    
+    # abundance
+    tempoab<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/abundance_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+    
+    #tasmax
+    tempotasmax<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+    
+    #tasmax_avgAprtoAug
+    tempotasmax5<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_avgAprtoAug_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+    
+    # check
+    #ch1<-any(tempoab$dist.KM==tempotasmax$dist.KM)==F
+    #ch2<-any(tempoab$dist.KM==tempotasmax5$dist.KM)==F
+    #ch3<-any(ch1,ch2)==T
+    
+    #if(ch3==T){
+    # print("something went wrong!!!")
+    #}
+    
+    #============= first for abundance ==================
+    tempoab<-tempoab%>%filter(dist.KM>target_dist_cat[1] & dist.KM<=target_dist_cat[2])
+    
+    tempo75<-tempoab%>%filter(sig75==1)
+    
+    if(nrow(tempo75)==0){
+      Lsig75<-Usig75<-0
+    }else{
+      Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
+      Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
+    }
+    
+    tempo95<-tempoab%>%filter(sig95==1)
+    
+    if(nrow(tempo95)==0){
+      Lsig95<-Usig95<-0
+    }else{
+      Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
+      Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
+    }
+    
+    df$Lsig75ab[i]<-Lsig75
+    df$Usig75ab[i]<-Usig75
+    df$Lsig95ab[i]<-Lsig95
+    df$Usig95ab[i]<-Usig95
+    
+    #============= now for tasmax ==================
+    
+    tempotasmax<-tempotasmax%>%filter(dist.KM>target_dist_cat[1] & dist.KM<=target_dist_cat[2])
+    
+    tempo75<-tempotasmax%>%filter(sig75==1)
+    
+    if(nrow(tempo75)==0){
+      Lsig75<-Usig75<-0
+    }else{
+      Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
+      Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
+    }
+    
+    tempo95<-tempotasmax%>%filter(sig95==1)
+    
+    if(nrow(tempo95)==0){
+      Lsig95<-Usig95<-0
+    }else{
+      Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
+      Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
+    }
+    
+    df$Lsig75tasmax[i]<-Lsig75
+    df$Usig75tasmax[i]<-Usig75
+    df$Lsig95tasmax[i]<-Lsig95
+    df$Usig95tasmax[i]<-Usig95
+    
+    #============= now for tasmax: avg over 5 months: Apr to Aug ==================
+    
+    tempotasmax5<-tempotasmax5%>%filter(dist.KM>target_dist_cat[1] & dist.KM<=target_dist_cat[2])
+    
+    tempo75<-tempotasmax5%>%filter(sig75==1)
+    
+    if(nrow(tempo75)==0){
+      Lsig75<-Usig75<-0
+    }else{
+      Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
+      Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
+    }
+    
+    tempo95<-tempotasmax5%>%filter(sig95==1)
+    
+    if(nrow(tempo95)==0){
+      Lsig95<-Usig95<-0
+    }else{
+      Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
+      Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
+    }
+    
+    df$Lsig75tasmax5[i]<-Lsig75
+    df$Usig75tasmax5[i]<-Usig75
+    df$Lsig95tasmax5[i]<-Lsig95
+    df$Usig95tasmax5[i]<-Usig95
+    
+    print(i)
+  }
+  
+  saveRDS(df,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
+                        "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
+                        target_dist_cat[2],"Km.RDS",sep="")))
+  
+}
+
 nbin<-4
-chosen_rad<-c(0,250) # within this distance category
-
 df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
-df<-df%>%dplyr::select(AOU,fLU_ab,fLU_tasmax,fLU_tasmax_avgMaytoJuly) # before considering significance
+target_dist_cat<-c(0,100)
+distance_sigtaildep_abund_clim(df=df,nbin=nbin,target_dist_cat=target_dist_cat)
 
-# Now consider tail-dep significant result
+nbin<-4
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
+target_dist_cat<-c(100,250)
+distance_sigtaildep_abund_clim(df=df,nbin=nbin,target_dist_cat=target_dist_cat)
 
-distance_sigtaildep_abund_tasmax<-c()
-for(i in 1:nrow(df)){
-  
-  givenAOU<-df$AOU[i]
-  sigabund<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/abundance_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
-  sigabund$row_col<-paste(sigabund$row,sigabund$col,sep="_")
-  sigabund<-sigabund%>%dplyr::select(row_col,corlmcoru_ab=corlmcoru_actual,
-                                     sig75ab=sig75,sig95ab=sig95)
-  idgs<-readRDS(paste("RESULTS/AOU_",givenAOU,"/abundance_spatsyn_nbin_",nbin,"/abund_table_for_sitepair_within_",chosen_rad[1],"_",chosen_rad[2],"_km_nbin_",nbin,".RDS",sep=""))
-  
-  idgs<-idgs%>%dplyr::mutate(row_col=paste(row,col,sep="_"))
-  idgs<-idgs%>%dplyr::select(row_col,dist.KM)
-  sigabund<-left_join(sigabund,idgs,by="row_col")
-  
-  #------ for climate: tasmax avg across all 12 months --------
-  sigclim<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
-  sigclim<-sigclim%>%dplyr::select(row_col,corlmcoru_tasmax=corlmcoru_actual,
-                                     sig75tasmax=sig75,sig95tasmax=sig95)
-  
-  sigabund<-left_join(sigabund,sigclim,by="row_col")
-  
-  #------ for climate: tasmax avg across 3 months: May to July --------
-  sigclim3<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_avgMaytoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
-  sigclim3<-sigclim3%>%dplyr::select(row_col,corlmcoru_tasmax3=corlmcoru_actual,
-                                   sig75tasmax3=sig75,sig95tasmax3=sig95)
-  sigabund<-left_join(sigabund,sigclim3,by="row_col")
-  
-  sigabund$AOU<-givenAOU
-  
-  sigabund<-sigabund%>%filter(sig75ab==1)
-  distance_sigtaildep_abund_tasmax<-rbind(distance_sigtaildep_abund_tasmax,sigabund)
-}
-distance_sigtaildep_abund_tasmax<-distance_sigtaildep_abund_tasmax%>%
-                                  dplyr::select(AOU,row_col,dist.KM,
-                                                corlmcoru_ab,
-                                                corlmcoru_tasmax,
-                                                corlmcoru_tasmax3,
-                                                sig75ab,
-                                                sig75tasmax,
-                                                sig75tasmax3)
+nbin<-4
+df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv"))
+target_dist_cat<-c(0,250)
+distance_sigtaildep_abund_clim(df=df,nbin=nbin,target_dist_cat=target_dist_cat)
 
-write.csv(distance_sigtaildep_abund_tasmax,here("RESULTS/distance_sigtaildep_abund_tasmax.csv"), row.names = F)
-#==================================================
-rm(list=ls())
-library(here)
-library(tidyverse)
-dat<-read.csv(here("RESULTS/distance_sigtaildep_abund_tasmax.csv"))
+#===================================
 
-# split into two category: <=100 km and 100-250 km
-df100<-dat%>%filter(dist.KM<100)
-df<-data.frame(AOU=unique(df100$AOU))
+#===================================
 
-# values: total sig within 0-100 Km distance
-df$fab.sig<-NA
-df$ftasmax.sig<-NA
-
-for(i in 1:nrow(df)){
+get_summary_csv<-function(nbin=4,target_dist_cat,siglevel=75){
   
-  givenAOU<-df$AOU[i]
-  tempo<-df100%>%filter(AOU%in%givenAOU)
-  df$fab.sig[i]<-sum(tempo$corlmcoru_ab)/sum(abs(tempo$corlmcoru_ab))
+  dff<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
+                          "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
+                          target_dist_cat[2],"Km.RDS",sep="")))
   
-  tempoclim<-tempo%>%filter(sig75tasmax==1)
-  df$ftasmax.sig[i]<-sum(tempoclim$corlmcoru_ab)/sum(abs(tempoclim$corlmcoru_ab))
+  if(siglevel==75){
+    dff<-dff%>%filter(Lsig75ab!=0 | Usig75ab!=0)# 59 species having sig taildep in abundance
+    
+    dff$fab.sig<-(dff$Lsig75ab+dff$Usig75ab)/(dff$Lsig75ab+abs(dff$Usig75ab))
+    dff$ftasmax.sig<-(dff$Lsig75tasmax+dff$Usig75tasmax)/(dff$Lsig75tasmax+abs(dff$Usig75tasmax))
+    dff$ftasmax5.sig<-(dff$Lsig75tasmax5+dff$Usig75tasmax5)/(dff$Lsig75tasmax5+abs(dff$Usig75tasmax5))
+    
+    
+    tail75<-(dff$Lsig75ab+dff$Usig75ab)
+    dff$tail75<-ifelse(tail75<0,"UT","LT")
+    dff$tail75<-as.factor(dff$tail75)
+    
+    dff<-dff%>%dplyr::select(AOU,tail75,fab.sig,ftasmax.sig,ftasmax5.sig)
+    write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_summary_",
+                             target_dist_cat[1],"-",
+                             target_dist_cat[2],"Km.csv",sep="")), row.names = F)
+  }
+  
+  if(siglevel==95){
+    dff<-dff%>%filter(Lsig95ab!=0 | Usig95ab!=0)
+    
+    dff$fab.sig<-(dff$Lsig95ab+dff$Usig95ab)/(dff$Lsig95ab+abs(dff$Usig95ab))
+    dff$ftasmax.sig<-(dff$Lsig95tasmax+dff$Usig95tasmax)/(dff$Lsig95tasmax+abs(dff$Usig95tasmax))
+    dff$ftasmax5.sig<-(dff$Lsig95tasmax5+dff$Usig95tasmax5)/(dff$Lsig95tasmax5+abs(dff$Usig95tasmax5))
+    
+    
+    tail95<-(dff$Lsig95ab+dff$Usig95ab)
+    dff$tail95<-ifelse(tail95<0,"UT","LT")
+    dff$tail95<-as.factor(dff$tail95)
+    
+    dff<-dff%>%dplyr::select(AOU,tail95,fab.sig,ftasmax.sig,ftasmax5.sig)
+    write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
+                             target_dist_cat[1],"-",
+                             target_dist_cat[2],"Km.csv",sep="")), row.names = F)
+  }
+  
 }
 
-df$tail<-ifelse(df$fab.sig>0,"LT","UT")
+# call the above function
+nbin<-4
+target_dist_cat<-c(0,100)
+siglevel=75
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
 
-# <100 Km. category
-table(df$tail)# 44 (21 LT, 23 UT) sp. out of 59 species below 100 Km distance
+nbin<-4
+target_dist_cat<-c(100,250)
+siglevel=75
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
 
-# 100-250 Km. category
-#table(df$tail)# 50 (29 LT, 21 UT)sp. out of 59 species fall within 100-250 Km distance
-
-# <100 Km. category
-df<-na.omit(df) # 24 sp. left after we delete NaN values of climate
-table(df$tail) # 12 LT, 12 UT
-
-# 100-250 Km. category
-#df<-na.omit(df) # 30 sp. left after we delete NaN values of climate
-#table(df$tail) # 20 LT, 10 UT
-
-
-
-
-
-
-
-
+nbin<-4
+target_dist_cat<-c(0,250)
+siglevel=75
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)

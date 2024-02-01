@@ -115,10 +115,32 @@ for(spi in 1:nrow(df)){
     dfid$sig95[i]<- 1-nsig95
     
   }
+  
+  myind<-as.matrix(dfid[,c(1,2)])
+  mydist<-distm_good[myind]
+  dfid$dist.KM<-mydist
+  
   saveRDS(dfid,here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
   print(spi)
 }
 #=============================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #=================== Now, sum significant taildep. within 0-250 km distance =======
 df$Lsig75<-NA
