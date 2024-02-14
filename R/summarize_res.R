@@ -25,6 +25,8 @@ summarize_res<-function(chosen_rad,nbin){
                                 "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   df_tasAprtoAugavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_avgAprtoAug_",chosen_rad[1],
                                             "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  df_tasAprtoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_avgAprtoJuly_",chosen_rad[1],
+                                         "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   
   
   df_tasmax<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_",chosen_rad[1],
@@ -52,14 +54,21 @@ summarize_res<-function(chosen_rad,nbin){
   # read tas 5 months avg summary
   df_tasAprtoAugavg<-df_tasAprtoAugavg%>%dplyr::select(AOU,tas5_L=L,tas5_U=U)%>%mutate(fLU_tas5=(tas5_L+tas5_U)/(abs(tas5_U)+tas5_L))
   
+  # read tas 4 months avg summary
+  df_tasAprtoJulyavg<-df_tasAprtoJulyavg%>%dplyr::select(AOU,tas4_L=L,tas4_U=U)%>%mutate(fLU_tas4=(tas4_L+tas4_U)/(abs(tas4_U)+tas4_L))
+  
   # read tas 3 months avg summary
   df_tasMaytoJulyavg<-df_tasMaytoJulyavg%>%dplyr::select(AOU,tas3_L=L,tas3_U=U)%>%mutate(fLU_tas3=(tas3_L+tas3_U)/(abs(tas3_U)+tas3_L))
   
   df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,
             df_tasmax$fLU_tasmax, 
             df_tasAprtoAugavg$fLU_tas5,
+            df_tasAprtoJulyavg$fLU_tas4,
             df_tasMaytoJulyavg$fLU_tas3)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tas_avgAprtoAug","fLU_tas_avgMaytoJuly")
+  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax",
+                  "fLU_tas_avgAprtoAug",
+                  "fLU_tas_avgAprtoJuly",
+                  "fLU_tas_avgMaytoJuly")
   df<-as.data.frame(df)
   
   

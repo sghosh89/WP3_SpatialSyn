@@ -32,7 +32,7 @@ write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_100km_nbin4_tail
 df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
 df<-df%>%dplyr::select(AOU,fab.sig,
-                       ftas.sig,ftas5.sig,ftas3.sig,
+                       ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,
                        ftasmax.sig,ftasmax5.sig,
                        HWI,
                        tail75,newBT)
@@ -90,6 +90,10 @@ call_phylopath_sig75_0_100km<-function(model="tasmax", df){
     model = c(fab.sig~ ftas5.sig+HWI)
   )
   
+  model_tas4<-define_model_set(
+    model = c(fab.sig~ ftas4.sig+HWI)
+  )
+  
   model_tas3<-define_model_set(
     model = c(fab.sig~ ftas3.sig+HWI)
   )
@@ -105,6 +109,10 @@ call_phylopath_sig75_0_100km<-function(model="tasmax", df){
   }else if(model=="tas5"){
     modelsHWI_Tonly<-model_tas5
     myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas5")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="tas4"){
+    modelsHWI_Tonly<-model_tas4
+    myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas4")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
   }else if(model=="tas3"){
     modelsHWI_Tonly<-model_tas3
@@ -127,9 +135,11 @@ call_phylopath_sig75_0_100km<-function(model="tasmax", df){
                                  tree = ct3, 
                                  model = 'lambda')
   
-  (modsum<-summary(modres_HWI_T_only))
+  modsum<-summary(modres_HWI_T_only)
+  print(modsum)
   gp3<-plot(modsum)+theme_classic()
-  (best_model_T <- best(modres_HWI_T_only, boot=1000))
+  best_model_T <- best(modres_HWI_T_only, boot=1000)
+  print(best_model_T)
   gp1<-plot(best_model_T, curvature=0.1, edge_width = 3)
   gp2<-coef_plot(best_model_T)+ggplot2::theme_bw()
   
@@ -153,13 +163,15 @@ call_phylopath_sig75_0_100km<-function(model="tasmax", df){
   #------------- with UT --------------
   sink(here(paste(myreslocUT,"modres_HWI_T_only_summary.txt",sep="/")),
        append=TRUE, split=TRUE)
-  modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfUT, 
-                                 tree = ct3, 
-                                 model = 'lambda')
+  modres_HWI_UT_only<- phylo_path(modelsHWI_Tonly, data = dfUT, 
+                                  tree = ct3, 
+                                  model = 'lambda')
   
-  (modsum<-summary(modres_HWI_T_only))
-  gp3<-plot(modsum)+theme_classic()
-  (best_model_T_UT <- best(modres_HWI_T_only, boot=1000))
+  modsumUT<-summary(modres_HWI_UT_only)
+  print(modsumUT)
+  gp3<-plot(modsumUT)+theme_classic()
+  best_model_T_UT <- best(modres_HWI_UT_only, boot=1000)
+  print(best_model_T_UT)
   gp1<-plot(best_model_T_UT, curvature=0.1, edge_width = 3)
   gp2<-coef_plot(best_model_T_UT)+ggplot2::theme_bw()
   
@@ -171,13 +183,15 @@ call_phylopath_sig75_0_100km<-function(model="tasmax", df){
   #------------- with LT --------------
   sink(here(paste(myreslocLT,"modres_HWI_T_only_summary.txt",sep="/")),
        append=TRUE, split=TRUE)
-  modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = dfLT, 
-                                 tree = ct3, 
-                                 model = 'lambda')
+  modres_HWI_LT_only<- phylo_path(modelsHWI_Tonly, data = dfLT, 
+                                  tree = ct3, 
+                                  model = 'lambda')
   
-  (modsum<-summary(modres_HWI_T_only))
-  gp3<-plot(modsum)+theme_classic()
-  (best_model_T_LT <- best(modres_HWI_T_only, boot=1000))
+  modsumLT<-summary(modres_HWI_LT_only)
+  print(modsumLT)
+  gp3<-plot(modsumLT)+theme_classic()
+  best_model_T_LT <- best(modres_HWI_LT_only, boot=1000)
+  print(best_model_T_LT)
   gp1<-plot(best_model_T_LT, curvature=0.1, edge_width = 3)
   gp2<-coef_plot(best_model_T_LT)+ggplot2::theme_bw()
   
@@ -191,5 +205,6 @@ call_phylopath_sig75_0_100km(model="tasmax", df=df)
 call_phylopath_sig75_0_100km(model="tas", df=df)
 call_phylopath_sig75_0_100km(model="tas5", df=df)
 call_phylopath_sig75_0_100km(model="tas3", df=df)
+call_phylopath_sig75_0_100km(model="tas4", df=df)
 
 

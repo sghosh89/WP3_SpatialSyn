@@ -26,6 +26,7 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas) in req
 #source(here("R/prepare_tasmax_with_MaytoJuly.R"))# avg data for May to July
 source(here("R/prepare_tasmax_with_AprtoAug.R"))# avg data for Apr to Aug
 
+source(here("R/prepare_tas_with_AprtoJuly.R"))# avg data for May to July
 source(here("R/prepare_tas_with_MaytoJuly.R"))# avg data for May to July
 source(here("R/prepare_tas_with_AprtoAug.R"))# avg data for Apr to Aug
 
@@ -50,7 +51,9 @@ source(here("R/get_birdspecies_phylotree.R")) # file to get matched names for al
 source(here("R/function_to_testing_abund.R"))
 source(here("R/function_to_testsig_tas.R"))
 source(here("R/function_to_testsig_tas_avgAprtoAug.R"))
+source(here("R/function_to_testsig_tas_avgAprtoJuly.R"))
 source(here("R/function_to_testsig_tas_avgMaytoJuly.R"))
+
 
 source(here("R/function_to_testsig_tasmax.R"))
 source(here("R/function_to_testsig_tasmax_avgAprtoAug.R"))
