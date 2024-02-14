@@ -20,12 +20,19 @@ summarize_res<-function(chosen_rad,nbin){
                              "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   df_tas<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_",chosen_rad[1],
                               "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  
+  df_tasMaytoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_avgMaytoJuly_",chosen_rad[1],
+                                "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  df_tasAprtoAugavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tas_avgAprtoAug_",chosen_rad[1],
+                                            "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  
+  
   df_tasmax<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_",chosen_rad[1],
                                  "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
   #df_tasmaxMaytoJulyavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgMaytoJuly_",chosen_rad[1],
   #                              "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
-  df_tasmaxAprtoAugavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgAprtoAug_",chosen_rad[1],
-                                             "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
+  #df_tasmaxAprtoAugavg<-read.csv(here(paste("RESULTS/summary_spat_syn_for_tasmax_avgAprtoAug_",chosen_rad[1],
+  #                                           "_",chosen_rad[2],"km_nbin_",nbin,".csv",sep="")))
                                              
   #======================== make combo data ===========================
   # read abundance summary
@@ -42,13 +49,17 @@ summarize_res<-function(chosen_rad,nbin){
   # read tasmax summary
   df_tasmax<-df_tasmax%>%dplyr::select(AOU,tasmax_L=L,tasmax_U=U)%>%mutate(fLU_tasmax=(tasmax_L+tasmax_U)/(abs(tasmax_U)+tasmax_L))
   
-  # read tasmax 5 months avg summary
-  df_tasmaxAprtoAugavg<-df_tasmaxAprtoAugavg%>%dplyr::select(AOU,tasmax5_L=L,tasmax5_U=U)%>%mutate(fLU_tasmax5=(tasmax5_L+tasmax5_U)/(abs(tasmax5_U)+tasmax5_L))
+  # read tas 5 months avg summary
+  df_tasAprtoAugavg<-df_tasAprtoAugavg%>%dplyr::select(AOU,tas5_L=L,tas5_U=U)%>%mutate(fLU_tas5=(tas5_L+tas5_U)/(abs(tas5_U)+tas5_L))
   
+  # read tas 3 months avg summary
+  df_tasMaytoJulyavg<-df_tasMaytoJulyavg%>%dplyr::select(AOU,tas3_L=L,tas3_U=U)%>%mutate(fLU_tas3=(tas3_L+tas3_U)/(abs(tas3_U)+tas3_L))
   
   df<-cbind(df_ab$AOU,df_ab$fLU_ab,df_pr$fLU_pr,df_tas$fLU_tas,
-            df_tasmax$fLU_tasmax, df_tasmaxAprtoAugavg$fLU_tasmax5)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tasmax_avgAprtoAug")
+            df_tasmax$fLU_tasmax, 
+            df_tasAprtoAugavg$fLU_tas5,
+            df_tasMaytoJulyavg$fLU_tas3)
+  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas","fLU_tasmax","fLU_tas_avgAprtoAug","fLU_tas_avgMaytoJuly")
   df<-as.data.frame(df)
   
   
@@ -77,12 +88,13 @@ summarize_res<-function(chosen_rad,nbin){
 
 # input chosen radius 
 chosen_rad<-c(0,250)
-#df2<-summarize_res(chosen_rad=chosen_rad,nbin=2)
 df4<-summarize_res(chosen_rad=chosen_rad,nbin=4)
 
+
+
+
+# run later below code
 #==================== plot across species ==============
-#nbin<-2 # NOTE WITH nbin=2 all are UT dep. and tasmax showed sig relationship with abundance synchrony
-#df<-df2
 
 nbin<-4
 df<-df4

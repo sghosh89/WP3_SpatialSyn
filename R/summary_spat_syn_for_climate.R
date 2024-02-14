@@ -114,12 +114,12 @@ call_summary_spat_syn_for_climate<-function(df, chosen_rad, climvar,nbin){
 df<-read.csv(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_species_w_minimum2sites.csv"))
 chosen_rad<-c(0,250) # within this distance category
 
-#call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr",nbin=2)
-#call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas",nbin=2)
-#call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax",nbin=2)
-
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr",nbin=4)
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas",nbin=4)
+
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgAprtoAug",nbin=4)
+call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgMaytoJuly",nbin=4)
+
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax",nbin=4)
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tasmax_avgAprtoAug",nbin=4)
 

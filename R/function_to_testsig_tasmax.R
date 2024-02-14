@@ -143,39 +143,39 @@ for(spi in 1:nrow(df)){
 
 
 #=================== Now, sum significant taildep. within 0-250 km distance =======
-df$Lsig75<-NA
-df$Usig75<-NA
-df$Lsig95<-NA
-df$Usig95<-NA
-for(i in 1:nrow(df)){
+#df$Lsig75<-NA
+#df$Usig75<-NA
+#df$Lsig95<-NA
+#df$Usig95<-NA
+#for(i in 1:nrow(df)){
   
-  givenAOU<-df$AOU[i]
-  tempo<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+#  givenAOU<-df$AOU[i]
+#  tempo<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tasmax_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
   
-  tempo75<-tempo%>%filter(sig75==1)
+#  tempo75<-tempo%>%filter(sig75==1)
   
-  if(nrow(tempo75)==0){
-    Lsig75<-Usig75<-0
-  }else{
-    Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
-    Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
-  }
+#  if(nrow(tempo75)==0){
+#    Lsig75<-Usig75<-0
+#  }else{
+#    Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
+#    Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
+#  }
   
-  tempo95<-tempo%>%filter(sig95==1)
+# tempo95<-tempo%>%filter(sig95==1)
   
-  if(nrow(tempo95)==0){
-    Lsig95<-Usig95<-0
-  }else{
-    Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
-    Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
-  }
+#  if(nrow(tempo95)==0){
+#    Lsig95<-Usig95<-0
+#  }else{
+#    Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
+#    Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
+#  }
   
-  df$Lsig75[i]<-Lsig75
-  df$Usig75[i]<-Usig75
-  df$Lsig95[i]<-Lsig95
-  df$Usig95[i]<-Usig95
-}
+#  df$Lsig75[i]<-Lsig75
+#  df$Usig75[i]<-Usig75
+#  df$Lsig95[i]<-Lsig95
+#  df$Usig95[i]<-Usig95
+#}
 
-saveRDS(df,here(paste("RESULTS/tasmax_spatsyn_nbin_",nbin,"_corlmcoru_sigres_summary.RDS",sep="")))
+#saveRDS(df,here(paste("RESULTS/tasmax_spatsyn_nbin_",nbin,"_corlmcoru_sigres_summary.RDS",sep="")))
 
 

@@ -2,8 +2,7 @@
 library(here)
 source(here("R/compute_spat_syn.R"))
 #============================================
-# Now call for species' abundance data 
-
+# Now call for detrended climate data 
 
 call_spat_syn_for_climate<-function(climvar){
   
@@ -20,6 +19,10 @@ call_spat_syn_for_climate<-function(climvar){
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tasmax_detrended_data_avgAprtoAug_selectedsitelist.RDS",sep="")))
     }else if(climvar=="tasmax_avgMaytoJuly"){
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tasmax_detrended_data_avgMaytoJuly_selectedsitelist.RDS",sep="")))
+    }else if(climvar=="tas_avgAprtoAug"){
+      d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tas_detrended_data_avgAprtoAug_selectedsitelist.RDS",sep="")))
+    }else if(climvar=="tas_avgMaytoJuly"){
+      d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tas_detrended_data_avgMaytoJuly_selectedsitelist.RDS",sep="")))
     }else{
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/",climvar,"_detrended_data_selectedsitelist.RDS",sep="")))
     }
@@ -35,20 +38,6 @@ call_spat_syn_for_climate<-function(climvar){
     compute_spat_syn(nbin=nbin, 
                      inputresloc=inputresloc, 
                      outputresloc=outputresloc, distm=distm, d_allsite=d_allsite_detrend)
-    #=============================
-    #nbin<-2
-    #outputresloc<-here(paste("RESULTS/AOU_", givenAOU,"/",climvar,"_spatsyn_nbin_",nbin,sep=""))
-    
-    #if(!dir.exists(outputresloc)){
-    #  dir.create(outputresloc)
-    #}
-    #compute_spat_syn(nbin=nbin, 
-    #                 inputresloc=inputresloc, 
-    #                 outputresloc=outputresloc, distm=distm, d_allsite=d_allsite_detrend)
-    
-    
-    print(i)
-    #=============================
   }
   cat("-------done---------\n")
 }
@@ -58,6 +47,12 @@ climvar<-"pr"
 call_spat_syn_for_climate(climvar=climvar)
 
 climvar<-"tas"
+call_spat_syn_for_climate(climvar=climvar)
+
+climvar<-"tas_avgAprtoAug"
+call_spat_syn_for_climate(climvar=climvar)
+
+climvar<-"tas_avgMaytoJuly"
 call_spat_syn_for_climate(climvar=climvar)
 
 climvar<-"tasmax"

@@ -26,6 +26,9 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas) in req
 #source(here("R/prepare_tasmax_with_MaytoJuly.R"))# avg data for May to July
 source(here("R/prepare_tasmax_with_AprtoAug.R"))# avg data for Apr to Aug
 
+source(here("R/prepare_tas_with_MaytoJuly.R"))# avg data for May to July
+source(here("R/prepare_tas_with_AprtoAug.R"))# avg data for Apr to Aug
+
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data (pr, tas, tasmax, tasmin) 
 source(here("R/summary_spat_syn_for_climate.R"))# summarize spat_syn for climate data
 
@@ -45,17 +48,20 @@ source(here("R/get_birdspecies_phylotree.R")) # file to get matched names for al
 # based on 75% CI there are 59 out of 78 sp. showing sig results
 
 source(here("R/function_to_testing_abund.R"))
-source(here("R/function_to_testing_tasmax.R"))
-source(here("R/function_to_testing_tasmax_avgAprtoAug.R"))
-source(here("R/distance_sigtaildep_abund_tasmax.R"))
+source(here("R/function_to_testsig_tas.R"))
+source(here("R/function_to_testsig_tas_avgAprtoAug.R"))
+source(here("R/function_to_testsig_tas_avgMaytoJuly.R"))
 
-source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
-source(here("R/phylopath_sig75.R"))# summarised: 0-250 km.
-# source(here("R/phylopath_sig95.R"))
+source(here("R/function_to_testsig_tasmax.R"))
+source(here("R/function_to_testsig_tasmax_avgAprtoAug.R"))
 
+source(here("R/distance_sigtaildep_abund_clim.R"))
+
+source(here("R/phylopath_sig75_0-250km.R"))
 source(here("R/phylopath_sig75_0-100km.R"))
 source(here("R/phylopath_sig75_100-250km.R"))
 
+source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
 
 source(here("R/get_migratory_status.R"))
 #=======================
