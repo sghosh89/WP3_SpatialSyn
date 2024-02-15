@@ -15,16 +15,14 @@ call_spat_syn_for_climate<-function(climvar){
     
     distm<-readRDS(here(paste(inputresloc,"/distm_sel.RDS",sep="")))
     
-    if(climvar=="tasmax_avgAprtoAug"){
-      d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tasmax_detrended_data_avgAprtoAug_selectedsitelist.RDS",sep="")))
-    }else if(climvar=="tasmax_avgMaytoJuly"){
-      d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tasmax_detrended_data_avgMaytoJuly_selectedsitelist.RDS",sep="")))
-    }else if(climvar=="tas_avgAprtoAug"){
+    if(climvar=="tas_avgAprtoAug"){
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tas_detrended_data_avgAprtoAug_selectedsitelist.RDS",sep="")))
     }else if(climvar=="tas_avgMaytoJuly"){
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tas_detrended_data_avgMaytoJuly_selectedsitelist.RDS",sep="")))
     }else if(climvar=="tas_avgAprtoJuly"){
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/tas_detrended_data_avgAprtoJuly_selectedsitelist.RDS",sep="")))
+    }else if(climvar=="pr_avgAprtoAug"){
+      d_allsite_detrend<-readRDS(here(paste(inputresloc,"/pr_detrended_data_avgAprtoAug_selectedsitelist.RDS",sep="")))
     }else{
       d_allsite_detrend<-readRDS(here(paste(inputresloc,"/",climvar,"_detrended_data_selectedsitelist.RDS",sep="")))
     }
@@ -48,6 +46,9 @@ call_spat_syn_for_climate<-function(climvar){
 climvar<-"pr"
 call_spat_syn_for_climate(climvar=climvar)
 
+climvar<-"pr_avgAprtoAug"
+call_spat_syn_for_climate(climvar=climvar)
+
 climvar<-"tas"
 call_spat_syn_for_climate(climvar=climvar)
 
@@ -60,9 +61,4 @@ call_spat_syn_for_climate(climvar=climvar)
 climvar<-"tas_avgMaytoJuly"
 call_spat_syn_for_climate(climvar=climvar)
 
-climvar<-"tasmax"
-call_spat_syn_for_climate(climvar=climvar)
 
-#climvar<-"tasmax_avgMaytoJuly"
-climvar<-"tasmax_avgAprtoAug"
-call_spat_syn_for_climate(climvar=climvar)

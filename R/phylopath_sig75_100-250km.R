@@ -33,7 +33,7 @@ df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
 df<-df%>%dplyr::select(AOU,fab.sig,
                        ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,
-                       ftasmax.sig,ftasmax5.sig,
+                       fpr.sig,fpr5.sig,
                        HWI,
                        tail75,newBT)
 df$Species<-df$newBT
@@ -75,12 +75,9 @@ g3 # Write the grid.arrange in the file
 dev.off()
 
 #============== model ===========
-call_phylopath_sig75_100_250km<-function(model="tasmax", df){
+call_phylopath_sig75_100_250km<-function(model, df){
   
   #-------------------------------
-  model_tasmax<-define_model_set(
-    model = c(fab.sig~ ftasmax.sig+HWI)
-  )
   
   model_tas<-define_model_set(
     model = c(fab.sig~ ftas.sig+HWI)
@@ -98,11 +95,15 @@ call_phylopath_sig75_100_250km<-function(model="tasmax", df){
     model = c(fab.sig~ ftas3.sig+HWI)
   )
   
-  if(model=="tasmax"){
-    modelsHWI_Tonly<-model_tasmax
-    myresloc<-here("RESULTS/model_phylopath_sig75_100-250km/model_tasmax")
-    if(!dir.exists(myresloc)){dir.create(myresloc)}
-  }else if(model=="tas"){
+  model_pr<-define_model_set(
+    model = c(fab.sig~ fpr.sig+HWI)
+  )
+  
+  model_pr5<-define_model_set(
+    model = c(fab.sig~ fpr5.sig+HWI)
+  )
+  
+  if(model=="tas"){
     modelsHWI_Tonly<-model_tas
     myresloc<-here("RESULTS/model_phylopath_sig75_100-250km/model_tas")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
@@ -117,6 +118,14 @@ call_phylopath_sig75_100_250km<-function(model="tasmax", df){
   }else if(model=="tas3"){
     modelsHWI_Tonly<-model_tas3
     myresloc<-here("RESULTS/model_phylopath_sig75_100-250km/model_tas3")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="pr"){
+    modelsHWI_Tonly<-model_pr
+    myresloc<-here("RESULTS/model_phylopath_sig75_100-250km/model_pr")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="pr5"){
+    modelsHWI_Tonly<-model_pr5
+    myresloc<-here("RESULTS/model_phylopath_sig75_100-250km/model_pr5")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
   }else{
     print("define model")
@@ -201,10 +210,12 @@ call_phylopath_sig75_100_250km<-function(model="tasmax", df){
   sink()
 }
 #=========================
-call_phylopath_sig75_100_250km(model="tasmax", df=df)
+
 call_phylopath_sig75_100_250km(model="tas", df=df)
 call_phylopath_sig75_100_250km(model="tas5", df=df)
 call_phylopath_sig75_100_250km(model="tas3", df=df)
 call_phylopath_sig75_100_250km(model="tas4", df=df)
 
+call_phylopath_sig75_100_250km(model="pr", df=df)
+call_phylopath_sig75_100_250km(model="pr5", df=df)
 

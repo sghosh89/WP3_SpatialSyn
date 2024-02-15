@@ -48,7 +48,8 @@ df2$meanTail.Length<-coalesce(df2$meanTail.Length.x,df2$meanTail.Length.y)
 
 # data with 8 traits from AvoNet
 mydftrait<-df2%>%dplyr::select(AOU, English_Common_Name, ScientificName, 
-                               fLU_ab,fLU_pr, fLU_tas, fLU_tasmax,
+                               fLU_ab,fLU_pr, fLU_tas, 
+                               fLU_pr_avgAprtoAug,
                                fLU_tas_avgAprtoAug,fLU_tas_avgAprtoJuly,fLU_tas_avgMaytoJuly,
                                Diet.5Cat, 
                                IUCN_status, tail, PassNonPass,
@@ -83,3 +84,4 @@ mydftrait_w_mass<-left_join(mydftrait,dfm_birds2,by=c("ScientificName"="Scientif
 
 # save file
 write.csv(mydftrait_w_mass,here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"),row.names=F)
+
