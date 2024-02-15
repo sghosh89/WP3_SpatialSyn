@@ -11,9 +11,6 @@ source(here("R/spat_syn_vs_distance_plot.R")) # maybe put in suppmat, until 250K
 source(here("R/summary_spat_syn_for_abund.R")) # summarize birds' abundance spat syn result (373 sp within 0-250 km distance with more than 2 sites)
 source(here("R/diet_cat.R")) # get diet and foraging info for each bird species
 
-#source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group between 0-250 Km between sites distance, total 263 sp. there 
-# later visualize with significant tail dep result only
-
 # conceptual figure: AOU_5110
 #------------ climate data extraction ------
 source(here("R/download_rawdata_CHELSA.R")) # need a lot of space in your desktop
@@ -49,7 +46,7 @@ source(here("R/get_birdspecies_phylotree.R")) # file to get matched names for al
 # Now consider sp. which shows significant tail-dep spatial synchrony
 # based on 75% CI there are 59 out of 78 sp. showing sig results
 
-source(here("R/function_to_testing_abund.R"))
+source(here("R/function_to_testsig_abund.R"))
 source(here("R/function_to_testsig_tas.R"))
 
 source(here("R/function_to_testsig_pr.R"))
@@ -62,6 +59,9 @@ source(here("R/function_to_testsig_tas_avgMaytoJuly.R"))
 
 source(here("R/distance_sigtaildep_abund_clim.R"))
 
+source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group between 0-250 Km between sites distance, total 263 sp. there 
+# later visualize with significant tail dep result only
+
 source(here("R/phylopath_sig75_0-250km.R"))
 source(here("R/phylopath_sig75_0-100km.R"))
 source(here("R/phylopath_sig75_100-250km.R"))
@@ -70,6 +70,7 @@ source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
 
 source(here("R/get_migratory_status.R"))
 source(here("R/plot_regression.R"))
+source(here("R/plot_td_for_various_months.R"))
 #=======================
 
 

@@ -3,7 +3,16 @@ library(tidyverse)
 library(gridExtra)
 library(here)
 
-visualize_spat_syn<-function(plotonly="LT",df1,df2){
+visualize_spat_syn<-function(plotonly="LT", target_dist_cat, nbin){
+  
+  df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
+                          "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
+                          target_dist_cat[2],"Km.RDS",sep="")))
+  df1<-df1%>%filter(Lsig75ab!=0 | Usig75ab!=0)
+  df1<-df1%>%dplyr::select(AOU,Lsig75ab, Usig75ab)
+  
+  df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
+  
   
   # select few variables
   df2<-df2%>%dplyr::select(AOU, ScientificName, totsites, ngoodsites,
@@ -11,18 +20,10 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
                     PassNonPass, Diet.5Cat, Diet.Certainty, Strat.7Cat, ForStrat.SpecLevel,
                     nAbsentSitesAllyr, Nocturnal, IUCN_status)
   
-  df<-left_join(df2,df1,by="AOU")# This is the dataframe we need to visualize
+  df<-left_join(df1,df2,by="AOU")# This is the dataframe we need to visualize
   
-  df<-df%>%filter(nint!=nind)# exluding sp. where all interactions are indep.
-  
-  df$fL<-(df$nL/(df$nint))*100
-  df$fU<-(df$nU/(df$nint))*100
-  df$fLval<-(df$L/(df$L + abs(df$U)))*100
-  df$fUval<-(abs(df$U)/(df$L + abs(df$U)))*100
-  
-  id<-which(is.na(df$fLval))
-  df$fLval[id]<-0 # replacing NaN # NaN happens when all are either indep, or neg corr.
-  df$fUval[id]<-0 # replacing NaN
+  df$fLval<-(df$Lsig75ab/(df$Lsig75ab + abs(df$Usig75ab)))*100
+  df$fUval<-(abs(df$Usig75ab)/(df$Lsig75ab + abs(df$Usig75ab)))*100
   
   class(df$fLval)
   #plot(df$fL, df$fLval)
@@ -32,12 +33,18 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
   df$LandU<-df$fLval-df$fUval
   
   if(plotonly=="LT"){
-    df<-df%>%filter(LandU>0)# only for positive tail dep. (lower tail) synchrony
+    df<-df%>%filter(fLval>fUval)# only for positive tail dep. (lower tail) synchrony
   }
   
   if(plotonly=="UT"){
-    df<-df%>%filter(LandU<0)# only for positive tail dep. (lower tail) synchrony
+    df<-df%>%filter(fLval<fUval)# only for positive tail dep. (lower tail) synchrony
   }
+  
+  if(plotonly=="Nogr"){
+    df<-df
+  }
+  
+  
   print(nrow(df))
   # arrange data in required format for stacked circular barplot
   dfsmall<-df%>%select(individual=AOU, group=Diet.5Cat, fLval, fUval)#%>%
@@ -142,27 +149,27 @@ visualize_spat_syn<-function(plotonly="LT",df1,df2){
 # Now visualization
 
 # ============ 0-250km ===========
+
+nbin<-4
+target_dist_cat<-c(0,250)
+
 plotonly<-"LT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km_nbin_4.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gLT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+gLT<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
 
 plotonly<-"UT"
-df1<-read.csv(here("RESULTS/summary_spat_syn_for_abund_0_250km_nbin_4.csv"))
-df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
-gUT<-visualize_spat_syn(df1=df1,df2=df2,plotonly=plotonly)
+gUT<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
+
+plotonly<-"Nogr"
+gall<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
+
 
 # later in your plot you could add info about IUCN status in inkscape
 
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4.pdf"), width = 14, height = 7) # Open a new pdf file
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_groupwise.pdf"), width = 14, height = 7) # Open a new pdf file
 grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
 dev.off() 
 
-
-#df263<-rbind(dfl,dfu)
-#df263<-df263[,c(1,2)]
-#write.csv(df263,here("RESULTS/species263_127LT_136UT.csv"),row.names = F)
-#df<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_with_optimal_biovar.csv"))
-#id254<-which(df263$AOU%in%df$AOU)
-#df263$AOU[setdiff(1:263,id254)] # not included in phylotree
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup.pdf"), width = 10, height = 7) # Open a new pdf file
+gall # Write the grid.arrange in the file
+dev.off() 
 
