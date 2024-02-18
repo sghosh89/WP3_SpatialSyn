@@ -32,9 +32,18 @@ write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_250km_nbin4_tail
 # remove the duplicated entries from df$new_BT column
 df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
-df<-df%>%dplyr::select(AOU,fab.sig,
-                       ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,
-                       fpr.sig,fpr5.sig,
+df<-df%>%dplyr::select(AOU,
+                       abs.tot.td.ab.sig,
+                       tot.td.ab.sig,
+                       fab.sig,
+                       ftas.sig,ftas5.sig,
+                       abs.tot.td.tas5.sig,
+                       tot.td.tas5.sig,
+                       ftas4.sig,ftas3.sig,
+                       fpr.sig,
+                       fpr5.sig,
+                       abs.tot.td.pr5.sig,
+                       tot.td.pr5.sig,
                        HWI,
                        tail75,newBT)
 df$Species<-df$newBT
@@ -81,6 +90,22 @@ dev.off()
 call_phylopath_sig75_0_250km<-function(model, df){
   
   #-------------------------------
+  model_tas5_abs_td<-define_model_set(
+    model = c(abs.tot.td.ab.sig~ abs.tot.td.tas5.sig+HWI)
+  )
+  
+  model_pr5_abs_td<-define_model_set(
+    model = c(abs.tot.td.ab.sig~ abs.tot.td.pr5.sig+HWI)
+  )
+  
+  model_tas5_tot_td<-define_model_set(
+    model = c(tot.td.ab.sig~ tot.td.tas5.sig+HWI)
+  )
+  
+  model_pr5_tot_td<-define_model_set(
+    model = c(tot.td.ab.sig~ tot.td.pr5.sig+HWI)
+  )
+  
   model_tas<-define_model_set(
     model = c(fab.sig~ ftas.sig+HWI)
   )
@@ -128,6 +153,22 @@ call_phylopath_sig75_0_250km<-function(model, df){
   }else if(model=="pr5"){
     modelsHWI_Tonly<-model_pr5
     myresloc<-here("RESULTS/model_phylopath_sig75_0-250km/model_pr5")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="tas5_abs_td"){
+    modelsHWI_Tonly<-model_tas5_abs_td
+    myresloc<-here("RESULTS/model_phylopath_sig75_0-250km/model_tas5_abs_td")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="pr5_abs_td"){
+    modelsHWI_Tonly<-model_pr5_abs_td
+    myresloc<-here("RESULTS/model_phylopath_sig75_0-250km/model_pr5_abs_td")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="tas5_tot_td"){
+    modelsHWI_Tonly<-model_tas5_tot_td
+    myresloc<-here("RESULTS/model_phylopath_sig75_0-250km/model_tas5_tot_td")
+    if(!dir.exists(myresloc)){dir.create(myresloc)}
+  }else if(model=="pr5_tot_td"){
+    modelsHWI_Tonly<-model_pr5_tot_td
+    myresloc<-here("RESULTS/model_phylopath_sig75_0-250km/model_pr5_tot_td")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
   }else{
     print("define model")
@@ -223,3 +264,8 @@ call_phylopath_sig75_0_250km(model="tas4", df=df)
 call_phylopath_sig75_0_250km(model="pr", df=df)
 call_phylopath_sig75_0_250km(model="pr5", df=df)
 
+call_phylopath_sig75_0_250km(model="tas5_abs_td", df=df)
+call_phylopath_sig75_0_250km(model="tas5_tot_td", df=df)
+
+call_phylopath_sig75_0_250km(model="pr5_abs_td", df=df)
+call_phylopath_sig75_0_250km(model="pr5_tot_td", df=df)

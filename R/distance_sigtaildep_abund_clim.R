@@ -1,5 +1,6 @@
 # write a function to get summarized value of sig tail dep (75%CI) within a given distance boundary
-
+library(here)
+library(tidyverse)
 
 distance_sigtaildep_abund_clim<-function(df,nbin=4,target_dist_cat){
   
@@ -309,36 +310,57 @@ get_summary_csv<-function(nbin=4,target_dist_cat,siglevel=75){
     dff$tail75<-ifelse(tail75<0,"UT","LT")
     dff$tail75<-as.factor(dff$tail75)
     
-    dff<-dff%>%dplyr::select(AOU,tail75,fab.sig,ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,fpr.sig,fpr5.sig)
+    dff$abs.tot.td.ab.sig<-dff$Lsig75ab+abs(dff$Usig75ab)
+    dff$abs.tot.td.tas5.sig<-dff$Lsig75tas5+abs(dff$Usig75tas5)
+    dff$abs.tot.td.pr5.sig<-dff$Lsig75pr5+abs(dff$Usig75pr5)
+    
+    dff$tot.td.ab.sig<-dff$Lsig75ab+dff$Usig75ab
+    dff$tot.td.tas5.sig<-dff$Lsig75tas5+dff$Usig75tas5
+    dff$tot.td.pr5.sig<-dff$Lsig75pr5+dff$Usig75pr5
+    
+    dff<-dff%>%dplyr::select(AOU,tail75,
+                             abs.tot.td.ab.sig,
+                             tot.td.ab.sig,
+                             fab.sig,
+                             ftas.sig,
+                             ftas5.sig,
+                             abs.tot.td.tas5.sig,
+                             tot.td.tas5.sig,
+                             ftas4.sig,
+                             ftas3.sig,
+                             fpr.sig,
+                             fpr5.sig,
+                             abs.tot.td.pr5.sig,
+                             tot.td.pr5.sig,)
     write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_summary_",
                              target_dist_cat[1],"-",
                              target_dist_cat[2],"Km.csv",sep="")), row.names = F)
   }
   
-  if(siglevel==95){
-    dff<-dff%>%filter(Lsig95ab!=0 | Usig95ab!=0)
+  #if(siglevel==95){
+   # dff<-dff%>%filter(Lsig95ab!=0 | Usig95ab!=0)
     
-    dff$fab.sig<-(dff$Lsig95ab+dff$Usig95ab)/(dff$Lsig95ab+abs(dff$Usig95ab))
-    dff$ftas.sig<-(dff$Lsig95tas+dff$Usig95tas)/(dff$Lsig95tas+abs(dff$Usig95tas))
+    #dff$fab.sig<-(dff$Lsig95ab+dff$Usig95ab)/(dff$Lsig95ab+abs(dff$Usig95ab))
+    #dff$ftas.sig<-(dff$Lsig95tas+dff$Usig95tas)/(dff$Lsig95tas+abs(dff$Usig95tas))
     
-    dff$ftas5.sig<-(dff$Lsig95tas5+dff$Usig95tas5)/(dff$Lsig95tas5+abs(dff$Usig95tas5))
-    dff$ftas4.sig<-(dff$Lsig95tas4+dff$Usig95tas4)/(dff$Lsig95tas4+abs(dff$Usig95tas4))
-    dff$ftas3.sig<-(dff$Lsig95tas3+dff$Usig95tas3)/(dff$Lsig95tas3+abs(dff$Usig95tas3))
+    #dff$ftas5.sig<-(dff$Lsig95tas5+dff$Usig95tas5)/(dff$Lsig95tas5+abs(dff$Usig95tas5))
+    #dff$ftas4.sig<-(dff$Lsig95tas4+dff$Usig95tas4)/(dff$Lsig95tas4+abs(dff$Usig95tas4))
+    #dff$ftas3.sig<-(dff$Lsig95tas3+dff$Usig95tas3)/(dff$Lsig95tas3+abs(dff$Usig95tas3))
     
-    dff$fpr.sig<-(dff$Lsig95pr+dff$Usig95pr)/(dff$Lsig95pr+abs(dff$Usig95pr))
-    dff$fpr5.sig<-(dff$Lsig95pr5+dff$Usig95pr5)/(dff$Lsig95pr5+abs(dff$Usig95pr5))
+    #dff$fpr.sig<-(dff$Lsig95pr+dff$Usig95pr)/(dff$Lsig95pr+abs(dff$Usig95pr))
+    #dff$fpr5.sig<-(dff$Lsig95pr5+dff$Usig95pr5)/(dff$Lsig95pr5+abs(dff$Usig95pr5))
     
-    tail95<-(dff$Lsig95ab+dff$Usig95ab)
-    dff$tail95<-ifelse(tail95<0,"UT","LT")
-    dff$tail95<-as.factor(dff$tail95)
+    #tail95<-(dff$Lsig95ab+dff$Usig95ab)
+    #dff$tail95<-ifelse(tail95<0,"UT","LT")
+    #dff$tail95<-as.factor(dff$tail95)
     
-    dff<-dff%>%dplyr::select(AOU,tail95,fab.sig,ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,fpr.sig,fpr5.sig)
-    write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
-                             target_dist_cat[1],"-",
-                             target_dist_cat[2],"Km.csv",sep="")), row.names = F)
-  }
+    #dff<-dff%>%dplyr::select(AOU,tail95,fab.sig,ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,fpr.sig,fpr5.sig)
+    #write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
+                            # target_dist_cat[1],"-",
+                            # target_dist_cat[2],"Km.csv",sep="")), row.names = F)
+  #}
   
-}
+} 
 
 # call the above function
 nbin<-4
