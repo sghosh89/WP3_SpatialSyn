@@ -119,10 +119,10 @@ call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="pr_avgA
 
 
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas",nbin=4)
-
 call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgAprtoAug",nbin=4)
-call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgAprtoJuly",nbin=4)
-call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgMaytoJuly",nbin=4)
+
+#call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgAprtoJuly",nbin=4)
+#call_summary_spat_syn_for_climate(df=df, chosen_rad=chosen_rad, climvar="tas_avgMaytoJuly",nbin=4)
 
 
 

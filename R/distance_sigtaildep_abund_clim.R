@@ -33,15 +33,6 @@ distance_sigtaildep_abund_clim<-function(df,nbin=4,target_dist_cat){
   df$Lsig95pr5<-NA
   df$Usig95pr5<-NA
   
-  df$Lsig75tas4<-NA
-  df$Usig75tas4<-NA
-  df$Lsig95tas4<-NA
-  df$Usig95tas4<-NA
-  
-  df$Lsig75tas3<-NA
-  df$Usig75tas3<-NA
-  df$Lsig95tas3<-NA
-  df$Usig95tas3<-NA
   
   #target_dist_cat<-c(0,100)
   
@@ -59,10 +50,10 @@ distance_sigtaildep_abund_clim<-function(df,nbin=4,target_dist_cat){
     tempotas5<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tas_avgAprtoAug_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
     
     #tas_avgAprtoJuly
-    tempotas4<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tas_avgAprtoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+    #tempotas4<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tas_avgAprtoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
     
     #tas_avgMaytoJuly
-    tempotas3<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tas_avgMaytoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
+    #tempotas3<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/tas_avgMaytoJuly_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
     
     #pr
     tempopr<-readRDS(here(paste("RESULTS/AOU_", givenAOU,"/pr_spatsyn_nbin_",nbin,"/corlmcoru_sigres.RDS",sep="")))
@@ -150,59 +141,6 @@ distance_sigtaildep_abund_clim<-function(df,nbin=4,target_dist_cat){
     df$Usig75tas5[i]<-Usig75
     df$Lsig95tas5[i]<-Lsig95
     df$Usig95tas5[i]<-Usig95
-    
-    #============= now for tas4 ==================
-    
-    tempotas4<-tempotas4%>%filter(dist.KM>target_dist_cat[1] & dist.KM<=target_dist_cat[2])
-    
-    tempo75<-tempotas4%>%filter(sig75==1)
-    
-    if(nrow(tempo75)==0){
-      Lsig75<-Usig75<-0
-    }else{
-      Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
-      Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
-    }
-    
-    tempo95<-tempotas4%>%filter(sig95==1)
-    
-    if(nrow(tempo95)==0){
-      Lsig95<-Usig95<-0
-    }else{
-      Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
-      Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
-    }
-    
-    df$Lsig75tas4[i]<-Lsig75
-    df$Usig75tas4[i]<-Usig75
-    df$Lsig95tas4[i]<-Lsig95
-    df$Usig95tas4[i]<-Usig95
-    #============= now for tas3 ==================
-    
-    tempotas3<-tempotas3%>%filter(dist.KM>target_dist_cat[1] & dist.KM<=target_dist_cat[2])
-    
-    tempo75<-tempotas3%>%filter(sig75==1)
-    
-    if(nrow(tempo75)==0){
-      Lsig75<-Usig75<-0
-    }else{
-      Lsig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual>0)])
-      Usig75<-sum(tempo75$corlmcoru_actual[which(tempo75$corlmcoru_actual<0)])
-    }
-    
-    tempo95<-tempotas3%>%filter(sig95==1)
-    
-    if(nrow(tempo95)==0){
-      Lsig95<-Usig95<-0
-    }else{
-      Lsig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual>0)])
-      Usig95<-sum(tempo95$corlmcoru_actual[which(tempo95$corlmcoru_actual<0)])
-    }
-    
-    df$Lsig75tas3[i]<-Lsig75
-    df$Usig75tas3[i]<-Usig75
-    df$Lsig95tas3[i]<-Lsig95
-    df$Usig95tas3[i]<-Usig95
     
     #============= now for pr ==================
     
@@ -299,8 +237,8 @@ get_summary_csv<-function(nbin=4,target_dist_cat,siglevel=75){
     dff$ftas.sig<-(dff$Lsig75tas+dff$Usig75tas)/(dff$Lsig75tas+abs(dff$Usig75tas))
     
     dff$ftas5.sig<-(dff$Lsig75tas5+dff$Usig75tas5)/(dff$Lsig75tas5+abs(dff$Usig75tas5))
-    dff$ftas4.sig<-(dff$Lsig75tas4+dff$Usig75tas4)/(dff$Lsig75tas4+abs(dff$Usig75tas4))
-    dff$ftas3.sig<-(dff$Lsig75tas3+dff$Usig75tas3)/(dff$Lsig75tas3+abs(dff$Usig75tas3))
+    #dff$ftas4.sig<-(dff$Lsig75tas4+dff$Usig75tas4)/(dff$Lsig75tas4+abs(dff$Usig75tas4))
+    #dff$ftas3.sig<-(dff$Lsig75tas3+dff$Usig75tas3)/(dff$Lsig75tas3+abs(dff$Usig75tas3))
     
     dff$fpr.sig<-(dff$Lsig75pr+dff$Usig75pr)/(dff$Lsig75pr+abs(dff$Usig75pr))
     dff$fpr5.sig<-(dff$Lsig75pr5+dff$Usig75pr5)/(dff$Lsig75pr5+abs(dff$Usig75pr5))
@@ -326,39 +264,61 @@ get_summary_csv<-function(nbin=4,target_dist_cat,siglevel=75){
                              ftas5.sig,
                              abs.tot.td.tas5.sig,
                              tot.td.tas5.sig,
-                             ftas4.sig,
-                             ftas3.sig,
+                             #ftas4.sig,
+                             #ftas3.sig,
                              fpr.sig,
                              fpr5.sig,
                              abs.tot.td.pr5.sig,
-                             tot.td.pr5.sig,)
+                             tot.td.pr5.sig)
     write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_summary_",
                              target_dist_cat[1],"-",
                              target_dist_cat[2],"Km.csv",sep="")), row.names = F)
   }
   
-  #if(siglevel==95){
-   # dff<-dff%>%filter(Lsig95ab!=0 | Usig95ab!=0)
+  if(siglevel==95){
+    dff<-dff%>%filter(Lsig95ab!=0 | Usig95ab!=0)
     
-    #dff$fab.sig<-(dff$Lsig95ab+dff$Usig95ab)/(dff$Lsig95ab+abs(dff$Usig95ab))
-    #dff$ftas.sig<-(dff$Lsig95tas+dff$Usig95tas)/(dff$Lsig95tas+abs(dff$Usig95tas))
+    dff$fab.sig<-(dff$Lsig95ab+dff$Usig95ab)/(dff$Lsig95ab+abs(dff$Usig95ab))
+    dff$ftas.sig<-(dff$Lsig95tas+dff$Usig95tas)/(dff$Lsig95tas+abs(dff$Usig95tas))
     
-    #dff$ftas5.sig<-(dff$Lsig95tas5+dff$Usig95tas5)/(dff$Lsig95tas5+abs(dff$Usig95tas5))
+    dff$ftas5.sig<-(dff$Lsig95tas5+dff$Usig95tas5)/(dff$Lsig95tas5+abs(dff$Usig95tas5))
     #dff$ftas4.sig<-(dff$Lsig95tas4+dff$Usig95tas4)/(dff$Lsig95tas4+abs(dff$Usig95tas4))
     #dff$ftas3.sig<-(dff$Lsig95tas3+dff$Usig95tas3)/(dff$Lsig95tas3+abs(dff$Usig95tas3))
     
-    #dff$fpr.sig<-(dff$Lsig95pr+dff$Usig95pr)/(dff$Lsig95pr+abs(dff$Usig95pr))
-    #dff$fpr5.sig<-(dff$Lsig95pr5+dff$Usig95pr5)/(dff$Lsig95pr5+abs(dff$Usig95pr5))
+    dff$fpr.sig<-(dff$Lsig95pr+dff$Usig95pr)/(dff$Lsig95pr+abs(dff$Usig95pr))
+    dff$fpr5.sig<-(dff$Lsig95pr5+dff$Usig95pr5)/(dff$Lsig95pr5+abs(dff$Usig95pr5))
     
-    #tail95<-(dff$Lsig95ab+dff$Usig95ab)
-    #dff$tail95<-ifelse(tail95<0,"UT","LT")
-    #dff$tail95<-as.factor(dff$tail95)
+    tail95<-(dff$Lsig95ab+dff$Usig95ab)
+    dff$tail95<-ifelse(tail95<0,"UT","LT")
+    dff$tail95<-as.factor(dff$tail95)
     
-    #dff<-dff%>%dplyr::select(AOU,tail95,fab.sig,ftas.sig,ftas5.sig,ftas4.sig,ftas3.sig,fpr.sig,fpr5.sig)
-    #write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
-                            # target_dist_cat[1],"-",
-                            # target_dist_cat[2],"Km.csv",sep="")), row.names = F)
-  #}
+    dff$abs.tot.td.ab.sig<-dff$Lsig95ab+abs(dff$Usig95ab)
+    dff$abs.tot.td.tas5.sig<-dff$Lsig95tas5+abs(dff$Usig95tas5)
+    dff$abs.tot.td.pr5.sig<-dff$Lsig95pr5+abs(dff$Usig95pr5)
+    
+    dff$tot.td.ab.sig<-dff$Lsig95ab+dff$Usig95ab
+    dff$tot.td.tas5.sig<-dff$Lsig95tas5+dff$Usig95tas5
+    dff$tot.td.pr5.sig<-dff$Lsig95pr5+dff$Usig95pr5
+    
+    dff<-dff%>%dplyr::select(AOU,tail95,
+                             abs.tot.td.ab.sig,
+                             tot.td.ab.sig,
+                             fab.sig,
+                             ftas.sig,
+                             ftas5.sig,
+                             abs.tot.td.tas5.sig,
+                             tot.td.tas5.sig,
+                             #ftas4.sig,
+                             #ftas3.sig,
+                             fpr.sig,
+                             fpr5.sig,
+                             abs.tot.td.pr5.sig,
+                             tot.td.pr5.sig)
+    
+    write.csv(dff,here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
+                             target_dist_cat[1],"-",
+                             target_dist_cat[2],"Km.csv",sep="")), row.names = F)
+  }
   
 } 
 
@@ -377,3 +337,6 @@ nbin<-4
 target_dist_cat<-c(0,250)
 siglevel=75
 get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
+
+
+

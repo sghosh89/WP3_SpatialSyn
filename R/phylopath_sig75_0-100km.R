@@ -33,16 +33,13 @@ df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
 df<-df%>%dplyr::select(AOU,
                        abs.tot.td.ab.sig,
-                       tot.td.ab.sig,
                        fab.sig,
-                       ftas.sig,ftas5.sig,
+                       ftas.sig,
+                       ftas5.sig,
                        abs.tot.td.tas5.sig,
-                       tot.td.tas5.sig,
-                       ftas4.sig,ftas3.sig,
                        fpr.sig,
                        fpr5.sig,
                        abs.tot.td.pr5.sig,
-                       tot.td.pr5.sig,
                        HWI,
                        tail75,newBT)
 df$Species<-df$newBT
@@ -58,12 +55,6 @@ dd<-left_join(dd,df,by=c("label"="newBT"))
 g2<-ggtree(ct3,layout="circular") %<+% dd +
   geom_tippoint(pch=19, cex=3,aes(col=fab.sig))+
   scale_color_gradientn(colours=rev(brewer.pal(n=5,"RdBu")))+
-  #scale_color_gradient2(low = "blue",
-  #                    midpoint = 0,
-  #                    mid = "white",
-  #                    high = "red",
-  #                    space="Lab", name="Spatial \nsynchrony in \nabundance")+
-  #geom_text(aes(label=AOU), hjust=1, vjust=-0.4, size=3)+ 
   theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
                                                hjust=-0.2)
 g2
@@ -95,28 +86,12 @@ call_phylopath_sig75_0_100km<-function(model, df){
     model = c(abs.tot.td.ab.sig~ abs.tot.td.pr5.sig+HWI)
   )
   
-  model_tas5_tot_td<-define_model_set(
-    model = c(tot.td.ab.sig~ tot.td.tas5.sig+HWI)
-  )
-  
-  model_pr5_tot_td<-define_model_set(
-    model = c(tot.td.ab.sig~ tot.td.pr5.sig+HWI)
-  )
-  
   model_tas<-define_model_set(
     model = c(fab.sig~ ftas.sig+HWI)
   )
   
   model_tas5<-define_model_set(
     model = c(fab.sig~ ftas5.sig+HWI)
-  )
-  
-  model_tas4<-define_model_set(
-    model = c(fab.sig~ ftas4.sig+HWI)
-  )
-  
-  model_tas3<-define_model_set(
-    model = c(fab.sig~ ftas3.sig+HWI)
   )
   
   model_pr<-define_model_set(
@@ -135,14 +110,6 @@ call_phylopath_sig75_0_100km<-function(model, df){
     modelsHWI_Tonly<-model_tas5
     myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas5")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
-  }else if(model=="tas4"){
-    modelsHWI_Tonly<-model_tas4
-    myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas4")
-    if(!dir.exists(myresloc)){dir.create(myresloc)}
-  }else if(model=="tas3"){
-    modelsHWI_Tonly<-model_tas3
-    myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas3")
-    if(!dir.exists(myresloc)){dir.create(myresloc)}
   }else if(model=="pr"){
     modelsHWI_Tonly<-model_pr
     myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_pr")
@@ -158,14 +125,6 @@ call_phylopath_sig75_0_100km<-function(model, df){
   }else if(model=="pr5_abs_td"){
     modelsHWI_Tonly<-model_pr5_abs_td
     myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_pr5_abs_td")
-    if(!dir.exists(myresloc)){dir.create(myresloc)}
-  }else if(model=="tas5_tot_td"){
-    modelsHWI_Tonly<-model_tas5_tot_td
-    myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_tas5_tot_td")
-    if(!dir.exists(myresloc)){dir.create(myresloc)}
-  }else if(model=="pr5_tot_td"){
-    modelsHWI_Tonly<-model_pr5_tot_td
-    myresloc<-here("RESULTS/model_phylopath_sig75_0-100km/model_pr5_tot_td")
     if(!dir.exists(myresloc)){dir.create(myresloc)}
   }else{
     print("define model")
@@ -197,70 +156,15 @@ call_phylopath_sig75_0_100km<-function(model, df){
   pdf(here(paste(myresloc,"nogroup_model_est.pdf",sep="/")), height=4, width=10)
   grid.arrange(gp1, gp2, ncol=2)
   dev.off()
-  
-  #------------- with groups --------------
-  
-  dfUT<-df%>%filter(tail75=="UT")# 32sp
-  dfLT<-df%>%filter(tail75=="LT")# 27 sp
-  
-  myreslocUT<-here(paste(myresloc,"UT",sep="/"))
-  myreslocLT<-here(paste(myresloc,"LT",sep="/"))
-  
-  if(!dir.exists(myreslocUT)){dir.create(myreslocUT)}
-  if(!dir.exists(myreslocLT)){dir.create(myreslocLT)}
-  
-  #------------- with UT --------------
-  sink(here(paste(myreslocUT,"modres_HWI_T_only_summary.txt",sep="/")),
-       append=TRUE, split=TRUE)
-  modres_HWI_UT_only<- phylo_path(modelsHWI_Tonly, data = dfUT, 
-                                  tree = ct3, 
-                                  model = 'lambda')
-  
-  modsumUT<-summary(modres_HWI_UT_only)
-  print(modsumUT)
-  gp3<-plot(modsumUT)+theme_classic()
-  best_model_T_UT <- best(modres_HWI_UT_only, boot=1000)
-  print(best_model_T_UT)
-  gp1<-plot(best_model_T_UT, curvature=0.1, edge_width = 3)
-  gp2<-coef_plot(best_model_T_UT)+ggplot2::theme_bw()
-  
-  pdf(here(paste(myreslocUT,"model_est.pdf",sep="/")), height=4, width=10)
-  grid.arrange(gp1, gp2, ncol=2)
-  dev.off()
-  
-  sink()
-  #------------- with LT --------------
-  sink(here(paste(myreslocLT,"modres_HWI_T_only_summary.txt",sep="/")),
-       append=TRUE, split=TRUE)
-  modres_HWI_LT_only<- phylo_path(modelsHWI_Tonly, data = dfLT, 
-                                  tree = ct3, 
-                                  model = 'lambda')
-  
-  modsumLT<-summary(modres_HWI_LT_only)
-  print(modsumLT)
-  gp3<-plot(modsumLT)+theme_classic()
-  best_model_T_LT <- best(modres_HWI_LT_only, boot=1000)
-  print(best_model_T_LT)
-  gp1<-plot(best_model_T_LT, curvature=0.1, edge_width = 3)
-  gp2<-coef_plot(best_model_T_LT)+ggplot2::theme_bw()
-  
-  pdf(here(paste(myreslocLT,"model_est.pdf",sep="/")), height=4, width=10)
-  grid.arrange(gp1, gp2, ncol=2)
-  dev.off()
-  sink()
+ 
 }
 #=========================
 call_phylopath_sig75_0_100km(model="tas5", df=df)
-
-call_phylopath_sig75_0_100km(model="tas", df=df)
-call_phylopath_sig75_0_100km(model="tas3", df=df)
-call_phylopath_sig75_0_100km(model="tas4", df=df)
-
-call_phylopath_sig75_0_100km(model="pr", df=df)
 call_phylopath_sig75_0_100km(model="pr5", df=df)
 
-call_phylopath_sig75_0_100km(model="tas5_abs_td", df=df)
-call_phylopath_sig75_0_100km(model="tas5_tot_td", df=df)
+call_phylopath_sig75_0_100km(model="tas", df=df)
+call_phylopath_sig75_0_100km(model="pr", df=df)
 
+call_phylopath_sig75_0_100km(model="tas5_abs_td", df=df)
 call_phylopath_sig75_0_100km(model="pr5_abs_td", df=df)
-call_phylopath_sig75_0_100km(model="pr5_tot_td", df=df)
+

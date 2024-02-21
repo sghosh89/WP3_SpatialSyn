@@ -3,7 +3,7 @@ library(tidyverse)
 library(gridExtra)
 library(here)
 
-visualize_spat_syn<-function(plotonly="LT", target_dist_cat, nbin){
+visualize_spat_syn<-function(plotonly, target_dist_cat, nbin){
   
   df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
                           "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
@@ -25,12 +25,8 @@ visualize_spat_syn<-function(plotonly="LT", target_dist_cat, nbin){
   df$fLval<-(df$Lsig75ab/(df$Lsig75ab + abs(df$Usig75ab)))*100
   df$fUval<-(abs(df$Usig75ab)/(df$Lsig75ab + abs(df$Usig75ab)))*100
   
-  class(df$fLval)
-  #plot(df$fL, df$fLval)
-  
   table(df$Diet.5Cat)
   
-  df$LandU<-df$fLval-df$fUval
   
   if(plotonly=="LT"){
     df<-df%>%filter(fLval>fUval)# only for positive tail dep. (lower tail) synchrony
@@ -164,10 +160,6 @@ gall<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nb
 
 
 # later in your plot you could add info about IUCN status in inkscape
-
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_groupwise.pdf"), width = 14, height = 7) # Open a new pdf file
-grid.arrange(gLT, gUT, nrow=1) # Write the grid.arrange in the file
-dev.off() 
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup.pdf"), width = 10, height = 7) # Open a new pdf file
 gall # Write the grid.arrange in the file
