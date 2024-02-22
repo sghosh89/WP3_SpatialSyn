@@ -3,7 +3,7 @@ library(tidyverse)
 library(gridExtra)
 library(here)
 
-visualize_spat_syn<-function(plotonly, target_dist_cat, nbin){
+visualize_spat_syn<-function(target_dist_cat, nbin=4){
   
   df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
                           "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
@@ -27,24 +27,9 @@ visualize_spat_syn<-function(plotonly, target_dist_cat, nbin){
   
   table(df$Diet.5Cat)
   
-  
-  if(plotonly=="LT"){
-    df<-df%>%filter(fLval>fUval)# only for positive tail dep. (lower tail) synchrony
-  }
-  
-  if(plotonly=="UT"){
-    df<-df%>%filter(fLval<fUval)# only for positive tail dep. (lower tail) synchrony
-  }
-  
-  if(plotonly=="Nogr"){
-    df<-df
-  }
-  
-  
   print(nrow(df))
   # arrange data in required format for stacked circular barplot
-  dfsmall<-df%>%select(individual=AOU, group=Diet.5Cat, fLval, fUval)#%>%
-  #              mutate(individual=paste(AOU,IUCN_status,sep=","))%>%select(-AOU,-IUCN_status)
+  dfsmall<-df%>%dplyr::select(individual=AOU, group=Diet.5Cat, fLval, fUval)
   
   dfs2<-dfsmall%>%gather(key="observation", value="value", -c(1,2))
   
@@ -149,14 +134,7 @@ visualize_spat_syn<-function(plotonly, target_dist_cat, nbin){
 nbin<-4
 target_dist_cat<-c(0,250)
 
-plotonly<-"LT"
-gLT<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
-
-plotonly<-"UT"
-gUT<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
-
-plotonly<-"Nogr"
-gall<-visualize_spat_syn(plotonly=plotonly, target_dist_cat= target_dist_cat, nbin=nbin)
+gall<-visualize_spat_syn(target_dist_cat= target_dist_cat, nbin=nbin)
 
 
 # later in your plot you could add info about IUCN status in inkscape
