@@ -17,7 +17,7 @@ xtc_r<-retd(n=np,d=2,rl=1,mn=0,sdev=1) # copula with extreme right tail
 xtc_r<-pnorm(xtc_r)
 xtc_l<-1-xtc_r
 
-N<-50
+N<-40
 time<-1:N
 
 pdf(here("RESULTS/conceptual_fig_cop.pdf"), height=6, width=3)
@@ -27,6 +27,18 @@ op<-par(mfrow=c(3,1),mar=c(1,1,1,1),mgp=c(3,1,0),pty="s")
 cf<-iRho(frankCopula(),0.875)
 f_cop<-BiCopSim(N,family = 5,par=cf)
 
+
+#=========== pearson correlation ===============
+scor_f<-cor.test(f_cop[time,1],f_cop[time,2], method="pearson")
+scor_f$estimate
+
+scor_lt<-cor.test(xtc_l[time,1],xtc_l[time,2], method="pearson")
+scor_lt$estimate
+
+scor_ut<-cor.test(xtc_r[time,1],xtc_r[time,2], method="pearson")
+scor_ut$estimate
+
+#=================================================
 # copula plot
 # symmetric tail
 plot(f_cop[,1],f_cop[,2],col="black",pch=21,

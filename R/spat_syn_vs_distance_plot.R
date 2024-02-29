@@ -47,8 +47,7 @@ for(i in 1:nrow(df)){
 # now plot
 range(dflong$d)
 
-dflong$dc<-cut(dflong$d, breaks=c(0,25,75,150,250,400,700,1000,1500,2500,5000,8000))
-#dflong$dc<-cut(dflong$d, breaks=c(0,250,400,700,1000,1500,2500,5000,8000))
+dflong$dc<-cut(dflong$d, breaks=c(0,25,75,150,250,400,700,1000,1500,2500,5000))
 
 #as.data.frame(table(dflong$dc))
 
@@ -70,26 +69,47 @@ g1<-ggplot(dg, aes(x=dc, y=value, col=type)) +
 #=======================
 
 df2<-dflong%>%dplyr::select(AOU,dc,spear)
-df2s<-df2%>%group_by(dc)%>%summarise(mn.spear=mean(spear),
-                                     sd.spear=sd(spear))%>%ungroup()
 
-g2<-ggplot(df2s, aes(x=dc, y=mn.spear)) + geom_point()+
-  ylim(0.3,0.6)+
-  ylab("Spatial synchrony in abundance\n average across species")+
-  xlab("Between-sites pairwise distance category, Km")+
-  geom_errorbar(aes(ymin=mn.spear-0.5*sd.spear, 
-                    ymax=mn.spear+0.5*sd.spear), width=.1)+theme_bw() 
+# first average over all site-pair interactions for a given distance category and for a given species
+dff<-df2%>%group_by(dc,AOU)%>%summarise(mn.spear=mean(spear))%>%ungroup()
+
+
+#df2s<-dff%>%group_by(dc)%>%summarise(mean.spear=mean(mn.spear),
+#                                     min.spear=min(mn.spear),
+#                                     max.spear=max(mn.spear))%>%ungroup()
+
+
+#df2s<-df2%>%group_by(dc)%>%summarise(mn.spear=mean(spear),
+#                                     sd.spear=sd(spear))%>%ungroup()
+library(PupillometryR)
+dff$AOU<-as.factor(dff$AOU)
+
+g2<-ggplot(dff, aes(x=dc, y=mn.spear)) + 
+  #geom_flat_violin(position = position_nudge(x = 0.2, y = 0), alpha = 1) + 
+  geom_point(aes(y = mn.spear, color = AOU), 
+             position = position_jitter(width = .15), size = 1, alpha = 0.6) +
+  geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.2)+ 
+  theme_bw()+
+  theme(
+    #panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
+    panel.background=element_rect(fill="white", colour="white"), 
+    legend.position="none",text=element_text(size=20)
+    )+
+  ylab("Spatial synchrony in abundance\n averaged across site-pairs")+
+  xlab("Between-sites pairwise distance category, Km")#+
+  #geom_errorbar(aes(ymin=min.spear, 
+   #                 ymax=max.spear), width=.1)+theme_bw() 
   
+g2
 
-
-pdf(here("RESULTS/spat_syn_vs_distance_plot.pdf"),height=3.5,width = 7)
+pdf(here("RESULTS/spat_syn_vs_distance_plot.pdf"),height=5,width = 9)
 g2
 dev.off()
 
 
 
-
-
+xx<-dff%>%group_by(dc)%>%summarise(n=n_distinct(AOU))
+xx
 
 
 
