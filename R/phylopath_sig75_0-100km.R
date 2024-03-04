@@ -52,25 +52,37 @@ saveRDS(ct3,here("RESULTS/model_phylopath_sig75_0-100Km/consensus_tree_with_edge
 
 dd<-as_tibble(ct3)
 dd<-left_join(dd,df,by=c("label"="newBT"))
+
+g1<-ggtree(ct3,layout="circular") %<+% dd +
+  geom_tippoint(pch=19, cex=6,aes(col=abs.tot.td.ab.sig))+
+  scale_color_gradientn(colours=brewer.pal(n=5,"PuRd"))+
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="black",
+                                               hjust=-0.3)
+g1
+
 g2<-ggtree(ct3,layout="circular") %<+% dd +
-  geom_tippoint(pch=19, cex=3,aes(col=fab.sig))+
+  geom_tippoint(pch=19, cex=6,aes(col=fab.sig))+
   scale_color_gradientn(colours=rev(brewer.pal(n=5,"RdBu")))+
-  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
-                                               hjust=-0.2)
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="black",
+                                               hjust=-0.3)
 g2
 
 g3<-ggtree(ct3,layout="circular") %<+% dd +
-  geom_tippoint(pch=19, cex=3,aes(col=HWI))+
+  geom_tippoint(pch=19, cex=6,aes(col=HWI))+
   scale_color_gradientn(colours=brewer.pal(n=5,"GnBu"))+
-  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="gray",
-                                               hjust=-0.2)
-g3
+  theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="black",
+                                               hjust=-0.3)
+#g3
 
-pdf(here("RESULTS/model_phylopath_sig75_0-100Km/species_phylogeny_0_100km_fLU_ab.pdf"), width = 9, height = 13) # Open a new pdf file
+pdf(here("RESULTS/model_phylopath_sig75_0-100km/species_phylogeny_0_100km_absolute_ab.pdf"), width = 9, height = 9) # Open a new pdf file
+g1 # Write the grid.arrange in the file
+dev.off()
+
+pdf(here("RESULTS/model_phylopath_sig75_0-100km/species_phylogeny_0_100km_fLU_ab.pdf"), width = 9, height = 9) # Open a new pdf file
 g2 # Write the grid.arrange in the file
 dev.off()
 
-pdf(here("RESULTS/model_phylopath_sig75_0-100Km/species_phylogeny_0_100km_HWI.pdf"), width = 9, height = 13) # Open a new pdf file
+pdf(here("RESULTS/model_phylopath_sig75_0-100km/species_phylogeny_0_100km_HWI.pdf"), width = 9, height = 9) # Open a new pdf file
 g3 # Write the grid.arrange in the file
 dev.off()
 

@@ -7,7 +7,7 @@ library(copula)
 library(here)
 
 source(here("R/ExtremeTailDep.R"))
-set.seed(seed=101)
+set.seed(seed=123)
 
 np<-1000000
 srho_common<-0.875 #7/8
@@ -72,26 +72,26 @@ op<-par(mfrow=c(2,2),mar=c(1,1,1,1),mgp=c(1,1,0),pty="s")
 
 # symmetric tail
 plot(1:N,f_cop[,1],col="black",pch=1,
-     cex=1.5,
+     cex=1.5,lwd=0.5,
      xaxt="n",yaxt="n",ann=F,type="b") # frank
 lines(1:N,f_cop[,2],col=rgb(0,0,0,0.5),pch=16,
-     cex=1,
+     cex=1,lwd=0.5,
      xaxt="n",yaxt="n",ann=F,type="b")
 
 # positive cor with LT
 plot(1:N,xtc_l[time,1],col="red",pch=1,
-     cex=1.5,
-     xaxt="n",yaxt="n",ann=F,type="b") # frank
+     cex=1.5,lwd=0.5,
+     xaxt="n",yaxt="n",ann=F,type="b") 
 lines(1:N,xtc_l[time,2],col=rgb(1,0,0,0.3),pch=16,
-      cex=1,
+      cex=1,lwd=0.5,
       xaxt="n",yaxt="n",ann=F,type="b")
 
 # positive cor with UT
 plot(1:N,xtc_r[time,1],col="blue",pch=1,
-     cex=1.5,
-     xaxt="n",yaxt="n",ann=F,type="b") # frank
+     cex=1.5,lwd=0.5,
+     xaxt="n",yaxt="n",ann=F,type="b") 
 lines(1:N,xtc_r[time,2],col=rgb(0,0,1,0.3),pch=16,
-      cex=1,
+      cex=1,lwd=0.5,
       xaxt="n",yaxt="n",ann=F,type="b")
 
 par(op)
