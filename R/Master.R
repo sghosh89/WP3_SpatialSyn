@@ -63,6 +63,10 @@ source(here("R/phylopath_sig75_100-250km.R"))
 
 source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
 
+source(here("R/phylopath_sig95_0-250km.R"))
+source(here("R/phylopath_sig95_0-100km.R"))
+source(here("R/phylopath_sig95_100-250km.R"))
+
 source(here("R/get_migratory_status.R"))
 source(here("R/plot_regression.R"))
 source(here("R/plot_td_for_various_months.R"))

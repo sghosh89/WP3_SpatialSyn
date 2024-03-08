@@ -338,5 +338,26 @@ target_dist_cat<-c(0,250)
 siglevel=75
 get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
 
+#---------
+nbin<-4
+target_dist_cat<-c(0,250)
+siglevel=95
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
 
+nbin<-4
+target_dist_cat<-c(0,100)
+siglevel=95
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
+
+nbin<-4
+target_dist_cat<-c(100,250)
+siglevel=95
+get_summary_csv(nbin=nbin,target_dist_cat = target_dist_cat, siglevel=siglevel)
+
+#df<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_",
+#                         target_dist_cat[1],"-",
+#                         target_dist_cat[2],"Km.csv",sep="")))
+
+#sum(is.na(df$ftas5.sig))
+#sum(is.na(df$fpr5.sig))
 
