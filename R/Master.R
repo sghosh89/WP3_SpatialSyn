@@ -16,7 +16,7 @@ source(here("R/diet_cat.R")) # get diet and foraging info for each bird species
 source(here("R/download_rawdata_CHELSA.R")) # need a lot of space in your desktop
 source(here("DATA/CHELSA_v2/monthly/pr/extract_data_for_uRID_WP3.R"))
 source(here("DATA/CHELSA_v2/monthly/tas/extract_data_for_uRID_WP3.R"))
-source(here("DATA/CHELSA_v2/monthly/tasmax/extract_data_for_uRID_WP3.R"))
+#source(here("DATA/CHELSA_v2/monthly/tasmax/extract_data_for_uRID_WP3.R"))
 
 #--------------- spat syn for climate data --------
 source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas) in required format
@@ -24,7 +24,6 @@ source(here("R/prepare_climate_data.R")) # prepare climate data (pr, tas) in req
 source(here("R/prepare_tas_with_AprtoAug.R"))# avg data for Apr to Aug
 source(here("R/prepare_pr_with_AprtoAug.R"))# avg data for Apr to Aug
 
-#source(here("R/prepare_tas_with_AprtoJuly.R"))# avg data for Apr to July
 #source(here("R/prepare_tas_with_MaytoJuly.R"))# avg data for May to July
 
 source(here("R/call_spat_syn_for_climate.R")) # compute spat syn for climate data 
@@ -47,7 +46,7 @@ source(here("R/get_birdspecies_phylotree.R")) # file to get matched names for al
 source(here("R/function_to_testsig_abund.R"))
 source(here("R/function_to_testsig_tas.R"))
 source(here("R/function_to_testsig_tas_avgAprtoAug.R"))
-#source(here("R/function_to_testsig_tas_avgAprtoJuly.R"))
+
 #source(here("R/function_to_testsig_tas_avgMaytoJuly.R"))
 source(here("R/function_to_testsig_pr.R"))
 source(here("R/function_to_testsig_pr_avgAprtoAug.R"))
