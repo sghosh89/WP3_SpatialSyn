@@ -5,7 +5,8 @@ https://birdtree.org/subsets/
 Species name might differ in their BirdTree database with my given species, I resolved those differing names in 
 "species_0_250km_nbin_4_filledin.csv file" (see last three columns). Related code is given here: "R/get_birdspecies_phylotree.R".
 
-"unique_speciesnameBirdTree_0_250km_nbin4_tailsig75.txt" is the text file containing the species name compatible with BirdTree database, 
+"unique_speciesnameBirdTree_0_250km_nbin4_tailsig75.txt" is the text file containing the species that showed significant tail-dependent synchrony in abundance 
+(based on 75% CI) within 0-250Km between-sites distance category.
 I used these species names to download 1000 trees from https://birdtree.org/subsets/, these trees are given in the folder "sig75_0_250km_..." as output.nex file.
 We also provide other files (text files and nexus files) set of species for 0-100 km, and 100-250 km distance categories.
 
