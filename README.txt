@@ -6,7 +6,7 @@ Authors: Shyamolina Ghosh (1*), Owen L. Petchey (1)
  
 
 Affiliations:
-1. Department of Evolutionary Biology and Environmental studies, University of Zurich; Winterthurerstrasse 190, 8057 Zurich, Switzerland
+1. Department of Evolutionary Biology and Environmental Studies, University of Zurich; Winterthurerstrasse 190, 8057 Zurich, Switzerland
 
 *Corresponding author: Shyamolina Ghosh (ghoshshyamolina89@gmail.com) 
 
