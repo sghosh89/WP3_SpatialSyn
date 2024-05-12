@@ -3,13 +3,20 @@ library(tidyverse)
 library(gridExtra)
 library(here)
 
-visualize_spat_syn<-function(target_dist_cat, nbin=4){
+visualize_spat_syn<-function(target_dist_cat, nbin=4, siglevel="75%CI"){
   
   df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
                           "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
                           target_dist_cat[2],"Km.RDS",sep="")))
-  df1<-df1%>%filter(Lsig75ab!=0 | Usig75ab!=0)
-  df1<-df1%>%dplyr::select(AOU,Lsig75ab, Usig75ab)
+  
+  if(siglevel=="75%CI"){
+    df1<-df1%>%filter(Lsig75ab!=0 | Usig75ab!=0)
+    df1<-df1%>%dplyr::select(AOU,Lsigab=Lsig75ab, Usigab=Usig75ab)
+  }else{
+    df1<-df1%>%filter(Lsig95ab!=0 | Usig95ab!=0)
+    df1<-df1%>%dplyr::select(AOU,Lsigab=Lsig95ab, Usigab=Usig95ab)
+  }
+  
   
   df2<-read.csv(here("RESULTS/species_dietcat_edited.csv"))
   
@@ -22,8 +29,8 @@ visualize_spat_syn<-function(target_dist_cat, nbin=4){
   
   df<-left_join(df1,df2,by="AOU")# This is the dataframe we need to visualize
   
-  df$fLval<-(df$Lsig75ab/(df$Lsig75ab + abs(df$Usig75ab)))*100
-  df$fUval<-(abs(df$Usig75ab)/(df$Lsig75ab + abs(df$Usig75ab)))*100
+  df$fLval<-(df$Lsigab/(df$Lsigab + abs(df$Usigab)))*100
+  df$fUval<-(abs(df$Usigab)/(df$Lsigab + abs(df$Usigab)))*100
   
   table(df$Diet.5Cat)
   
@@ -111,7 +118,7 @@ visualize_spat_syn<-function(target_dist_cat, nbin=4){
     # Add labels on top of each bar
     geom_text(data = label_data, aes(x = id, y = tot -0.5, 
                                      label = individual, 
-                                     hjust = hjust), color = "gray", 
+                                     hjust = hjust), color = "black", 
               fontface = "bold", alpha = 0.6, size = 4, 
               angle = label_data$angle, inherit.aes = FALSE) +
     
@@ -134,12 +141,17 @@ visualize_spat_syn<-function(target_dist_cat, nbin=4){
 nbin<-4
 target_dist_cat<-c(0,250)
 
-gall<-visualize_spat_syn(target_dist_cat= target_dist_cat, nbin=nbin)
+gall_sig75CI<-visualize_spat_syn(target_dist_cat= target_dist_cat, nbin=nbin, siglevel="75%CI")
+gall_sig95CI<-visualize_spat_syn(target_dist_cat= target_dist_cat, nbin=nbin, siglevel="95%CI")
 
 
 # later in your plot you could add info about IUCN status in inkscape
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup.pdf"), width = 10, height = 7) # Open a new pdf file
-gall # Write the grid.arrange in the file
+gall_sig75CI # Write the grid.arrange in the file
+dev.off() 
+
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI.pdf"), width = 14, height = 7) # Open a new pdf file
+gridExtra::grid.arrange(gall_sig75CI,gall_sig95CI, ncol=2)# Write the grid.arrange in the file
 dev.off() 
 

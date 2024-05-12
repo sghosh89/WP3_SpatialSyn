@@ -1,17 +1,20 @@
 library(here)
+library(tidyverse)
 library(ape)
 library(phytools)
 library(ggplot2)
 set.seed(seed=123)
 
-stree<-read.nexus(here("DATA/BirdTree/sig75_0_250km_tree-pruner-dd4d5870-1c32-4bfb-9253-d3af12edd234/output.nex"))
+#stree<-read.nexus(here("DATA/BirdTree/sig75_0_250km_tree-pruner-dd4d5870-1c32-4bfb-9253-d3af12edd234/output.nex"))
+stree<-read.nexus(here("DATA/BirdTree/sig95_0_250km_tree-pruner-6c06110b-3266-48fc-b9bd-13786bc19ec8/output.nex"))
 
 df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
 nbin<-4
-dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_summary_0-250Km.csv",sep="")))
+#dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_summary_0-250Km.csv",sep="")))
+dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_0-250Km.csv",sep="")))
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
@@ -59,7 +62,8 @@ for(i in 1:1000){
 res=list(HWI.signal=HWI.signal,
          fab.signal=fab.signal,
          abs.tot.td.ab.signal=abs.tot.td.ab.signal)
-saveRDS(res,here("RESULTS/phylogenetic_signal_sig75.RDS"))
+#saveRDS(res,here("RESULTS/phylogenetic_signal_sig75.RDS"))
+saveRDS(res,here("RESULTS/phylogenetic_signal_sig95.RDS"))
 
 # this shows there is phylogenetic signals in traits but not in fLU_ab
 
@@ -74,6 +78,10 @@ mean(phyloHWI$lambda)
 #pdf(here("RESULTS/phylogenetic_signal_sig75_in_HWI.pdf"), height=3, width=4)
 #g1
 #dev.off()
+res<-readRDS(here("RESULTS/phylogenetic_signal_sig95.RDS"))
+mean(res$HWI.signal$lambda)# ~0.96
+mean(res$fab.signal$lambda) #~0
+mean(res$abs.tot.td.ab.signal$lambda) #~0
 
-mean(HWI.signal$lambda)# ~1
+
 

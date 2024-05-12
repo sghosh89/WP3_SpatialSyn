@@ -56,18 +56,29 @@ source(here("R/distance_sigtaildep_abund_clim.R"))
 source(here("R/visualize_spat_syn.R")) # plot synchrony contributions from both tail per diet group between 0-250 Km between sites distance, total 263 sp. there 
 # later visualize with significant tail dep result only
 
-source(here("R/phylopath_sig75_0-250km.R"))
-source(here("R/phylopath_sig75_0-100km.R"))
-source(here("R/phylopath_sig75_100-250km.R"))
+#source(here("R/phylopath_sig75_0-250km.R"))
+#source(here("R/phylopath_sig75_0-100km.R"))
+#source(here("R/phylopath_sig75_100-250km.R"))
 
-source(here("R/test_phylogenetic_signal_sig75tree.R")) # maybe put in suppmat
+source(here("R/phylolm_sig75_0-250km.R"))
+source(here("R/phylolm_sig75_0-100km.R"))
+source(here("R/phylolm_sig75_100-250km.R"))
 
-source(here("R/phylopath_sig95_0-250km.R"))
-source(here("R/phylopath_sig95_0-100km.R"))
-source(here("R/phylopath_sig95_100-250km.R"))
+source(here("R/test_phylogenetic_signal_sigtree.R")) # maybe put in suppmat
+
+#source(here("R/phylopath_sig95_0-250km.R"))
+#source(here("R/phylopath_sig95_0-100km.R"))
+#source(here("R/phylopath_sig95_100-250km.R"))
+
+source(here("R/phylolm_sig95_0-250km.R"))
+source(here("R/phylolm_sig95_0-100km.R"))
+source(here("R/phylolm_sig95_100-250km.R"))
+
+source(here("R/phylANOVA_dietgroups_0_250km.R"))
 
 source(here("R/get_migratory_status.R"))
 source(here("R/plot_regression.R"))
+#source(here("R/summary_estimate_phylopath_plot.R"))
 source(here("R/plot_td_for_various_months.R"))
 #=======================
 
