@@ -176,4 +176,10 @@ call_phylopath_sig95_0_100km<-function(model, df){
 call_phylopath_sig95_0_100km(model="tas5_abs_td", df=df)
 call_phylopath_sig95_0_100km(model="pr5_abs_td", df=df)
 
+# later can't run because of drastic drop in sample size!
+#call_phylopath_sig95_0_100km(model="tas5", df=df)
+#call_phylopath_sig95_0_100km(model="pr5", df=df)
+
+#call_phylopath_sig95_0_250km(model="tas", df=df)
+#call_phylopath_sig95_0_250km(model="pr", df=df)
 

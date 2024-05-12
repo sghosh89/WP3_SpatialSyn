@@ -90,7 +90,7 @@ g3 # Write the grid.arrange in the file
 dev.off()
 
 #============== model ===========
-call_phylopath_sig95_0_250km<-function(model, df){
+call_phylopath_sig95_0_250km<-function(model, df, ct3){
   
   #-------------------------------
   model_tas5_abs_td<-define_model_set(
@@ -157,12 +157,13 @@ call_phylopath_sig95_0_250km<-function(model, df){
   modres_HWI_T_only<- phylo_path(modelsHWI_Tonly, data = df, 
                                  tree = ct3, 
                                  model = 'lambda')
-  
+  saveRDS(modres_HWI_T_only,here(paste(myresloc,"model_est.RDS",sep="/")))
   modsum<-summary(modres_HWI_T_only)
   print(modsum)
   gp3<-plot(modsum)+theme_classic()
   best_model_T <- best(modres_HWI_T_only, boot=1000)
   print(best_model_T)
+  saveRDS(best_model_T,here(paste(myresloc,"best_model_est.RDS",sep="/")))
   gp1<-plot(best_model_T, curvature=0.1, edge_width = 3)
   gp2<-coef_plot(best_model_T)+ggplot2::theme_bw()
   
@@ -174,8 +175,12 @@ call_phylopath_sig95_0_250km<-function(model, df){
 }
 
 #=========================
-call_phylopath_sig95_0_250km(model="tas5_abs_td", df=df)
-call_phylopath_sig95_0_250km(model="pr5_abs_td", df=df)
+call_phylopath_sig95_0_250km(model="tas5_abs_td", df=df, ct3=ct3)
+call_phylopath_sig95_0_250km(model="pr5_abs_td", df=df, ct3=ct3)
 
+call_phylopath_sig95_0_250km(model="tas5", df=df, ct3=ct3)
+call_phylopath_sig95_0_250km(model="pr5", df=df, ct3=ct3)
 
+call_phylopath_sig95_0_250km(model="tas", df=df, ct3=ct3)
+call_phylopath_sig95_0_250km(model="pr", df=df, ct3=ct3)
 
