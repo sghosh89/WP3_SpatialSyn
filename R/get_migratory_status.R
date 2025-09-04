@@ -22,7 +22,7 @@ dfmig<-read.csv(here("RESULTS/species_0_250km_nbin_4_tailsig75_migstatus_manuall
 table(df$mig_NB_BBS)
 dfmig<-dfmig%>%dplyr::select(AOU,mig_NB_BBS)
 #===========================
-df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin_min32yr.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
@@ -31,8 +31,8 @@ dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_su
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"))
-dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI,mass=mass_gm)
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits.csv"))
+dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 dfsig<-left_join(dfsig,dft,by="ScientificName")
 
 dfsig_mig<-left_join(dfsig,dfmig,by="AOU")

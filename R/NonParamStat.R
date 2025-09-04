@@ -123,7 +123,7 @@ multcall<-function(d_allsite,resloc,nbin){
     for (j in c(1:lensite)){
       
       #if(i!=j){
-      if(lensite<500){
+      if(lensite<50){
         ms<-vivj_matrix(d_allsite=d_allsite,i=i,j=j,level=0.05,ploton=T)
       }else{# too many plots in a single file, not needed
         ms<-vivj_matrix(d_allsite=d_allsite,i=i,j=j,level=0.05,ploton=F)

@@ -19,7 +19,7 @@ dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_su
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"))
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits.csv"))
 dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 dfsig<-left_join(dfsig,dft,by="ScientificName")
 
@@ -91,6 +91,8 @@ dev.off()
 
 #============== model ===========
 call_phylolm_sig75_0_250km<-function(model, df, ct3){
+  
+  set.seed(seed=123)
   
   rownames(df)<-df$Species
   ct3null<-ct3

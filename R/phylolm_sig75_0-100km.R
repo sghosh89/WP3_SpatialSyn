@@ -9,7 +9,7 @@ if(!dir.exists(here("RESULTS/model_phylolm_sig75_0-100km"))){
 }
 # ============= read data ==============
 
-df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin_min32yr.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
@@ -19,7 +19,7 @@ dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail75sig_su
 dfsig<-left_join(dfsig,df,by="AOU")
 #---------
 
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"))
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits.csv"))
 dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 dfsig<-left_join(dfsig,dft,by="ScientificName")
 
@@ -89,6 +89,7 @@ dev.off()
 #============== model ===========
 call_phylolm_sig75_0_100km<-function(model, df, ct3){
   
+  set.seed(seed=123)
   rownames(df)<-df$Species
   #ct3null<-ct3
   #ct3null$node.label<-NULL
