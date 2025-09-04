@@ -8,7 +8,7 @@ set.seed(seed=123)
 #stree<-read.nexus(here("DATA/BirdTree/sig75_0_250km_tree-pruner-dd4d5870-1c32-4bfb-9253-d3af12edd234/output.nex"))
 stree<-read.nexus(here("DATA/BirdTree/sig95_0_250km_tree-pruner-6c06110b-3266-48fc-b9bd-13786bc19ec8/output.nex"))
 
-df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin.csv"))
+df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin_min32yr.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
@@ -18,7 +18,7 @@ dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_su
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
-dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits_mass.csv"))
+dft<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_speciestraits.csv"))
 dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 dfsig<-left_join(dfsig,dft,by="ScientificName")
 
