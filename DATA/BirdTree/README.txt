@@ -13,6 +13,5 @@ I used these species names to download 1000 trees from https://birdtree.org/subs
 We also provide other files (text files and nexus files) set of species for:
 	1) "unique_speciesnameBirdTree_0_250km_nbin4_tailsig95.txt" is the text file containing the species that showed significant tail-dependent synchrony in abundance 
 	   (based on 95% CI) within 0-250Km between-sites distance category and at least 40 years sampled as used in the main analysis.
-	2) For 0-250km distance category we also provide those files based on 75%CI & 95% CI significant tail-dependent synchrony considering routes that are minimum 
-	  sampled for 32 and 36 years.
-	3) For minimum 40years of sampling routes (as used in the main analysis) we also provide files for other two distance categories: 0-100km, and 100-250km.
+	2) For 0-250km distance category we also provide those files based on 75%CI & 95% CI significant tail-dependent synchrony considering routes that are sampled for a 		   minimum of 32 and 36 years, respectively.
+	3) For default (a minimum of 40 years) sampling routes (as used in the main analysis) we also provide files for other two distance categories: 0-100km, and 100-250km.
