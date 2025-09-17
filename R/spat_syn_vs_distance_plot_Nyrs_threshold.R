@@ -3,7 +3,7 @@
 library(here)
 library(dplyr)
 library(tidyverse)
-#library(gridExtra)
+library(gridExtra)
 
 call_spat_syn_vs_distance_plot_Nyrs_threshold<-function(yr_threshold=40){
   
@@ -93,8 +93,8 @@ call_spat_syn_vs_distance_plot_Nyrs_threshold<-function(yr_threshold=40){
   
   g2ex<-ggplot(dff, aes(x=dc, y=mn.spear)) + 
     #geom_flat_violin(position = position_nudge(x = 0.2, y = 0), alpha = 1) + 
-    geom_point(aes(y = mn.spear, color = AOU), 
-               position = position_jitter(width = .15), size = 1, alpha = 0.6) +
+    geom_point(aes(y = mn.spear), 
+               position = position_jitter(width = .15), size = 1, alpha = 0.3) +
     geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.2)+ 
     #geom_smooth(method="loess")+
     theme_bw()+
@@ -107,48 +107,75 @@ call_spat_syn_vs_distance_plot_Nyrs_threshold<-function(yr_threshold=40){
     ylab("Spatial synchrony in abundance\n averaged across site-pairs")+
     xlab("Between-sites pairwise distance category, Km") 
   
-  g2<-ggplot(dff, aes(x=dc, y=mn.spear)) + 
-    #geom_flat_violin(position = position_nudge(x = 0.2, y = 0), alpha = 1) + 
-    geom_point(aes(y = mn.spear, color = AOU), 
-               position = position_jitter(width = .15), size = 1, alpha = 0.6) +
-    geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.2)+ 
-    #geom_smooth(method="loess")+
-    theme_bw()+
-    theme(
-      #panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
-      panel.background=element_rect(fill="white", colour="white"), 
-      legend.position="none",text=element_text(size=20)
-    )+
-    ylab("Spatial synchrony in abundance\n averaged across site-pairs")+
-    xlab("Between-sites pairwise distance category, Km")
   
-  return(g2ex)
+  
+  return(list(tab=dfextra,gp=g2ex))
   
 }
 
 yr_threshold<-32
 p32<-call_spat_syn_vs_distance_plot_Nyrs_threshold(yr_threshold = yr_threshold)
-pdf(file = here::here(paste0("RESULTS/spat_syn_vs_distance_plot_min", yr_threshold, "yr.pdf")),
-    height = 5,
-    width = 12)
-p32
-dev.off()
 
 yr_threshold<-36
 p36<-call_spat_syn_vs_distance_plot_Nyrs_threshold(yr_threshold = yr_threshold)
-pdf(file = here::here(paste0("RESULTS/spat_syn_vs_distance_plot_min", yr_threshold, "yr.pdf")),
-    height = 5,
-    width = 12)
-p36
-dev.off()
 
 yr_threshold<-40
 p40<-call_spat_syn_vs_distance_plot_Nyrs_threshold(yr_threshold = yr_threshold)
-pdf(file = here::here("RESULTS/spat_syn_vs_distance_plot.pdf"),
-    height = 5,
-    width = 12)
-p40
+
+p40$tab
+# A tibble: 10 × 2
+# dc                    n
+# <fct>             <int>
+#   1 (0,25]               36
+# 2 (25,75]              53
+# 3 (75,150]             59
+# 4 (150,250]            59
+# 5 (250,400]            68
+# 6 (400,700]            74
+# 7 (700,1e+03]          71
+# 8 (1e+03,1.5e+03]      72
+# 9 (1.5e+03,2.5e+03]    60
+# 10 (2.5e+03,6e+03]      35
+
+p36$tab
+# A tibble: 10 × 2
+# dc                    n
+# <fct>             <int>
+#   1 (0,25]              100
+# 2 (25,75]             128
+# 3 (75,150]            139
+# 4 (150,250]           137
+# 5 (250,400]           152
+# 6 (400,700]           154
+# 7 (700,1e+03]         146
+# 8 (1e+03,1.5e+03]     145
+# 9 (1.5e+03,2.5e+03]   126
+# 10 (2.5e+03,6e+03]      73
+
+p32$tab
+# A tibble: 10 × 2
+#dc                    n
+#<fct>             <int>
+#  1 (0,25]              132
+#2 (25,75]             191
+#3 (75,150]            200
+#4 (150,250]           198
+#5 (250,400]           215
+# 6 (400,700]           208
+# 7 (700,1e+03]         205
+# 8 (1e+03,1.5e+03]     202
+# 9 (1.5e+03,2.5e+03]   172
+# 10 (2.5e+03,6e+03]     120
+g1<-p40$gp+ylim(0.25,0.8)
+g2<-p36$gp+ylim(0.25,0.8)
+g3<-p32$gp+ylim(0.25,0.8)
+
+pdf(file = here::here("RESULTS/spat_syn_vs_distance_plot_min40to32yr.pdf"),
+    height = 15,
+    width = 13)
+grid.arrange(g1,g2,g3, nrow=3)
 dev.off()
+
 
 
 

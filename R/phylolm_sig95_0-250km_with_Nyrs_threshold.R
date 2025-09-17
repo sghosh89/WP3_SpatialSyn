@@ -4,7 +4,7 @@ library(here); library(ape); library(castor); library(phytools); library(caper)
 library(tidyverse); library(gridExtra)
 
 
-#yr_threshold<-32
+#yr_threshold<-36
 
 get_df<-function(yr_threshold){
   
@@ -313,6 +313,18 @@ call_phylolm_sig95_0_250km_Nyrs_threshold(model="pr5", yr_threshold=40)
 call_phylolm_sig95_0_250km_Nyrs_threshold(model="tas", yr_threshold=40)
 call_phylolm_sig95_0_250km_Nyrs_threshold(model="pr", yr_threshold=40)
 
+
+
+#df has 134 species for 32 years  with match from BirdTree
+#sum(!is.na(df$fab.sig))#134
+#sum(!is.na(df$ftas5.sig))#105 sp. used in regression
+#sum(!is.na(df$fpr5.sig))#103 sp. used in regression
+
+#df has 93 species for 36 years  with match from BirdTree
+#sum(!is.na(df$fab.sig))#93
+#sum(!is.na(df$abs.tot.td.ab.sig))# 93
+#sum(!is.na(df$ftas5.sig))#64 sp. used in regression
+#sum(!is.na(df$fpr5.sig))#73 sp. used in regression
 
 
 
