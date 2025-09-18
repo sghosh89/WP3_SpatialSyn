@@ -180,7 +180,7 @@ tab_all$year<-factor(levels_year,levels = levels_year)
 tab_all <- tab_all %>%
   mutate(
     label = sprintf("Slope Median = %.2f\nSlope 95%% CI: [%.2f, %.2f]\np_boot = %.3f",
-                    slope_lo, slope_hi, slope_med, p_boot),
+                    slope_med, slope_lo, slope_hi, p_boot),
     x = 0,  # Set desired x position for annotation (adjust if needed)
     y = -0.5  # Set desired y position for annotation (adjust if needed)
   )  
