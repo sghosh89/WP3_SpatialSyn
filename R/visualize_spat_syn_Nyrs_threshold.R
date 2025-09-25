@@ -1,5 +1,6 @@
 # --- Packages ---
 rm(list=ls())
+library(here)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -136,27 +137,30 @@ visualize_spat_syn_Nyrs_threshold<-function(yr_threshold=40,target_dist_cat=c(0,
 #nbin<-4
 #target_dist_cat<-c(0,250)
 
-gall_sig75CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
-gall_sig95CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
+gall_sig75CI32<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
+gall_sig95CI32<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI_min32yr.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI,gall_sig95CI, ncol=2)# Write the grid.arrange in the file
+gridExtra::grid.arrange(gall_sig75CI32,gall_sig95CI32, ncol=2)# Write the grid.arrange in the file
 dev.off() 
 
-gall_sig75CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
-gall_sig95CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
+gall_sig75CI36<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
+gall_sig95CI36<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI_min36yr.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI,gall_sig95CI, ncol=2)# Write the grid.arrange in the file
+gridExtra::grid.arrange(gall_sig75CI36,gall_sig95CI36, ncol=2)# Write the grid.arrange in the file
 dev.off() 
 
-gall_sig75CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
-gall_sig95CI<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
+gall_sig75CI40<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
+gall_sig95CI40<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI,gall_sig95CI, ncol=2)# Write the grid.arrange in the file
+gridExtra::grid.arrange(gall_sig75CI40,gall_sig95CI40, ncol=2)# Write the grid.arrange in the file
 dev.off() 
 
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_95CI32&36yr.pdf"), width = 16, height = 10) # Open a new pdf file
+gridExtra::grid.arrange(gall_sig95CI32,gall_sig95CI36, nrow=1)# Write the grid.arrange in the file
+dev.off() 
 
 
 

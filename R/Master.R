@@ -55,8 +55,7 @@ source(here("R/phylolm_sig75_100-250km.R"))# for 40yrs
 source(here("R/phylolm_sig95_0-100km.R"))# for 40yrs
 source(here("R/phylolm_sig95_100-250km.R"))# for 40yrs
 
-source(here("R/test_phylogenetic_signal_sigtree.R")) # maybe put in suppmat
-
+source(here("R/test_phylogenetic_signal_sigtree.R")) 
 source(here("R/boot_summarize_all.R"))
 
 source(here("R/get_migratory_status.R"))
