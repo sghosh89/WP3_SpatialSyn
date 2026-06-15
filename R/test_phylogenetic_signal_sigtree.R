@@ -1,3 +1,4 @@
+rm(list=ls())
 library(here)
 library(tidyverse)
 library(ape)
@@ -9,6 +10,8 @@ stree32<-read.nexus(here("DATA/BirdTree/sig95_32yr_45sitepairs_tree-pruner-54a7b
 stree36<-read.nexus(here("DATA/BirdTree/sig95_36yr_45sitepairs_tree-pruner-ea7a4d35-0386-4ddc-a20c-6a5264b28dbf/output.nex"))
 
 nbin<-4
+sitepair_thr<-45
+
 yr_threshold<-32# vary this as 32, 36, 40
 
 if(yr_threshold==40){
@@ -29,16 +32,19 @@ if(yr_threshold==40){
 df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin_min32yr.csv"))
 df$newBT<-gsub(" ", "_", df$BirdTreeName)
 df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
-
+  
 dfsig<-left_join(dfsig,df,by="AOU")
 
 dft<-dft%>%dplyr::select(ScientificName,kipps=meanKipps.Distance,HWI=meanHWI)
 dfsig<-left_join(dfsig,dft,by="ScientificName")
 
+
 # initialize
 df<-dfsig
+df<-df%>%filter(nint>=sitepair_thr)
+
 HWI.signal<-data.frame(lambda=NA*numeric(1000),pval=NA*numeric(1000))
-fab.signal<-abs.tot.td.ab.signal<-HWI.signal
+fab.signal<-abs.avg.td.ab.signal<-HWI.signal
 
 for(i in 1:1000){
   tree<-stree[[i]]
@@ -61,20 +67,20 @@ for(i in 1:1000){
   fab.signal$lambda[i]<-res2$lambda
   fab.signal$pval[i]<-res2$P
   
-  #----------- for abs.tot.td.ab.signal --------------
-  x2<-df2$abs.tot.td.ab.sig
+  #----------- for abs.avg.td.ab.signal --------------
+  x2<-df2$abs.avg.td.ab.sig
   names(x2)<-nm
   
   res2<-phylosig(tree,x=x2,method="lambda",test=TRUE)
-  abs.tot.td.ab.signal$lambda[i]<-res2$lambda
-  abs.tot.td.ab.signal$pval[i]<-res2$P
+  abs.avg.td.ab.signal$lambda[i]<-res2$lambda
+  abs.avg.td.ab.signal$pval[i]<-res2$P
   
   print(i)
 }
 
 res=list(HWI.signal=HWI.signal,
          fab.signal=fab.signal,
-         abs.tot.td.ab.signal=abs.tot.td.ab.signal)
+         abs.avg.td.ab.signal=abs.avg.td.ab.signal)
 
 if(yr_threshold==40){
   saveRDS(res,here("RESULTS/phylogenetic_signal_sig95.RDS"))
@@ -96,7 +102,7 @@ g1
 mean(phyloHWI$lambda)
 mean(res$HWI.signal$lambda)# ~0.99
 mean(res$fab.signal$lambda) #~0.0
-mean(res$abs.tot.td.ab.signal$lambda) #~0
+mean(res$abs.avg.td.ab.signal$lambda) #~0.028
 
 #===================== for 36 years =========================================
 # this shows there is phylogenetic signals in traits but not in fLU_ab
@@ -109,9 +115,9 @@ g1<-ggplot(phyloHWI,aes(lambda))+geom_histogram(color="black", fill="orange")+
 g1
 
 mean(phyloHWI$lambda)
-mean(res$HWI.signal$lambda)# ~0.99
-mean(res$fab.signal$lambda) #~0.1
-mean(res$abs.tot.td.ab.signal$lambda) #~0
+mean(res$HWI.signal$lambda)# ~1.00
+mean(res$fab.signal$lambda) #~0.078
+mean(res$abs.avg.td.ab.signal$lambda) #~0
 
 #===================== for 40 years =========================================
 # this shows there is phylogenetic signals in traits but not in fLU_ab
@@ -123,9 +129,9 @@ g1<-ggplot(phyloHWI,aes(lambda))+geom_histogram(color="black", fill="orange")+
   theme_bw()+xlab(expression("Phylogenetic signal in HWI,"~lambda))
 g1
 
-mean(phyloHWI$lambda)#0.96
-mean(res$HWI.signal$lambda)# ~0.96
+mean(phyloHWI$lambda)#0.98
+mean(res$HWI.signal$lambda)# ~0.98
 mean(res$fab.signal$lambda) #~0.0
-mean(res$abs.tot.td.ab.signal$lambda) #~0
+mean(res$abs.avg.td.ab.signal$lambda) #~0
 
 
