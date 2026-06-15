@@ -25,7 +25,7 @@ testsig_pr_avgAprtoAug_Nyrs_threshold<-function(numsurr=1000, nbin=4, chosen_rad
   
   df_pr5<-df_pr5%>%dplyr::select(AOU,nL,nU,L,U)
   
-  df<-df%>%dplyr::select(AOU,fLU_pr_avgAprtoAug)
+  df<-df%>%dplyr::select(AOU,fLU_pr5)
   df<-left_join(df,df_pr5,by="AOU") # this is summarized value within 0-250Km distance
   
   for(spi in 1:nrow(df)){

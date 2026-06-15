@@ -51,29 +51,36 @@ summarize_res_Nyrs_threshold<-function(yr_threshold=40,chosen_rad,nbin){
   
   #======================== make combo data ===========================
   # read abundance summary
-  df_ab<-df_ab%>%dplyr::select(AOU,ab_L=L,ab_U=U)%>%mutate(fLU_ab=(ab_L+ab_U)/(abs(ab_U)+ab_L))
+  df_ab<-df_ab%>%dplyr::select(AOU,nint,ab_L=L,ab_U=U)%>%mutate(avgL_ab=ab_L/nint, 
+                                                                avgU_ab = ab_U/nint)%>%mutate(fLU_ab=(avgL_ab+avgU_ab)/(abs(avgU_ab)+avgL_ab))
   
   # read pr summary
-  df_pr<-df_pr%>%dplyr::select(AOU,pr_L=L,pr_U=U)%>%mutate(fLU_pr=(pr_L+pr_U)/(abs(pr_U)+pr_L))
+  df_pr<-df_pr%>%dplyr::select(AOU,pr_L=L,pr_U=U)#%>%mutate(fLU_pr=(pr_L+pr_U)/(abs(pr_U)+pr_L))
+  
+  df_ab<-df_ab%>%left_join(df_pr,by="AOU")
+  df_ab<-df_ab%>%mutate(avgL_pr=pr_L/nint, 
+                        avgU_pr = pr_U/nint)%>%mutate(fLU_pr=(avgL_pr+avgU_pr)/(abs(avgU_pr)+avgL_pr))
+  
   
   # read prs 5 months avg summary
-  df_prAprtoAugavg<-df_prAprtoAugavg%>%dplyr::select(AOU,pr5_L=L,pr5_U=U)%>%mutate(fLU_pr5=(pr5_L+pr5_U)/(abs(pr5_U)+pr5_L))
+  df_prAprtoAugavg<-df_prAprtoAugavg%>%dplyr::select(AOU,pr5_L=L,pr5_U=U)#%>%mutate(fLU_pr5=(pr5_L+pr5_U)/(abs(pr5_U)+pr5_L))
+  df_ab<-df_ab%>%left_join(df_prAprtoAugavg,by="AOU")
+  df_ab<-df_ab%>%mutate(avgL_pr5=pr5_L/nint, 
+                        avgU_pr5 = pr5_U/nint)%>%mutate(fLU_pr5=(avgL_pr5+avgU_pr5)/(abs(avgU_pr5)+avgL_pr5))
   
   # read tas summary
-  df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
+  df_tas<-df_tas%>%dplyr::select(AOU,tas_L=L,tas_U=U)#%>%mutate(fLU_tas=(tas_L+tas_U)/(abs(tas_U)+tas_L))
+  df_ab<-df_ab%>%left_join(df_tas,by="AOU")
+  df_ab<-df_ab%>%mutate(avgL_tas=tas_L/nint, 
+                        avgU_tas = tas_U/nint)%>%mutate(fLU_tas=(avgL_tas+avgU_tas)/(abs(avgU_tas)+avgL_tas))
+  
+  
   
   # read tas 5 months avg summary
-  df_tasAprtoAugavg<-df_tasAprtoAugavg%>%dplyr::select(AOU,tas5_L=L,tas5_U=U)%>%mutate(fLU_tas5=(tas5_L+tas5_U)/(abs(tas5_U)+tas5_L))
-  
-  df<-cbind(df_ab$AOU,df_ab$fLU_ab,
-            df_pr$fLU_pr,
-            df_tas$fLU_tas,
-            df_prAprtoAugavg$fLU_pr5,
-            df_tasAprtoAugavg$fLU_tas5)
-  colnames(df)<-c("AOU","fLU_ab","fLU_pr","fLU_tas",
-                  "fLU_pr_avgAprtoAug",
-                  "fLU_tas_avgAprtoAug")
-  df<-as.data.frame(df)
+  df_tasAprtoAugavg<-df_tasAprtoAugavg%>%dplyr::select(AOU,tas5_L=L,tas5_U=U)#%>%mutate(fLU_tas5=(tas5_L+tas5_U)/(abs(tas5_U)+tas5_L))
+  df_ab<-df_ab%>%left_join(df_tasAprtoAugavg,by="AOU")
+  df_ab<-df_ab%>%mutate(avgL_tas5=tas5_L/nint, 
+                        avgU_tas5 = tas5_U/nint)%>%mutate(fLU_tas5=(avgL_tas5+avgU_tas5)/(abs(avgU_tas5)+avgL_tas5))
   
   
   # metadata: AOU code for given species, diet category and IUCN status
@@ -81,7 +88,7 @@ summarize_res_Nyrs_threshold<-function(yr_threshold=40,chosen_rad,nbin){
   #df_spmeta<-df_spmeta%>%dplyr::select(AOU,Diet.5Cat,IUCN_status)
   
   #df<-left_join(df,df_spmeta,by="AOU")# This is the dataframe we need to visualize
-  
+  df<-df_ab
   
   id<-which(is.na(df$fLU_ab))
   df<-df[-id,]

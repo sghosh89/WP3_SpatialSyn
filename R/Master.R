@@ -22,7 +22,7 @@ source(here("R/prepare_pr_with_AprtoAug_Nyrs_threshold.R"))# avg data for Apr to
 source(here("R/call_spat_syn_for_climate_Nyrs_threshold.R")) # compute spat syn for climate data 
 source(here("R/summary_spat_syn_for_climate_Nyrs_threshold.R"))# summarize spat_syn for climate data
 
-source(here("R/summarize_res_Nyrs_threshold.R"))# summarize for abundance and climate data
+source(here("R/summarize_res_Nyrs_threshold.R"))# summarize for abundance and climate data # modified 11-06-26
 
 #--------- AVONET: trait data for bird species ----------
 # file to get traits for all 78 species 
@@ -39,19 +39,20 @@ source(here("R/function_to_testsig_tas_avgAprtoAug_Nyrs_threshold.R"))
 source(here("R/function_to_testsig_pr_Nyrs_threshold.R"))
 source(here("R/function_to_testsig_pr_avgAprtoAug_Nyrs_threshold.R"))
 
-source(here("R/distance_sigtaildep_abund_clim_Nyrs_threshold.R"))
+source(here("R/distance_sigtaildep_abund_clim_Nyrs_threshold.R")) 
 
-source(here("R/visualize_spat_syn_Nyrs_threshold.R"))
+source(here("R/visualize_spat_syn_Nyrs_threshold.R")) # need to change the style of the plot @Editor+Reviewer comment
 
 #--------- phylogeny data for bird species ----------
-source(here("R/get_birdspecies_phylotree_with_Nyrs_threshold.R")) # 180 unique sp. from BirdTREE
+source(here("R/get_birdspecies_phylotree_with_Nyrs_threshold.R")) # unique sp. from BirdTREE
 
 source(here("R/phylolm_sig95_0-250km_with_Nyrs_threshold.R"))
 
-source(here("R/phylolm_sig75_0-250km_with_Nyrs_threshold.R"))
+#source(here("R/phylolm_sig75_0-250km_with_Nyrs_threshold.R"))
 
-source(here("R/phylolm_sig75_0-100km.R"))# for 40yrs
-source(here("R/phylolm_sig75_100-250km.R"))# for 40yrs
+#source(here("R/phylolm_sig75_0-100km.R"))# for 40yrs
+#source(here("R/phylolm_sig75_100-250km.R"))# for 40yrs
+
 source(here("R/phylolm_sig95_0-100km.R"))# for 40yrs
 source(here("R/phylolm_sig95_100-250km.R"))# for 40yrs
 

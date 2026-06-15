@@ -21,15 +21,17 @@ visualize_spat_syn_Nyrs_threshold<-function(yr_threshold=40,target_dist_cat=c(0,
   
   if(siglevel=="75%CI"){
     df1<-df1%>%filter(Lsig75ab!=0 | Usig75ab!=0)
-    df1<-df1%>%dplyr::select(AOU,Lsigab=Lsig75ab, Usigab=Usig75ab)
+    df1<-df1%>%dplyr::select(AOU,nint,Lsigab=Lsig75ab, Usigab=Usig75ab)
   }else{
     df1<-df1%>%filter(Lsig95ab!=0 | Usig95ab!=0)
-    df1<-df1%>%dplyr::select(AOU,Lsigab=Lsig95ab, Usigab=Usig95ab)
+    df1<-df1%>%dplyr::select(AOU,nint,Lsigab=Lsig95ab, Usigab=Usig95ab)
   }
   
+  df1$avgLsigab<-df1$Lsigab/df1$nint
+  df1$avgUsigab<-df1$Usigab/df1$nint
   
-  df1$fLval<-(df1$Lsigab/(df1$Lsigab + abs(df1$Usigab)))*100
-  df1$fUval<-(abs(df1$Usigab)/(df1$Lsigab + abs(df1$Usigab)))*100
+  df1$fLval<-(df1$avgLsigab/(df1$avgLsigab + abs(df1$avgUsigab)))*100
+  df1$fUval<-(abs(df1$avgUsigab)/(df1$avgLsigab + abs(df1$avgUsigab)))*100
   
   # arrange data in required format for stacked circular barplot
   dfsmall<-df1%>%dplyr::select(individual=AOU, fLval, fUval)
@@ -137,25 +139,14 @@ visualize_spat_syn_Nyrs_threshold<-function(yr_threshold=40,target_dist_cat=c(0,
 #nbin<-4
 #target_dist_cat<-c(0,250)
 
-gall_sig75CI32<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
 gall_sig95CI32<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 32, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI_min32yr.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI32,gall_sig95CI32, ncol=2)# Write the grid.arrange in the file
-dev.off() 
-
-gall_sig75CI36<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
 gall_sig95CI36<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 36, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI_min36yr.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI36,gall_sig95CI36, ncol=2)# Write the grid.arrange in the file
-dev.off() 
-
-gall_sig75CI40<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="75%CI")
 gall_sig95CI40<-visualize_spat_syn_Nyrs_threshold(yr_threshold = 40, target_dist_cat= c(0,250), nbin=4, siglevel="95%CI")
 
-pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig75_and_95CI.pdf"), width = 16, height = 10) # Open a new pdf file
-gridExtra::grid.arrange(gall_sig75CI40,gall_sig95CI40, ncol=2)# Write the grid.arrange in the file
+pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_sig95CI.pdf"), width = 8, height = 10) # Open a new pdf file
+gall_sig95CI40# Write the grid.arrange in the file
 dev.off() 
 
 pdf(here("RESULTS/visualize_spat_syn_for_abund_0_250km_nbin_4_nogroup_95CI32&36yr.pdf"), width = 16, height = 10) # Open a new pdf file

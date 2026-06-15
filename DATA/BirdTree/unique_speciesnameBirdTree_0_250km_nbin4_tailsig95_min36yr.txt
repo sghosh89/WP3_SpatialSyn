@@ -45,7 +45,7 @@ Zonotrichia albicollis
 Spizella passerina
 Spizella pallida
 Spizella pusilla
-Junco hyemalis
+NA
 Melospiza melodia
 Passerella iliaca
 Pipilo erythrophthalmus
@@ -62,7 +62,6 @@ Tachycineta bicolor
 Bombycilla cedrorum
 Vireo olivaceus
 Vireo gilvus
-Vireo flavifrons
 Vireo griseus
 Mniotilta varia
 Vermivora ruficapilla

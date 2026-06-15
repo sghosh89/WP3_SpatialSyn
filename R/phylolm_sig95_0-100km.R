@@ -16,6 +16,8 @@ df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
 nbin<-4
 dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_0-100Km.csv",sep="")))
+dfsig<-dfsig%>%filter(nint>=45)#16 obs
+
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
@@ -25,27 +27,28 @@ dfsig<-left_join(dfsig,dft,by="ScientificName")
 
 nm<-dfsig
 nm<-nm%>%distinct(BirdTreeName)
-write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_100km_nbin4_tailsig95.txt"),quote=F,col.names =F,row.names=F)
-# Now we will download 1000 trees with the above 25 species names
+write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_0_100km_nbin4_tailsig95_sitepairthr_45.txt"),quote=F,col.names =F,row.names=F)
+# Now we will download 1000 trees with the above 16 species names
 
 
 # remove the duplicated entries from df$new_BT column
 df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
 df<-df%>%dplyr::select(AOU,
-                       abs.tot.td.ab.sig,
+                       abs.avg.td.ab.sig,
                        fab.sig,
                        ftas.sig,
                        ftas5.sig,
-                       abs.tot.td.tas5.sig,
+                       abs.avg.td.tas5.sig,
                        fpr.sig,
                        fpr5.sig,
-                       abs.tot.td.pr5.sig,
+                       abs.avg.td.pr5.sig,
                        HWI,
                        tail95,newBT)
 df$Species<-df$newBT
 df$tail95<-as.factor(df$tail95)
 
+#sigT<-read.nexus(here("DATA/BirdTree/sig95_0_100km_tree-pruner-81d735f3-6702-46d7-a7ee-60a2bc6f305d/output.nex"))
 sigT<-read.nexus(here("DATA/BirdTree/sig95_0_100km_tree-pruner-81d735f3-6702-46d7-a7ee-60a2bc6f305d/output.nex"))
 ct<-consensus(sigT, p = 0.5, check.labels = TRUE, rooted = TRUE)# no edge length
 ct3<-consensus.edges(sigT,method="least.squares")# with edge length

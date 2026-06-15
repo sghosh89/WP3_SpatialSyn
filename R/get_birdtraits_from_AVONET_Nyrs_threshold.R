@@ -123,7 +123,7 @@ write.csv(mytrait,here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4_with_spe
 
 #=========================
 df40<-read.csv(here("RESULTS/df_abund_climate_spatsyn_0_250km_nbin_4.csv")) # 40 yrs. = yr_threshold
-df40<-df40%>%dplyr::select(AOU,fLU_ab, fLU_pr,fLU_tas,fLU_pr_avgAprtoAug,fLU_tas_avgAprtoAug, tail)
+df40<-df40%>%dplyr::select(AOU,fLU_ab, fLU_pr,fLU_tas,fLU_pr5,fLU_tas5, tail)
 df_spmeta<-read.csv(here("DATA/for_BBS/raw_data/BBSdata_accessed_03dec2020/SpeciesList_edited.csv"))
 df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName)
 df40<-left_join(df40,df_spmeta, by="AOU")
