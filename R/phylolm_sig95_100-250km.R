@@ -8,6 +8,7 @@ if(!dir.exists(here("RESULTS/model_phylolm_sig95_100-250km"))){
   dir.create(here("RESULTS/model_phylolm_sig95_100-250km"))
 }
 
+sitepair_thr<-45
 # ============= read data ==============
 
 df<-read.csv(here("DATA/BirdTree/species_0_250km_nbin_4_filledin_min32yr.csv"))
@@ -16,6 +17,7 @@ df<-df%>%dplyr::select(AOU,newBT,ScientificName,BirdTreeName)
 
 nbin<-4
 dfsig<-read.csv(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,"_tail95sig_summary_100-250Km.csv",sep="")))
+dfsig<-dfsig%>%filter(nint>=sitepair_thr)#28 obs
 dfsig<-left_join(dfsig,df,by="AOU")
 
 
@@ -25,28 +27,28 @@ dfsig<-left_join(dfsig,dft,by="ScientificName")
 
 nm<-dfsig
 nm<-nm%>%distinct(BirdTreeName)
-write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_100_250km_nbin4_tailsig95.txt"),quote=F,col.names =F,row.names=F)
-# Now we will download 1000 trees with the above 29 species names
+write.table(nm,here("DATA/BirdTree/unique_speciesnameBirdTree_100_250km_nbin4_tailsig95_sitepairthr_45.txt"),quote=F,col.names =F,row.names=F)
+# Now we will download 1000 trees with the above 28 species names
 
 
 # remove the duplicated entries from df$new_BT column
 df<-dfsig
 df<-df%>%distinct(newBT,.keep_all = T)# just to make sure
-df<-df%>%dplyr::select(AOU,
-                       abs.tot.td.ab.sig,
+df<-df%>%dplyr::select(AOU,nint, BirdTreeName, ScientificName,
+                       abs.avg.td.ab.sig,
                        fab.sig,
                        ftas.sig,
                        ftas5.sig,
-                       abs.tot.td.tas5.sig,
+                       abs.avg.td.tas5.sig,
                        fpr.sig,
                        fpr5.sig,
-                       abs.tot.td.pr5.sig,
+                       abs.avg.td.pr5.sig,
                        HWI,
                        tail95,newBT)
 df$Species<-df$newBT
 df$tail95<-as.factor(df$tail95)
 
-sigT<-read.nexus(here("DATA/BirdTree/sig95_100_250km_tree-pruner-e6cc469e-a006-409c-a34d-35b468fa4ccd/output.nex"))
+sigT<-read.nexus(here("DATA/BirdTree/sig95_100_250km_min40yrs_sitepairthr_45_tree-pruner-1382b88a-4a5b-4e37-9706-8774786c34f7/output.nex"))
 ct<-consensus(sigT, p = 0.5, check.labels = TRUE, rooted = TRUE)# no edge length
 ct3<-consensus.edges(sigT,method="least.squares")# with edge length
 saveRDS(ct3,here("RESULTS/model_phylolm_sig95_100-250km/consensus_tree_with_edgelength.RDS"))
@@ -56,7 +58,7 @@ dd<-as_tibble(ct3)
 dd<-left_join(dd,df,by=c("label"="newBT"))
 
 g1<-ggtree(ct3,layout="circular") %<+% dd +
-  geom_tippoint(pch=19, cex=6,aes(col=abs.tot.td.ab.sig))+
+  geom_tippoint(pch=19, cex=6,aes(col=abs.avg.td.ab.sig))+
   scale_color_gradientn(colours=brewer.pal(n=5,"PuRd"))+
   theme(legend.position="bottom")+ geom_tiplab(aes(label=AOU),color="black",
                                                hjust=-0.3)
@@ -149,9 +151,9 @@ call_phylolm_sig95_100_250km<-function(model, df, ct3){
     
   }else if(model=="tas5_abs_td"){
     
-    fit <- phylolm(abs.tot.td.ab.sig~ abs.tot.td.tas5.sig+HWI,data=df,
+    fit <- phylolm(abs.avg.td.ab.sig~ abs.avg.td.tas5.sig+HWI,data=df,
                    phy=ct3,model="lambda")
-    fitboot <- phylolm(abs.tot.td.ab.sig~ abs.tot.td.tas5.sig+HWI,data=df,
+    fitboot <- phylolm(abs.avg.td.ab.sig~ abs.avg.td.tas5.sig+HWI,data=df,
                        phy=ct3,model="lambda", boot=1000)
     
     myresloc<-here("RESULTS/model_phylolm_sig95_100-250km/model_tas5_abs_td")
@@ -162,9 +164,9 @@ call_phylolm_sig95_100_250km<-function(model, df, ct3){
     
   }else if(model=="pr5_abs_td"){
     
-    fit <- phylolm(abs.tot.td.ab.sig~ abs.tot.td.pr5.sig+HWI,data=df,
+    fit <- phylolm(abs.avg.td.ab.sig~ abs.avg.td.pr5.sig+HWI,data=df,
                    phy=ct3,model="lambda")
-    fitboot <- phylolm(abs.tot.td.ab.sig~ abs.tot.td.pr5.sig+HWI,data=df,
+    fitboot <- phylolm(abs.avg.td.ab.sig~ abs.avg.td.pr5.sig+HWI,data=df,
                        phy=ct3,model="lambda", boot=1000)
     myresloc<-here("RESULTS/model_phylolm_sig95_100-250km/model_pr5_abs_td")
     

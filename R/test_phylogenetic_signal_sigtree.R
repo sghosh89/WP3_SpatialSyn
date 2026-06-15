@@ -4,9 +4,9 @@ library(ape)
 library(phytools)
 library(ggplot2)
 set.seed(seed=123)
-stree40<-read.nexus(here("DATA/BirdTree/sig95_0_250km_tree-pruner-6c06110b-3266-48fc-b9bd-13786bc19ec8/output.nex"))
-stree32<-read.nexus(here("DATA/BirdTree/sig95_0_250km_min32yr_tree-pruner-8d5f46d0-b4a6-4c08-a1a1-2aa6c9cd15b0/output.nex"))
-stree36<-read.nexus(here("DATA/BirdTree/sig95_0_250km_min36yr_tree-pruner-20e11ea7-5cfc-4cbe-b7ee-055e0b9bdff6/output.nex"))
+stree40<-read.nexus(here("DATA/BirdTree/sig95_40yr_45sitepairs_tree-pruner-b1fa35ac-c796-46ba-aac5-cbc330f1832e/output.nex"))
+stree32<-read.nexus(here("DATA/BirdTree/sig95_32yr_45sitepairs_tree-pruner-54a7b6b9-379a-41d3-8af4-04b9a69c7ecd/output.nex"))
+stree36<-read.nexus(here("DATA/BirdTree/sig95_36yr_45sitepairs_tree-pruner-ea7a4d35-0386-4ddc-a20c-6a5264b28dbf/output.nex"))
 
 nbin<-4
 yr_threshold<-32# vary this as 32, 36, 40

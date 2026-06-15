@@ -48,11 +48,6 @@ source(here("R/get_birdspecies_phylotree_with_Nyrs_threshold.R")) # unique sp. f
 
 source(here("R/phylolm_sig95_0-250km_with_Nyrs_threshold.R"))
 
-#source(here("R/phylolm_sig75_0-250km_with_Nyrs_threshold.R"))
-
-#source(here("R/phylolm_sig75_0-100km.R"))# for 40yrs
-#source(here("R/phylolm_sig75_100-250km.R"))# for 40yrs
-
 source(here("R/phylolm_sig95_0-100km.R"))# for 40yrs
 source(here("R/phylolm_sig95_100-250km.R"))# for 40yrs
 
