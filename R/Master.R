@@ -52,9 +52,13 @@ source(here("R/phylolm_sig95_0-100km.R"))# for 40yrs
 source(here("R/phylolm_sig95_100-250km.R"))# for 40yrs
 
 source(here("R/test_phylogenetic_signal_sigtree.R")) 
-source(here("R/boot_summarize_all.R"))
+
+
+source(here("R/boot_summarize_all.R")) 
 
 source(here("R/get_migratory_status.R"))
+
+
 source(here("R/plot_regression_0-250km_40to32years_absTaildep.R"))
 source(here("R/plot_regression_0-250km_40to32years_netTaildep.R"))
 source(here("R/plot_td_for_various_months.R"))
