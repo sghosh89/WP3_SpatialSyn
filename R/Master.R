@@ -41,7 +41,7 @@ source(here("R/function_to_testsig_pr_avgAprtoAug_Nyrs_threshold.R"))
 
 source(here("R/distance_sigtaildep_abund_clim_Nyrs_threshold.R")) 
 
-source(here("R/visualize_spat_syn_Nyrs_threshold.R")) # need to change the style of the plot @Editor+Reviewer comment
+source(here("R/visualize_spat_syn_Nyrs_threshold.R")) # 
 
 #--------- phylogeny data for bird species ----------
 source(here("R/get_birdspecies_phylotree_with_Nyrs_threshold.R")) # unique sp. from BirdTREE
@@ -60,6 +60,9 @@ source(here("R/get_migratory_status.R"))
 
 
 source(here("R/plot_regression_0-250km_40to32years_absTaildepP.R"))
+source(here("R/plot_regression_0-250km_40to32years_absTaildepT.R"))
+
+source(here("R/plot_regression_0-250km_40to32years_netTaildepP.R"))
 source(here("R/plot_regression_0-250km_40to32years_netTaildepT.R"))
 
 source(here("R/plot_td_for_various_months.R"))
