@@ -41,7 +41,7 @@ source(here("R/function_to_testsig_pr_avgAprtoAug_Nyrs_threshold.R"))
 
 source(here("R/distance_sigtaildep_abund_clim_Nyrs_threshold.R")) 
 
-source(here("R/visualize_spat_syn_Nyrs_threshold.R")) # 
+source(here("R/visualize_spat_syn_Nyrs_threshold.R")) # updated
 
 #--------- phylogeny data for bird species ----------
 source(here("R/get_birdspecies_phylotree_with_Nyrs_threshold.R")) # unique sp. from BirdTREE
@@ -50,6 +50,8 @@ source(here("R/phylolm_sig95_0-250km_with_Nyrs_threshold.R"))
 
 source(here("R/phylolm_sig95_0-100km.R"))# for 40yrs
 source(here("R/phylolm_sig95_100-250km.R"))# for 40yrs
+
+source(here("R/robustness_check.R")) #robustness of the results
 
 source(here("R/test_phylogenetic_signal_sigtree.R")) 
 
@@ -67,7 +69,7 @@ source(here("R/plot_regression_0-250km_40to32years_netTaildepT.R"))
 
 source(here("R/plot_td_for_various_months.R"))
 
-
+source(here("R/specieslist_table_in_suppmat.R"))
 
 
 

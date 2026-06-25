@@ -6,7 +6,7 @@
 # initial diagonistics
 
 # Are species-level tail estimates (abs.avg.td.ab.sig, abs.avg.td.pr5.sig, abs.avg.td.tas5.sig) dependent on nint?
-
+library(here)
 library(ggplot2)
 library(patchwork)
 library(dplyr)
