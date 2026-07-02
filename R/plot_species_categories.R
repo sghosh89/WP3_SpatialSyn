@@ -2,9 +2,8 @@ library(ggplot2)
 
 plot_species_categories <- function(
     yr_threshold = 40,
-    title = "Species Counts Across Categories A-E",
-    palette = "Set2"
-) {
+    title = "Species Counts Across Categories I-V",
+    palette = "Set2"){
   
   # Select counts based on threshold
   counts <- switch(
@@ -17,17 +16,17 @@ plot_species_categories <- function(
   
   # Category labels with descriptions
   labels <- c(
-    "A\nSampled ≥2 sites",
-    "B\nNo spatial\nsynchrony",
-    "C\nSpatial\nsynchrony",
-    "D\nSpatial synchrony\nwith significant\ntail-dependence",
-    "E\nCategory D\nsampled at\n≥10 sites"
+    "I\nSampled at least \nat 2 sites",
+    "II\nNo spatial\nsynchrony",
+    "III\nSpatial\nsynchrony",
+    "IV\nSpatial synchrony\nwith significant\ntail-dependence",
+    "V\nCategory IV\nsampled at least \nat 10 sites"
   )
   
   # Create dataframe
   species_data <- data.frame(
-    Category = factor(c("A", "B", "C", "D", "E"),
-                      levels = c("A", "B", "C", "D", "E")),
+    Category = factor(c("I", "II", "III", "IV", "V"),
+                      levels = c("I", "II", "III", "IV", "V")),
     Number_of_species = counts
   )
   
@@ -43,7 +42,7 @@ plot_species_categories <- function(
     geom_col(width = 0.7) +
     geom_text(
       aes(label = Number_of_species),
-      vjust = -0.5,
+      vjust = -0.1,
       size = 5
     ) +
     scale_x_discrete(labels = labels) +
@@ -51,7 +50,7 @@ plot_species_categories <- function(
     labs(
       x = NULL,
       y = "Number of species",
-      title = paste0(title, " (sites were sampled within 250 km for a minimum of ", yr_threshold, " years)")
+      title = paste0(title, " (sites were sampled within 250 km for at least ", yr_threshold, " years)")
     ) +
     theme_bw(base_size = 14) +
     theme(

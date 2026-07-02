@@ -11,137 +11,164 @@ library(ggplot2)
 library(patchwork)
 library(dplyr)
 
-plot_nint_sensitivity <- function(yr_threshold, sitepair_thr=45){
+plot_nint_sensitivity <- function(yr_threshold,
+                                    site_thr = 10,
+                                    sitepair_thr = 45){
   
-  if(yr_threshold==40){
-    outputresloc<-here("RESULTS/model_phylolm_sig95_0-250km")
+  ##------------------------------------------------------------
+  ## Read data
+  ##------------------------------------------------------------
+  outputresloc <- if (yr_threshold == 40){
+    here("RESULTS/model_phylolm_sig95_0-250km")
   }else{
-    outputresloc<-here(paste0("RESULTS/model_phylolm_sig95_0-250km_min",yr_threshold,"yr"))
-  }
-  df<-readRDS(here(paste(outputresloc,"/df.RDS",sep="")))
-  
-  vars <- c(
-    "abs.avg.td.ab.sig",
-    "abs.avg.td.pr5.sig",
-    "abs.avg.td.tas5.sig"
-  )
-  
-  titles <- c(
-    "Abundance",
-    "Precipitation",
-    "Temperature"
-  )
-  
-  p_mean <- list()
-  p_var <- list()
-  
-  for(i in seq_along(vars)){
-    
-    v <- vars[i]
-    
-    tmp <- df %>%
-      filter(
-        !is.na(.data[[v]]),
-        !is.na(nint),
-        nint > 0
-      )
-    
-    # ------------------------
-    # Row 1 → Mean check
-    # ------------------------
-    
-    p_mean[[i]] <-
-      ggplot(
-        tmp,
-        aes(
-          x = log10(nint),
-          y = .data[[v]]
-        )
-      ) +
-      geom_point(size=2) +
-      geom_smooth(
-        method="lm",
-        se=TRUE,
-        color="blue"
-      ) +
-      geom_vline(
-        xintercept = log10(sitepair_thr),
-        linetype = "dashed"
-      )+
-      #annotate("text", x = log10(sitepair_thr),
-       # y = Inf, label = paste0("n=", sitepair_thr),
-       # vjust = 1.5, angle = 90)+
-      theme_bw() +
-      labs(
-        title=paste("Mean:", titles[i]),
-        x="log10(unique site pairs)",
-        y="Tail estimate"
-      )
-    
-    
-    # ------------------------
-    # Row 2 → Variance check
-    # ------------------------
-    
-    tmp$dev <-
-      abs(
-        tmp[[v]] -
-          mean(
-            tmp[[v]],
-            na.rm=TRUE
-          )
-      )
-    
-    p_var[[i]] <-
-      ggplot(
-        tmp,
-        aes(
-          x=log10(nint),
-          y=dev
-        )
-      ) +
-      geom_point(size=2) +
-      geom_smooth(
-        method="loess",
-        se=TRUE,
-        color="red"
-      ) +
-      geom_vline(
-        xintercept = log10(sitepair_thr),
-        linetype = "dashed"
-      )+
-      theme_bw() +
-      labs(
-        title=paste("Variance:", titles[i]),
-        x="log10(unique site pairs)",
-        y="Absolute deviation"
-      )
-    
+    here(paste0("RESULTS/model_phylolm_sig95_0-250km_min",
+                yr_threshold,"yr"))
   }
   
-  final_plot <-
-    (p_mean[[1]] | p_mean[[2]] | p_mean[[3]]) /
-    (p_var[[1]]  | p_var[[2]]  | p_var[[3]])
+  df <- readRDS(file.path(outputresloc,"df.RDS"))
   
-  ggsave(here(paste(outputresloc,"/nint_sensitivity_check.pdf",sep="")),
-         final_plot,
-         width=12,
-         height=7
+  tmp <- df %>%
+    filter(!is.na(abs.avg.td.ab.sig),
+           !is.na(nint),
+           nint > 0) %>%
+    mutate(
+      abs_dev = abs(
+        abs.avg.td.ab.sig -
+          mean(abs.avg.td.ab.sig, na.rm = TRUE)
+      )
+    )
+  
+  ##------------------------------------------------------------
+  ## Axis breaks
+  ##------------------------------------------------------------
+  
+  ## site numbers to display on the top axis
+  site_breaks <- c(2,3,4,5,6,8,10,15,20,30,50,100)
+  
+  ## convert sites -> unique site pairs
+  pair_breaks <- site_breaks*(site_breaks-1)/2
+  
+  ##------------------------------------------------------------
+  ## Common theme
+  ##------------------------------------------------------------
+  
+  common_theme <-
+    theme_bw(base_size = 12) +
+    theme(
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(face = "bold"),
+      axis.title.x.top = element_text(margin = margin(b = 8))
+    )
+  
+  ##------------------------------------------------------------
+  ## Tail estimate
+  ##------------------------------------------------------------
+  
+  p1 <-
+    ggplot(tmp,
+           aes(x = nint,
+               y = abs.avg.td.ab.sig)) +
+    
+    geom_point(size = 2, alpha = 0.8) +
+    
+    geom_smooth(method = "lm",
+                se = TRUE,
+                colour = "blue") +
+    
+    geom_vline(xintercept = sitepair_thr,
+               linetype = "dashed") +
+    
+    annotate("text",
+             x = sitepair_thr,
+             y = Inf,
+             label = "10 sites",
+             angle = 90,
+             vjust = -0.4,
+             hjust = 1.1,
+             fontface = "bold",
+             size = 3.4) +
+    
+    scale_x_log10(
+      breaks = pair_breaks,
+      labels = pair_breaks,
+      sec.axis = dup_axis(
+        breaks = pair_breaks,
+        labels = site_breaks,
+        name = "Sampled sites"
+      )
+    ) +
+    
+    common_theme +
+    
+    labs(
+      title = paste0("sampled for a minimum of ", yr_threshold, " years"),
+      x = "Unique site pairs (log scale)",
+      y = expression(A[TD]^abundance)
+    )
+  
+  ##------------------------------------------------------------
+  ## Absolute deviation
+  ##------------------------------------------------------------
+  
+  p2 <-
+    ggplot(tmp,
+           aes(x = nint,
+               y = abs_dev)) +
+    
+    geom_point(size = 2, alpha = 0.8) +
+    
+    geom_smooth(method = "loess",
+                se = TRUE,
+                colour = "red") +
+    
+    geom_vline(xintercept = sitepair_thr,
+               linetype = "dashed") +
+    
+    annotate("text",
+             x = sitepair_thr,
+             y = Inf,
+             label = "10 sites",
+             angle = 90,
+             vjust = -0.4,
+             hjust = 1.1,
+             fontface = "bold",
+             size = 3.4) +
+    
+    scale_x_log10(
+      breaks = pair_breaks,
+      labels = pair_breaks,
+      sec.axis = dup_axis(
+        breaks = pair_breaks,
+        labels = site_breaks,
+        name = "Sampled sites"
+      )
+    ) +
+    
+    common_theme +
+    
+    labs(
+      title = "Absolute deviation from mean",
+      x = "Unique site pairs (log scale)",
+      y = "Absolute deviation"
+    )
+  
+  final_plot <- p1 / p2
+  
+  ggsave(
+    file.path(outputresloc,
+              "nint_sensitivity_check.pdf"),
+    final_plot,
+    width = 6.5,
+    height = 7
   )
   
-  return(final_plot)
-  
+  final_plot
 }
 
-yr_threshold<-40
-p40 <- plot_nint_sensitivity(yr_threshold=yr_threshold)
-
-
-yr_threshold<-36
-p36 <- plot_nint_sensitivity(yr_threshold=yr_threshold)
-
-yr_threshold<-32
-p32 <- plot_nint_sensitivity(yr_threshold=yr_threshold)
+## Run
+p40 <- plot_nint_sensitivity(40)
+p36 <- plot_nint_sensitivity(36)
+p32 <- plot_nint_sensitivity(32)
 
 
 # =========== for 40 years: plot interpretation ===================
@@ -263,7 +290,7 @@ p32 <- plot_nint_sensitivity(yr_threshold=yr_threshold)
 #32 yr	Cleanest, most stable
 
 #That does not necessarily mean 32 years is better biologically, but statistically it suggests:
-  
+
 #more retained species
 #more site pairs
 #reduced influence of sparse estimates
@@ -274,80 +301,6 @@ p32 <- plot_nint_sensitivity(yr_threshold=yr_threshold)
 # reduced sampling-related bias. However, variability in estimated tail dependence declined with increasing nint, 
 # suggesting lower precision for species represented by few site pairs.
 
-#==================
-library(car)
-detect_outliers_cook <- function(yr_threshold, formula, species_col = "Species"){
-  
-  if(yr_threshold==40){
-    outputresloc<-here("RESULTS/model_phylolm_sig95_0-250km")
-  }else{
-    outputresloc<-here(paste0("RESULTS/model_phylolm_sig95_0-250km_min",yr_threshold,"yr"))
-  }
-  df<-readRDS(here(paste(outputresloc,"/df.RDS",sep="")))
-  
-  fit <- lm(formula, data = df)
-  
-  cook <- cooks.distance(fit)
-  
-  thr <- 4 / nrow(df)
-  
-  res <- data.frame(Species = df[[species_col]],
-    cooks = cook,
-    influential = cook > thr
-  )
-  
-  # plot
-  plot(cook, pch = 19,
-       ylab = "Cook's distance", 
-       xlab = "Observation",
-       main = deparse(formula))
-  
-  abline(h = thr, col = "red", lty = 2, lwd = 2)
-  
-  text(which(cook > thr),
-    cook[cook > thr],
-    labels = df[[species_col]][cook > thr],
-    pos = 3,
-    cex = 0.7
-  )
-  
-  cat("\nCook threshold =", round(thr,3), "\n\n")
-  
-  print(
-    res[order(-res$cooks),]
-  )
-  
-  return(res)
-  
-}
 
-yr_threshold<-40
-res_ab40 <- detect_outliers_cook(yr_threshold=yr_threshold, formula= abs.avg.td.ab.sig ~ log10(nint), species_col = "Species")
 
-yr_threshold<-36
-res_ab36 <- detect_outliers_cook(yr_threshold=yr_threshold, formula= abs.avg.td.ab.sig ~ log10(nint), species_col = "Species")
-
-yr_threshold<-32
-res_ab32 <- detect_outliers_cook(yr_threshold=yr_threshold, formula= abs.avg.td.ab.sig ~ log10(nint), species_col = "Species")
-
-#====================================================
-compare_fit_without_outlier <- function(yr_threshold, formula){
-  
-  if(yr_threshold==40){
-    outputresloc<-here("RESULTS/model_phylolm_sig95_0-250km")
-  }else{
-    outputresloc<-here(paste0("RESULTS/model_phylolm_sig95_0-250km_min",yr_threshold,"yr"))
-  }
-  df<-readRDS(here(paste(outputresloc,"/df.RDS",sep="")))
-  df<-df%>%filter(nint>=45)
-  
-  # Fit full model
-  fit <- lm(formula, data=df)
-  
-  print(summary(fit))
-}
-
-yr_threshold<-40
-res40 <- compare_fit_without_outlier(yr_threshold=yr_threshold,  abs.avg.td.ab.sig ~ abs.avg.td.pr5.sig)
-resf40 <- compare_fit_without_outlier(yr_threshold=yr_threshold,  fab.sig ~ fpr5.sig)
 

@@ -10,96 +10,100 @@ library(ggplot2)
 source(here("R/plot_species_categories.R"))
 
 
-visualize_spat_syn_Nyrs_threshold<-function(yr_threshold=40,target_dist_cat=c(0,250), nbin=4, siglevel="95%CI", 
-                                            order_by_total = TRUE,
-                                            label_size = 6){
+visualize_spat_syn_Nyrs_threshold <- function(yr_threshold = 40, target_dist_cat = c(0, 250), 
+                                              nbin = 4, siglevel = "95%CI", label_size = 6){
   
-  if(yr_threshold==40){
-    df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
-                            "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
-                            target_dist_cat[2],"Km.RDS",sep="")))
-  }else{
-    df1<-readRDS(here(paste("RESULTS/abundance_spatsyn_nbin_",nbin,
-                            "_corlmcoru_sigres_summary_",target_dist_cat[1],"-",
-                            target_dist_cat[2],"Km_min",yr_threshold,"yr.RDS",sep="")))
+  if (yr_threshold == 40) {
+    df1 <- readRDS(here(paste(
+      "RESULTS/abundance_spatsyn_nbin_", nbin,
+      "_corlmcoru_sigres_summary_", target_dist_cat[1], "-",
+      target_dist_cat[2], "Km.RDS", sep = ""
+    )))
+  } else {
+    df1 <- readRDS(here(paste(
+      "RESULTS/abundance_spatsyn_nbin_", nbin,
+      "_corlmcoru_sigres_summary_", target_dist_cat[1], "-",
+      target_dist_cat[2], "Km_min", yr_threshold, "yr.RDS", sep = ""
+    )))
   }
   
-  if(siglevel=="95%CI"){
-    df1<-df1%>%filter(Lsig95ab!=0 | Usig95ab!=0)
-    df1<-df1%>%dplyr::select(AOU,nint,Lsigab=Lsig95ab, Usigab=Usig95ab)
+  if (siglevel == "95%CI") {
+    df1 <- df1 %>%
+      filter(Lsig95ab != 0 | Usig95ab != 0) %>%
+      dplyr::select(
+        AOU,
+        nint,
+        Lsigab = Lsig95ab,
+        Usigab = Usig95ab
+      )
   }
   
-  df1$avgLsigab<-df1$Lsigab/df1$nint
-  df1$avgUsigab<-df1$Usigab/df1$nint
+  ## Compute percentage contributions
+  df1 <- df1 %>%
+    filter(nint >= 45) %>%
+    mutate(
+      lower_strength = Lsigab / nint,
+      upper_strength = abs(Usigab) / nint,
+      total_strength = lower_strength + upper_strength,
+      fLval = 100 * lower_strength / total_strength,
+      fUval = 100 * upper_strength / total_strength
+    ) %>%
+    arrange(desc(fLval))          # Red → Blue
   
-  df1$fLval<-(df1$avgLsigab/(df1$avgLsigab + abs(df1$avgUsigab)))*100
-  df1$fUval<-(abs(df1$avgUsigab)/(df1$avgLsigab + abs(df1$avgUsigab)))*100
+  ## Order species
+  ord_vec <- df1$AOU
   
-  df1<-df1%>%filter(nint>=45) # at least 10 sites sampled
-  
-  data <- df1 %>%
-    dplyr::select(individual = AOU, fLval, fUval) %>%
-    tidyr::pivot_longer(
+  ## Convert to long format
+  df <- df1 %>%
+    select(individual = AOU, fLval, fUval) %>%
+    pivot_longer(
       cols = c(fLval, fUval),
       names_to = "observation",
       values_to = "value"
-    )
-  #################################################################
-  
-  df <- data %>%
+    ) %>%
     mutate(
-      individual = as.character(individual),
+      individual = factor(individual,
+                          levels = rev(ord_vec)),   # red at top after coord_flip()
       observation = factor(
         observation,
         levels = c("fLval", "fUval"),
-        labels = c("Lower-tail dependence", "Upper-tail dependence")
+        labels = c("Lower-tail dependence",
+                   "Upper-tail dependence")
       )
-    ) %>%
-    group_by(individual, observation) %>%
-    summarize(value = mean(value, na.rm = TRUE), .groups = "drop")
+    )
   
-  totals <- df %>%
-    group_by(individual) %>%
-    summarize(total = sum(value, na.rm = TRUE), .groups = "drop")
-  
-  ord_vec <- if (order_by_total) {
-    totals %>% arrange(total) %>% pull(individual)
-  } else {
-    totals %>% arrange(individual) %>% pull(individual)
-  }
-  
-  df <- df %>%
-    mutate(individual = factor(individual, levels = ord_vec))
-  
-  p <- ggplot(df, aes(x = individual, y = value, fill = observation)) +
-    geom_col(width = 0.8, alpha = 0.95) +
+  ## Plot
+  p <- ggplot(df,
+              aes(x = individual,
+                  y = value,
+                  fill = observation)) +
+    geom_col(position = "fill",
+             width = 0.8,
+             alpha = 0.95) +
     coord_flip() +
     scale_y_continuous(
-      limits = c(0, 100),
-      breaks = c(0, 25, 50, 75, 100),
+      breaks = c(0, 0.25, 0.50, 0.75, 1),
+      labels = c(0, 25, 50, 75, 100),
       expand = c(0, 0)
     ) +
     labs(
       x = "Species",
-      y = "Percentage of significant tail-dependence",
-      fill = NULL,
-      title = NULL #paste0(
-        #"Spatial synchrony by species: ≥", yr_threshold,
-       # " years, ", target_dist_cat[1], "–", target_dist_cat[2], " km"
-      #)
+      y = "Percentage contribution to significant tail-dependence",
+      fill = NULL
     ) +
     theme_bw(base_size = 16) +
     theme(
       legend.position = "bottom",
       axis.text.x = element_text(color = "black"),
-      axis.text.y = element_text(color = "black", size = label_size),
+      axis.text.y = element_text(color = "black",
+                                 size = label_size),
       axis.title = element_text(color = "black"),
-      plot.title = element_text(hjust = 0.5, face = "bold", color = "black"),
+      plot.title = element_text(hjust = 0.5,
+                                face = "bold"),
       legend.text = element_text(color = "black")
     )
   
   return(p)
-  
 }
 
 # Now visualization
