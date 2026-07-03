@@ -261,7 +261,19 @@ write.csv(
   row.names = FALSE
 )
 
+temp_ylim <- range(
+  clim40$yearly$mean_temp + c(-clim40$yearly$sd_temp, clim40$yearly$sd_temp),
+  clim36$yearly$mean_temp + c(-clim36$yearly$sd_temp, clim36$yearly$sd_temp),
+  clim32$yearly$mean_temp + c(-clim32$yearly$sd_temp, clim32$yearly$sd_temp),
+  na.rm = TRUE
+)
 
+pr_ylim <- range(
+  clim40$yearly$mean_pr + c(-clim40$yearly$sd_pr, clim40$yearly$sd_pr),
+  clim36$yearly$mean_pr + c(-clim36$yearly$sd_pr, clim36$yearly$sd_pr),
+  clim32$yearly$mean_pr + c(-clim32$yearly$sd_pr, clim32$yearly$sd_pr),
+  na.rm = TRUE
+)
 #-------------------------------------------------------
 # Function to make annual climate plots
 #-------------------------------------------------------
@@ -279,7 +291,7 @@ plot_climate <- function(df, threshold){
       breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2018),
       limits = c(1979, 2018),
       expand = c(0, 0)
-    )+
+    )+coord_cartesian(ylim = temp_ylim)+
     labs(
       title = threshold,
       x = NULL,
@@ -298,7 +310,7 @@ plot_climate <- function(df, threshold){
       breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2018),
       limits = c(1979, 2018),
       expand = c(0, 0)
-    )+
+    )+coord_cartesian(ylim = pr_ylim)+
     labs(
       x = "Year",
       y = "Precipitation (mm)"
@@ -323,7 +335,7 @@ climate_fig
 ggsave(
   "Results/Fig_climate_timeseries.pdf",
   climate_fig,
-  width = 11,
-  height = 6.5,
+  width = 16,
+  height = 6,
   dpi = 600
 )
