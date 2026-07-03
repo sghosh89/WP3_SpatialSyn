@@ -29,4 +29,9 @@ df_spmeta<-df_spmeta%>%dplyr::select(AOU, English_Common_Name, ScientificName)
 df<-left_join(df1,df_spmeta, by="AOU")
 
 df<-df%>%select(AOU, nint, English_Common_Name, ScientificName)%>%filter(nint>=45)%>%select(-nint) # show this table into suppmat
+
+
+
+#====================
+
 write.csv(df, here("Results/SpeciesList_0_250km_nbin_4_min32yr_min10sites.csv"),row.names=F) # 124 species
