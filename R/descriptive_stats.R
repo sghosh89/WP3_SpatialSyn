@@ -57,8 +57,8 @@ table_s1 <- occ_df %>%
     
     `Median no. sites/species` = median(ngoodsites),
     `IQR no. sites/species` = paste0(
-      quantile(ngoodsites, 0.25), "–",
-      quantile(ngoodsites, 0.75)
+      quantile(ngoodsites, 0.25, type=1, na.rm=TRUE), "–",
+      quantile(ngoodsites, 0.75, type=1, na.rm=TRUE)
     ),
     `Range no. sites/species` = paste0(
       min(ngoodsites), "–", max(ngoodsites)
@@ -288,8 +288,8 @@ plot_climate <- function(df, threshold){
                 alpha = 0.20) +
     geom_line(colour = "firebrick", linewidth = 0.7) +
     scale_x_continuous(
-      breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2018),
-      limits = c(1979, 2018),
+      breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2019),
+      limits = c(1979, 2019),
       expand = c(0, 0)
     )+coord_cartesian(ylim = temp_ylim)+
     labs(
@@ -307,8 +307,8 @@ plot_climate <- function(df, threshold){
                 alpha = 0.20) +
     geom_line(colour = "dodgerblue4", linewidth = 0.7) +
     scale_x_continuous(
-      breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2018),
-      limits = c(1979, 2018),
+      breaks = c(1979, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2019),
+      limits = c(1979, 2019),
       expand = c(0, 0)
     )+coord_cartesian(ylim = pr_ylim)+
     labs(
@@ -321,9 +321,9 @@ plot_climate <- function(df, threshold){
        pr = p_pr)
   
 }
-p40 <- plot_climate(clim40$yearly,"≥40 years")
-p36 <- plot_climate(clim36$yearly,"≥36 years")
-p32 <- plot_climate(clim32$yearly,"≥32 years")
+p40 <- plot_climate(clim40$yearly,"minimum 40 years sampled")
+p36 <- plot_climate(clim36$yearly,"minimum 36 years sampled")
+p32 <- plot_climate(clim32$yearly,"minimum 32 years sampled")
 
 climate_fig <-
   

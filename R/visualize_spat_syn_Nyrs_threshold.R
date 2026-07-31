@@ -50,6 +50,14 @@ visualize_spat_syn_Nyrs_threshold <- function(yr_threshold = 40, target_dist_cat
     ) %>%
     arrange(desc(fLval))          # Red → Blue
   
+  #nrow(df1)# 34 for 40 years, 86 for 36 years, 124 for 32 years
+  #sum(df1$fLval>50.0)# 15 out of 34 for 40 yrs, 29 out of 86 for 36 years, 40 out of 124 for 32 years
+  #sum(df1$fLval<50.0)# 19 out of 34 for 40 yrs, 57 out of 86 for 36 years, 84 out of 124 for 32 years
+  
+  #binom.test(15, 34, p = 0.5)
+  #binom.test(29, 86, p = 0.5, alternative = "less")# p<0.001 means reject H0, accept HA
+  #binom.test(40, 124, p = 0.5)
+  
   ## Order species
   ord_vec <- df1$AOU
   
