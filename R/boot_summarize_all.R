@@ -232,3 +232,58 @@ all_boot_summaries <- lapply(model_dirs, function(x) {
 })
 
 names(all_boot_summaries) <- model_dirs
+
+#================= 
+source(here("R/phylolm_model_with_sampling_effort.R"))
+#===================
+
+#===========================================================
+# Sampling-effort sensitivity models
+#===========================================================
+
+sampling_model_dirs <- c(
+  
+  # 32 years
+  "RESULTS/model_phylolm_sig95_0-250km_min32yr",
+  
+  # 36 years
+  "RESULTS/model_phylolm_sig95_0-250km_min36yr",
+  
+  # 40 years
+  "RESULTS/model_phylolm_sig95_0-250km"
+  
+)
+
+run_boot_sampling_summary <- function(resloc, climate="pr"){
+  
+  fitbootP <- readRDS(paste0(resloc, "/model_est_phylolm_boot_with_samplingeffort_P.RDS"))
+  fitbootT <- readRDS(paste0(resloc, "/model_est_phylolm_boot_with_samplingeffort_T.RDS"))
+  
+  boot_tabP  <- boot_summarize_all(fitbootP)
+  boot_tabT  <- boot_summarize_all(fitbootT)
+  
+  sink(
+    here(paste(resloc, "boot_summary_samplingeffort.txt", sep = "/")),
+    append = FALSE,
+    split = TRUE
+  )
+  
+  print(boot_tabP)
+  
+  cat("\n")
+  cat("\n")
+  cat("\n")
+  
+  print(boot_tabT)
+  
+  sink()
+}
+
+
+sampling_boot_summaries <- lapply(sampling_model_dirs, function(x) {
+  run_boot_sampling_summary(here(x))
+})
+
+names(sampling_boot_summaries) <- sampling_model_dirs
+
+
