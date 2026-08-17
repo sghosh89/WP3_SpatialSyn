@@ -339,3 +339,68 @@ ggsave(
   height = 6,
   dpi = 600
 )
+#======================================
+
+
+give_clim_stat<-function(prdat, tempdat, abund_array){
+  sitenames<-dimnames(abund_array)[[2]]
+  entiresites<-colnames(prdat)
+  
+  id<-which(entiresites%in%sitenames)
+  prdat_sel<-prdat[,id]
+  tempdat_sel<-tempdat[,id]
+  
+  prdat_sel<-as.data.frame(prdat_sel)
+  tempdat_sel<-as.data.frame(tempdat_sel)
+  all(colnames(prdat_sel)==colnames(tempdat_sel))==T
+  
+  # Spearman correlation between precipitation and temperature
+  # across years, separately for each site
+  site_cor <- sapply(seq_len(ncol(prdat_sel)), function(j) {
+    
+    cor(
+      prdat_sel[, j],
+      tempdat_sel[, j],
+      method = "spearman",
+      use = "complete.obs"
+    )
+  })
+  
+  sscor<-summary(site_cor)
+  print(sscor)
+  # Useful summaries
+  #median(site_cor, na.rm = TRUE)
+  #quantile(site_cor, c(0.025, 0.25, 0.5, 0.75, 0.975), na.rm = TRUE)
+  
+  # Proportion negative
+  (prneg<-mean(site_cor < 0, na.rm = TRUE))
+  
+  # Proportion positive
+  #mean(site_cor > 0, na.rm = TRUE)
+  
+  #out<-list(sscor=sscor,prneg=prneg)
+  
+}
+
+
+#all(dimnames(abund_array40)[[2]]%in%dimnames(abund_array32)[[2]])==TRUE
+#all(dimnames(abund_array36)[[2]]%in%dimnames(abund_array32)[[2]])==TRUE
+
+prdat<-readRDS(here("RESULTS/year_by_site_pr_avgAprtoAug.RDS"))
+tempdat<-readRDS(here("RESULTS/year_by_site_tas_avgAprtoAug.RDS"))
+
+abund_array32<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_array_min32yr.RDS"))
+give_clim_stat(prdat = prdat, tempdat = tempdat, abund_array = abund_array32)
+
+abund_array36<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_array_min36yr.RDS"))
+give_clim_stat(prdat = prdat, tempdat = tempdat, abund_array = abund_array36)
+
+abund_array40<-readRDS(here("DATA/for_BBS/wrangled_data/data1979to2019_abundance_array.RDS"))
+give_clim_stat(prdat = prdat, tempdat = tempdat, abund_array = abund_array40)
+
+
+
+
+
+
+
